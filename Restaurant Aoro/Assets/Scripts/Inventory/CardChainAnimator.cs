@@ -8,6 +8,11 @@ public class CardChainAnimator : MonoBehaviour
     public RectTransform[] targetPositions; // 위치 0~4
     public RectTransform centerStackPosition; // 접힐 위치
 
+    public RectTransform cookingButton; // 요리 버튼 위치
+    public RectTransform cookingButtonTarget; // 요리 버튼 타겟 위치
+
+    public Ease easeType = Ease.OutCubic;
+
     public float moveDuration = 0.3f;
     public float stepDelay = 0.05f;
 
@@ -57,7 +62,7 @@ public class CardChainAnimator : MonoBehaviour
         foreach (var card in cards)
         {
             card.Initialize();
-            card.MoveTo(startPos, moveDuration);
+            card.MoveTo(startPos, moveDuration, easeType);
         }
 
         DOVirtual.DelayedCall(moveDuration + stepDelay, () =>
@@ -70,6 +75,8 @@ public class CardChainAnimator : MonoBehaviour
     {
         if (step >= cards.Length)
         {
+            cookingButton.DOAnchorPos(cookingButtonTarget.anchoredPosition, moveDuration)
+                .SetEase(easeType);
             isAnimating = false;
             return;
         }
@@ -78,7 +85,7 @@ public class CardChainAnimator : MonoBehaviour
 
         for (int i = step; i < cards.Length; i++)
         {
-            cards[i].MoveTo(toPos, moveDuration);
+            cards[i].MoveTo(toPos, moveDuration, easeType);
         }
 
         DOVirtual.DelayedCall(moveDuration + stepDelay, () =>
@@ -99,9 +106,15 @@ public class CardChainAnimator : MonoBehaviour
         {
             Vector2 center = centerStackPosition.anchoredPosition;
 
+            DOVirtual.DelayedCall(stepDelay * (cards.Length - 1), () =>
+            {
+                cookingButton.DOAnchorPos(center, moveDuration)
+                 .SetEase(easeType);
+            });
+
             foreach (var card in cards)
             {
-                card.MoveTo(center, moveDuration);
+                card.MoveTo(center, moveDuration, easeType);
             }
 
             DOVirtual.DelayedCall(moveDuration, () =>
@@ -117,7 +130,7 @@ public class CardChainAnimator : MonoBehaviour
 
         for (int i = step; i < cards.Length; i++)
         {
-            cards[i].MoveTo(toPos, moveDuration);
+            cards[i].MoveTo(toPos, moveDuration, easeType);
         }
 
         DOVirtual.DelayedCall(moveDuration + stepDelay, () =>

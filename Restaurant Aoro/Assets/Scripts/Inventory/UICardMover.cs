@@ -11,11 +11,11 @@ public class UICardMover : MonoBehaviour
         rectTransform = GetComponent<RectTransform>();
     }
 
-    public void MoveTo(Vector2 targetPos, float duration, float delay = 0f, TweenCallback onComplete = null)
+    public void MoveTo(Vector2 targetPos, float duration, Ease easeType, float delay = 0f, TweenCallback onComplete = null)
     {
         rectTransform.DOAnchorPos(targetPos, duration)
             .SetDelay(delay)
-            .SetEase(Ease.OutCubic)
+            .SetEase(easeType)
             .OnComplete(onComplete);
     }
 
