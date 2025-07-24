@@ -11,8 +11,8 @@ public class CardChainAnimator : MonoBehaviour
     public RectTransform cookingButton; // 요리 버튼 위치
     public RectTransform cookingButtonTarget; // 요리 버튼 타겟 위치
 
+    [Header("애니메이션 설정")]
     public Ease easeType = Ease.OutCubic;
-
     public float moveDuration = 0.3f;
     public float stepDelay = 0.05f;
 
@@ -27,6 +27,8 @@ public class CardChainAnimator : MonoBehaviour
             Debug.LogError("카드와 타겟 위치의 배열 길이가 같아야 합니다.");
             return;
         }
+
+        cards = GetComponentsInChildren<UICardMover>();
 
         CardActivation(false);
     }
