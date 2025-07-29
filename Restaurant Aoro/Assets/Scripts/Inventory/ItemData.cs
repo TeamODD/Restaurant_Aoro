@@ -1,9 +1,12 @@
 using UnityEngine;
 
-[System.Serializable]
-public class ItemData
+namespace Inventory
 {
-    public string id;
-    public Sprite icon;
-    public string name;
+    [CreateAssetMenu(fileName = "NewItemData", menuName = "Cooking/Item Data")]
+    public class ItemData : ScriptableObject
+    {
+        public string id;
+        public Sprite icon;
+        public string ingredientName;
+    }
 }

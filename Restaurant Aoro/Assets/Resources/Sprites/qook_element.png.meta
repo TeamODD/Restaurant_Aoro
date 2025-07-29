@@ -14,6 +14,15 @@ TextureImporter:
   - first:
       213: 1547825548071643759
     second: qook_element_3
+  - first:
+      213: -2304775505103533691
+    second: qook_element_4
+  - first:
+      213: -3753575583115156804
+    second: qook_element_5
+  - first:
+      213: 2350502347527396901
+    second: qook_element_6
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -112,12 +121,12 @@ TextureImporter:
       name: qook_element_0
       rect:
         serializedVersion: 2
-        x: 77
-        y: 122
-        width: 690
-        height: 810
-      alignment: 9
-      pivot: {x: 0.47315842, y: 0.4999999}
+        x: 74
+        y: 119
+        width: 653
+        height: 791
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -131,13 +140,35 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
+      name: qook_element_1
+      rect:
+        serializedVersion: 2
+        x: 234
+        y: 882
+        width: 37
+        height: 28
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 79ed73563f2e99410800000000000000
+      internalID: 1484467087198379671
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
       name: qook_element_2
       rect:
         serializedVersion: 2
-        x: 88
-        y: 141
-        width: 85
-        height: 89
+        x: 254
+        y: 882
+        width: 40
+        height: 28
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -156,10 +187,10 @@ TextureImporter:
       name: qook_element_3
       rect:
         serializedVersion: 2
-        x: 609
-        y: 129
-        width: 108
-        height: 111
+        x: 282
+        y: 882
+        width: 40
+        height: 28
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -174,11 +205,77 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: qook_element_4
+      rect:
+        serializedVersion: 2
+        x: 88
+        y: 141
+        width: 85
+        height: 89
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 589484ba3eac300e0800000000000000
+      internalID: -2304775505103533691
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: qook_element_5
+      rect:
+        serializedVersion: 2
+        x: 103
+        y: 159
+        width: 594
+        height: 706
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb267daf4ee98ebc0800000000000000
+      internalID: -3753575583115156804
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: qook_element_6
+      rect:
+        serializedVersion: 2
+        x: 609
+        y: 129
+        width: 108
+        height: 111
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52e971c7e69ae9020800000000000000
+      internalID: 2350502347527396901
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 4c0f8a09b9430694481bc5acaceaa6b2
+    spriteID: 31a9a34ad675cf041907f8512be1d184
     internalID: 0
     vertices: []
     indices: 
@@ -192,6 +289,9 @@ TextureImporter:
       qook_element_1: 1484467087198379671
       qook_element_2: 50250655535605100
       qook_element_3: 1547825548071643759
+      qook_element_4: -2304775505103533691
+      qook_element_5: -3753575583115156804
+      qook_element_6: 2350502347527396901
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
