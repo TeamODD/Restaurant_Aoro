@@ -3,6 +3,7 @@ using UnityEngine;
 public class TabletState : MonoBehaviour
 {
     public GameObject[] Seats;
+    public bool isTabletClicked;
     public bool canClicked;
     public bool canSeat;
 
@@ -10,5 +11,6 @@ public class TabletState : MonoBehaviour
     {
         canClicked = false;
         canSeat = true;
+        isTabletClicked = false;
     }
 }

@@ -5,8 +5,12 @@ public class TabletButtonController : MonoBehaviour
 {
     public TabletState tabletState;
     public SpawnCustomer spawner;
+    public Sprite seat_blank;
+    public Sprite seat_filled;
+    public Sprite seat_half;
 
     private Transform seatLocation;
+
 
     void Start()
     {
@@ -29,7 +33,7 @@ public class TabletButtonController : MonoBehaviour
     public void SeatButtonClicked(int seatIndex)
     {
         if (!tabletState.canClicked) return;
-
+        
         for (int i = 0; i < tabletState.Seats.Length; i++)
         {
             GameObject seat = tabletState.Seats[i];
@@ -38,8 +42,17 @@ public class TabletButtonController : MonoBehaviour
 
             if (i == seatIndex && state.isClicked == false)
             {
-                state.isClicked = true;
-                img.color = new Color(img.color.r, img.color.g, img.color.b, 0.5f); // 반투명
+                if(state.isSeated == false)
+                {
+                    state.isClicked = true;
+                    tabletState.isTabletClicked = true;
+                    img.sprite = seat_half;
+                }
+                else
+                {
+                    tabletState.isTabletClicked = false;
+                }
+                //img.color = new Color(img.color.r, img.color.g, img.color.b, 0.5f); // 반투명
                 //img.color = Color.red;
             }
             else
@@ -47,7 +60,8 @@ public class TabletButtonController : MonoBehaviour
                 state.isClicked = false;
 
                 if (!state.isSeated)
-                    img.color = Color.white;
+                    img.sprite = seat_blank;
+                    //img.color = Color.white;
             }
         }
     }
@@ -55,6 +69,7 @@ public class TabletButtonController : MonoBehaviour
     public void AcceptButtonClicked()
     {
         if (!tabletState.canClicked) return;
+        if (!tabletState.isTabletClicked) return;
 
         GameObject currentCustomer = spawner.GetCurrentCustomer();
         foreach (GameObject seat in tabletState.Seats)
@@ -67,7 +82,8 @@ public class TabletButtonController : MonoBehaviour
                 state.isSeated = true;
                 state.isClicked = false;
                 seatLocation = state.SeatLocation;
-                img.color = Color.black;
+                img.sprite = seat_filled;
+                //img.color = Color.black;
             }
         }
         if (currentCustomer != null)
@@ -88,6 +104,7 @@ public class TabletButtonController : MonoBehaviour
             }
         }
         tabletState.canSeat = !allSeated;
+        tabletState.isTabletClicked = false;
     }
 
     public void RefuseButtonClicked()
@@ -103,7 +120,8 @@ public class TabletButtonController : MonoBehaviour
             if (!state.isSeated)
             {
                 state.isClicked = false;
-                img.color = Color.white;
+                img.sprite = seat_blank;
+                //img.color = Color.white;
             }
         }
         if (currentCustomer != null)

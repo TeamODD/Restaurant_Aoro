@@ -30,11 +30,19 @@ public class InventoryController : MonoBehaviour
         BaseOffset = positionOffset;
     }
 
-    /*public void SetOffset(Vector3 newOffset)
+    public bool GetArrowCentered()
     {
-        currentOffset = newOffset;
-        UpdateTargetTransform();
-    }*/
+        return isArrowCentered;
+    }
+
+    public void SetrightArrowInitialPos(Vector3 pos)
+    {
+        rightArrowInitialPos = pos;
+    }
+    public Vector3 GetrightArrowInitialPos()
+    {
+        return rightArrowInitialPos;
+    }
 
     public void AnimateToOffset(Vector3 newOffset, Vector3 cameraFinalPos, float duration, float rotateSpeed = 10f)
     {

@@ -1,12 +1,15 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.EventSystems;
+using NUnit.Framework.Constraints;
+using TMPro;
 
 public class ArrowController : MonoBehaviour
 {
     public GameObject[] Arrow;
     public Transform cameraTransform;
     public InventoryController inventoryController;
+    public InventoryManager inventoryManager; //후에 변경 예정
     public float stepDistance = 19.58f;
 
     private int currentStep = 0; // 0 (중앙), 1 (한 칸 왼쪽), 2 (두 칸 왼쪽)
@@ -28,7 +31,6 @@ public class ArrowController : MonoBehaviour
             StartMove();
         }
     }
-
     public void MoveRight()
     {
         if (currentStep > minStep && !inventoryController.IsAnimating)
@@ -37,7 +39,6 @@ public class ArrowController : MonoBehaviour
             StartMove();
         }
     }
-
     private void StartMove()
     {
         float targetX = -stepDistance * currentStep;
@@ -68,6 +69,23 @@ public class ArrowController : MonoBehaviour
             arrowStartPositions[i] = Arrow[i].transform.position;
             arrowTargetPositions[i] = arrowStartPositions[i] + offset;
         }
+        Vector3 arrowinitialpos = inventoryController.GetrightArrowInitialPos();
+        inventoryController.SetrightArrowInitialPos(arrowinitialpos + offset);
+
+        //인벤토리 패널이 중앙일 경우
+        if (inventoryController.GetArrowCentered())
+        {
+            panelTargetOffset = inventoryManager.offsetCenter;
+
+            //Vector3 arrowTmpPos = new Vector3(arrowTargetPositions[1].x + inventoryController.BaseOffset.x, arrowTargetPositions[1].y, arrowTargetPositions[1].z);
+            //Vector3 arrowTmpPos = panelTargetOffset - inventoryController.BaseOffset;
+            //float offsetX = centerOffset.x - BaseOffset.x;
+            //inventoryController.SetrightArrowInitialPos(arrowTmpPos);
+        }
+        else
+        {
+            //inventoryController.SetrightArrowInitialPos(arrowTargetPositions[1]);
+        }
 
         float t = 0f;
         inventoryController.SetIsAnimating(true);
@@ -88,7 +106,7 @@ public class ArrowController : MonoBehaviour
 
             yield return null;
         }
-
+        
         // 최종 위치 보정
         cameraTransform.position = endCamPos;
 
@@ -116,6 +134,8 @@ public class ArrowController : MonoBehaviour
             }
         }
     }
+
+
 
     private IEnumerator FadeOutArrow(GameObject arrowObj, float duration)
     {
