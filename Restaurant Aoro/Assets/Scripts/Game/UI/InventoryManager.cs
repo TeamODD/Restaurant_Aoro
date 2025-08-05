@@ -5,7 +5,7 @@ public class InventoryManager : MonoBehaviour
 {
     public GameObject[] panelObjects; // Panel1, 2, 3 (GameObject)
     public ArrowController arrowController;
-    public Transform rightArrow;
+    public RectTransform rightArrow;
     public Transform IngredientPanel;
     public Transform FoodPanel;
     public Image IngredientImg;
@@ -14,24 +14,22 @@ public class InventoryManager : MonoBehaviour
     public Camera mainCamera;
     public InventoryUIController uiController;
 
-    public Vector3 offset = new Vector3(10.65f, 0f, 3f);
-    public Vector3 offsetCenter = new Vector3(5.45f, 0f, 3f);
+    public Vector2 offset = new Vector2(1065f, 0f); //10.65f, 0f
+    public Vector2 offsetCenter = new Vector2(545f, 0f); //5.45f, 0f
 
     private bool isCentered = false;
 
     void Start()
     {
-        Transform[] panelTransforms = new Transform[panelObjects.Length];
+        RectTransform[] panelRects = new RectTransform[panelObjects.Length];
         for (int i = 0; i < panelObjects.Length; i++)
-            panelTransforms[i] = panelObjects[i].transform;
+            panelRects[i] = panelObjects[i].GetComponent<RectTransform>();
 
-        controller.Initialize(mainCamera, panelTransforms, offset);
+        controller.Initialize(panelRects, offset);
         controller.SetRightArrow(rightArrow);
-    }
 
-    void LateUpdate()
-    {
-        controller.UpdatePanelPositions(); // 계속 위치 추적
+        foreach (RectTransform rect in panelRects)
+            rect.anchoredPosition = offset;
     }
 
     public void ShowPanel(int index)

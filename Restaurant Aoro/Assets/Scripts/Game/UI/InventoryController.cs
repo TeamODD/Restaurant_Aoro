@@ -4,15 +4,11 @@ using System.Collections;
 
 public class InventoryController : MonoBehaviour
 {
-    private Camera mainCamera;
-    private Transform[] panels;
-    private Vector3 currentOffset;
-    private Transform rightArrow { get; set; }
-    private Vector3 rightArrowInitialPos;
+    private RectTransform[] panels;
+    private Vector2 currentOffset;
+    private RectTransform rightArrow { get; set; }
+    private Vector2 rightArrowInitialPos;
     private bool isArrowCentered = false;
-
-    private Vector3 currentTargetPos;
-    private Quaternion currentTargetRot;
 
     private Coroutine moveCoroutine;
 
@@ -22,110 +18,96 @@ public class InventoryController : MonoBehaviour
 
     public void SetIsAnimating(bool value) => IsAnimating = value;
 
-    public void Initialize(Camera cam, Transform[] panelTransforms, Vector3 positionOffset)
+    public void Initialize(RectTransform[] panelRects, Vector2 positionOffset)
     {
-        mainCamera = cam;
-        panels = panelTransforms;
+        panels = panelRects;
         currentOffset = positionOffset;
         BaseOffset = positionOffset;
     }
 
-    public bool GetArrowCentered()
+    public bool GetArrowCentered() => isArrowCentered;
+
+    public void SetRightArrow(RectTransform arrow)
     {
-        return isArrowCentered;
+        rightArrow = arrow;
+        rightArrowInitialPos = arrow.anchoredPosition;
     }
 
-    public void SetrightArrowInitialPos(Vector3 pos)
-    {
-        rightArrowInitialPos = pos;
-    }
-    public Vector3 GetrightArrowInitialPos()
-    {
-        return rightArrowInitialPos;
-    }
+    public Vector2 GetRightArrowInitialPos() => rightArrowInitialPos;
 
-    public void AnimateToOffset(Vector3 newOffset, Vector3 cameraFinalPos, float duration, float rotateSpeed = 10f)
+    public void AnimateToOffset(Vector2 newOffset, float duration)
     {
         currentOffset = newOffset;
 
         if (moveCoroutine != null)
             StopCoroutine(moveCoroutine);
 
-        moveCoroutine = StartCoroutine(AnimateMove(cameraFinalPos, duration, rotateSpeed));
+        moveCoroutine = StartCoroutine(AnimateMove(newOffset, duration));
     }
 
-    private IEnumerator AnimateMove(Vector3 cameraFinalPos, float duration, float rotateSpeed)
+    private IEnumerator AnimateMove(Vector2 targetPos, float duration)
     {
         IsAnimating = true;
 
-        // 목표 위치 계산 (이동 중에는 매 프레임마다 새로 계산 X, 카메라 위치 고정 기준)
-        Vector3 camRight = mainCamera.transform.right;
-        Vector3 camForward = Vector3.ProjectOnPlane(mainCamera.transform.forward, Vector3.up).normalized;
-
-        Vector3 fixedTargetPos = cameraFinalPos + camRight * currentOffset.x + Vector3.up * currentOffset.y + camForward * currentOffset.z;
-        Quaternion fixedTargetRot = Quaternion.LookRotation(camForward);
-
-        Vector3[] startPositions = new Vector3[panels.Length];
-        Quaternion[] startRotations = new Quaternion[panels.Length];
-
+        Vector2[] startPositions = new Vector2[panels.Length];
         for (int i = 0; i < panels.Length; i++)
-        {
-            startPositions[i] = panels[i].position;
-            startRotations[i] = panels[i].rotation;
-        }
+            startPositions[i] = panels[i].anchoredPosition;
 
         float t = 0f;
 
         while (t < 1f)
         {
             t += Time.deltaTime / duration;
-
             for (int i = 0; i < panels.Length; i++)
-            {
-                panels[i].position = Vector3.Lerp(startPositions[i], fixedTargetPos, t);
-                panels[i].rotation = Quaternion.Slerp(startRotations[i], fixedTargetRot, t * rotateSpeed);
-            }
-
+                panels[i].anchoredPosition = Vector2.Lerp(startPositions[i], targetPos, t);
             yield return null;
         }
 
         for (int i = 0; i < panels.Length; i++)
-        {
-            panels[i].position = fixedTargetPos;
-            panels[i].rotation = fixedTargetRot;
-        }
+            panels[i].anchoredPosition = targetPos;
 
         IsAnimating = false;
     }
 
-    public void UpdatePanelPositions()
+    public void MovePanelToCenter(Vector2 centerOffset, float duration)
     {
-        if (mainCamera == null || panels == null || panels.Length == 0) return;
-
-        UpdateTargetTransform(); //항상 카메라 기준 위치를 계산
-
-        // 애니메이션 중에는 보간 유지
-        if (IsAnimating)
+        if (!isArrowCentered)
         {
-            // 아무것도 하지 않음 (애니메이션이 위치를 바꿈)
-            return;
+            AnimateToOffset(centerOffset, duration);
+
+            if (rightArrow != null)
+            {
+                float offsetX = centerOffset.x - BaseOffset.x;
+                Vector2 newArrowPos = rightArrow.anchoredPosition + new Vector2(offsetX, 0);
+                StartCoroutine(MoveArrowToUIPosition(rightArrow, newArrowPos, duration));
+            }
+
+            isArrowCentered = true;
         }
-
-        // 애니메이션이 아닐 경우에만 강제로 위치 고정
-        foreach (Transform panel in panels)
+        else
         {
-            panel.position = currentTargetPos;
-            panel.rotation = currentTargetRot;
+            AnimateToOffset(BaseOffset, duration);
+
+            if (rightArrow != null)
+                StartCoroutine(MoveArrowToUIPosition(rightArrow, rightArrowInitialPos, duration));
+
+            isArrowCentered = false;
         }
     }
 
-    private void UpdateTargetTransform()
+    private IEnumerator MoveArrowToUIPosition(RectTransform arrow, Vector2 targetPos, float duration)
     {
-        Vector3 camRight = mainCamera.transform.right;
-        Vector3 camForward = Vector3.ProjectOnPlane(mainCamera.transform.forward, Vector3.up).normalized;
+        Vector2 startPos = arrow.anchoredPosition;
+        float t = 0f;
 
-        currentTargetPos = mainCamera.transform.position + camRight * currentOffset.x + Vector3.up * currentOffset.y + camForward * currentOffset.z;
-        currentTargetRot = Quaternion.LookRotation(camForward);
+        while (t < 1f)
+        {
+            t += Time.deltaTime / duration;
+            arrow.anchoredPosition = Vector2.Lerp(startPos, targetPos, t);
+            yield return null;
+        }
+
+        arrow.anchoredPosition = targetPos;
     }
 
     public void SwapToFoodPanel(Transform ingredientPanel, Transform foodPanel, Image ingredientImg, Image foodImg)
@@ -154,58 +136,5 @@ public class InventoryController : MonoBehaviour
         {
             ingredientPanel.SetSiblingIndex(foodPanel.GetSiblingIndex());
         }
-    }
-
-    public void MovePanelToCenter(Vector3 centerOffset, float duration)
-    {
-        Vector3 cameraFinalPos = mainCamera.transform.position;
-
-        if (!isArrowCentered)
-        {
-            AnimateToOffset(centerOffset, cameraFinalPos, duration);
-
-            if (rightArrow != null)
-            {
-                // 처음 위치 기억
-                rightArrowInitialPos = rightArrow.position;
-
-                // X축 이동량 계산
-                float offsetX = centerOffset.x - BaseOffset.x;
-                Vector3 newArrowPos = rightArrow.position + mainCamera.transform.right * offsetX;
-
-                StartCoroutine(MoveArrowToPosition(rightArrow, newArrowPos, duration));
-            }
-
-            isArrowCentered = true;
-        }
-        else
-        {
-            AnimateToOffset(BaseOffset, cameraFinalPos, duration);
-
-            if (rightArrow != null)
-            {
-                StartCoroutine(MoveArrowToPosition(rightArrow, rightArrowInitialPos, duration));
-            }
-
-            isArrowCentered = false;
-        }
-    }
-
-    private IEnumerator MoveArrowToPosition(Transform arrow, Vector3 targetPos, float duration)
-    {
-        Vector3 startPos = arrow.position;
-        float t = 0f;
-        while (t < 1f)
-        {
-            t += Time.deltaTime / duration;
-            arrow.position = Vector3.Lerp(startPos, targetPos, t);
-            yield return null;
-        }
-        arrow.position = targetPos;
-    }
-
-    public void SetRightArrow(Transform arrow)
-    {
-        rightArrow = arrow;
     }
 }
