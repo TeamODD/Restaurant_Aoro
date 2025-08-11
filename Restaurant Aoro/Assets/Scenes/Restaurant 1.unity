@@ -973,7 +973,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isClicked: 0
   isSeated: 0
-  SeatLocation: {fileID: 1014905218}
+  SeatLocation: {fileID: 1014905217}
 --- !u!114 &106212903
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2838,7 +2838,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isClicked: 0
   isSeated: 0
-  SeatLocation: {fileID: 1695367454}
+  SeatLocation: {fileID: 1695367453}
 --- !u!114 &401133131
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5579,7 +5579,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isClicked: 0
   isSeated: 0
-  SeatLocation: {fileID: 681056956}
+  SeatLocation: {fileID: 681056955}
 --- !u!114 &1030418802
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6034,7 +6034,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isClicked: 0
   isSeated: 0
-  SeatLocation: {fileID: 871662267}
+  SeatLocation: {fileID: 871662266}
 --- !u!114 &1064022035
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7352,7 +7352,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isClicked: 0
   isSeated: 0
-  SeatLocation: {fileID: 1569372492}
+  SeatLocation: {fileID: 1569372491}
 --- !u!114 &1286721920
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7742,7 +7742,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isClicked: 0
   isSeated: 0
-  SeatLocation: {fileID: 1833303063}
+  SeatLocation: {fileID: 1833303062}
 --- !u!114 &1435551739
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9071,7 +9071,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isClicked: 0
   isSeated: 0
-  SeatLocation: {fileID: 428981374}
+  SeatLocation: {fileID: 428981373}
 --- !u!114 &1600953645
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10392,7 +10392,7 @@ Transform:
   m_GameObject: {fileID: 1905487262}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -18.085451, y: -0.83819544, z: -3.323355}
+  m_LocalPosition: {x: -18.085451, y: -0.83819544, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -11512,7 +11512,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isClicked: 0
   isSeated: 0
-  SeatLocation: {fileID: 2072499175}
+  SeatLocation: {fileID: 2072499174}
 --- !u!114 &2015495689
 MonoBehaviour:
   m_ObjectHideFlags: 0

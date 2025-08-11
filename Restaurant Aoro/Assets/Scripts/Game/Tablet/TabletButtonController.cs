@@ -52,8 +52,6 @@ public class TabletButtonController : MonoBehaviour
                 {
                     tabletState.isTabletClicked = false;
                 }
-                //img.color = new Color(img.color.r, img.color.g, img.color.b, 0.5f); // π›≈ı∏Ì
-                //img.color = Color.red;
             }
             else
             {
@@ -61,7 +59,6 @@ public class TabletButtonController : MonoBehaviour
 
                 if (!state.isSeated)
                     img.sprite = seat_blank;
-                    //img.color = Color.white;
             }
         }
     }
@@ -81,9 +78,9 @@ public class TabletButtonController : MonoBehaviour
             {
                 state.isSeated = true;
                 state.isClicked = false;
-                seatLocation = state.SeatLocation;
+                seatLocation = state.SeatLocation.transform;
+                Debug.Log(seatLocation.position.ToString());
                 img.sprite = seat_filled;
-                //img.color = Color.black;
             }
         }
         if (currentCustomer != null)
@@ -121,7 +118,6 @@ public class TabletButtonController : MonoBehaviour
             {
                 state.isClicked = false;
                 img.sprite = seat_blank;
-                //img.color = Color.white;
             }
         }
         if (currentCustomer != null)

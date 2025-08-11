@@ -83,7 +83,8 @@ public class CustomerManager : MonoBehaviour
 
     private IEnumerator MoveAndSeated(Transform seatLocation)
     {
-        Vector3 moveTarget = new Vector3(seatLocation.position.x - 1f, transform.position.y, transform.position.z);
+        Debug.Log(seatLocation.position.z.ToString());
+        Vector3 moveTarget = new Vector3(seatLocation.position.x - 1f, transform.position.y, -0.1f);
 
         while (Vector3.Distance(transform.position, moveTarget) > 0.1f)
         {

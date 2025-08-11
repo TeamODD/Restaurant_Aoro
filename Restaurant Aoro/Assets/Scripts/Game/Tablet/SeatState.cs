@@ -5,5 +5,5 @@ public class SeatState : MonoBehaviour
 {
     public bool isClicked;
     public bool isSeated;
-    public Transform SeatLocation;
+    public GameObject SeatLocation;
 }
