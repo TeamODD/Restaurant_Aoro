@@ -17,7 +17,7 @@ public class InventoryManager : MonoBehaviour
     public Vector2 offset = new Vector2(1065f, 0f); //10.65f, 0f
     public Vector2 offsetCenter = new Vector2(545f, 0f); //5.45f, 0f
 
-    private bool isCentered = false;
+    public bool isCentered = false;
 
     void Start()
     {

@@ -1,60 +1,125 @@
 using UnityEngine;
 using System.Collections;
-using UnityEngine.EventSystems;
-using NUnit.Framework.Constraints;
-using TMPro;
 
 public class ArrowController : MonoBehaviour
 {
+    private enum CameraStep
+    {
+        Center = 0, // Right
+        One = 1, // 1 * Left
+        Two = 2, // 2 * Left
+    }
+
+    private enum ArrowDirection
+    {
+        Left = 0,
+        Right,
+        Down,
+        Up
+    }
+
+    private struct Axis
+    {
+        public CameraStep currentStep;
+        public CameraStep lastStep;
+        public CameraStep minStep { get; }
+
+        public CameraStep maxStep { get; }
+
+        public Axis(CameraStep currentStep, CameraStep minStep, CameraStep maxStep)
+        {
+            this.currentStep = currentStep;
+            this.lastStep = currentStep;
+            this.minStep = minStep;
+            this.maxStep = maxStep;
+        }
+    }
+
     public GameObject[] Arrow;
     public Transform cameraTransform;
     public InventoryController inventoryController;
     public InventoryManager inventoryManager; //후에 변경 예정
+    public Transform cookSceneTransform;
+    public Transform connectionSceneTransform;
+    public Transform customerScene2Transform;
+    public Transform counterSceneTransform;
 
-    public float stepDistance = 19.58f;
+    public float horStepDistance = 19.58f;
+    public float verStepDistance = 10.5f;
 
-    private int currentStep = 0; // 0 (중앙), 1 (한 칸 왼쪽), 2 (두 칸 왼쪽)
-    private const int maxStep = 2;
-    private const int minStep = 0;
+    private Axis hor = new(CameraStep.Center, CameraStep.Center, CameraStep.Two);
+    private Axis ver = new(CameraStep.Center, CameraStep.Center, CameraStep.One);
 
     private Coroutine moveCoroutine;
 
     private void Start()
     {
-        var rightArrowCG = Arrow[1].GetComponent<CanvasGroup>();
+        var rightArrowCG = Arrow[(int)ArrowDirection.Right].GetComponent<CanvasGroup>();
         if (rightArrowCG != null) rightArrowCG.alpha = 0f;
+
+        var upArrowCG = Arrow[(int)ArrowDirection.Up].GetComponent<CanvasGroup>();
+        if (upArrowCG != null) upArrowCG.alpha = 0f;
     }
+
     public void MoveLeft()
     {
-        if (currentStep < maxStep && !inventoryController.IsAnimating)
+        if (hor.currentStep < hor.maxStep && !inventoryController.IsAnimating)
         {
-            currentStep++;
+            hor.currentStep++;
             StartMove();
         }
     }
+
     public void MoveRight()
     {
-        if (currentStep > minStep && !inventoryController.IsAnimating)
+        if (hor.currentStep > hor.minStep && !inventoryController.IsAnimating)
         {
-            currentStep--;
+            hor.currentStep--;
             StartMove();
         }
     }
+
+    public void MoveDown()
+    {
+        if (ver.currentStep < ver.maxStep && !inventoryController.IsAnimating)
+        {
+            ver.currentStep++;
+            StartMove();
+        }
+    }
+
+    public void MoveUp()
+    {
+        if (ver.currentStep > ver.minStep && !inventoryController.IsAnimating)
+        {
+            ver.currentStep--;
+            StartMove();
+        }
+    }
+
     private void StartMove()
     {
-        float targetX = -stepDistance * currentStep;
+        float targetX = -horStepDistance * (int)hor.currentStep;
+        float targetY = -verStepDistance * (int)ver.currentStep;
 
         if (moveCoroutine != null)
             StopCoroutine(moveCoroutine);
 
-        moveCoroutine = StartCoroutine(MoveCameraAndInventory(targetX, 0.5f));
+        moveCoroutine = StartCoroutine(MoveCameraAndInventory(targetX, targetY, 0.5f));
     }
 
-    private IEnumerator MoveCameraAndInventory(float targetX, float duration)
+    private IEnumerator MoveCameraAndInventory(float targetX, float targetY, float duration)
     {
+        if (ver.currentStep == ver.minStep && ver.lastStep != ver.currentStep)
+        {
+            cameraTransform.position = new Vector3(connectionSceneTransform.position.x,
+                connectionSceneTransform.position.y, cameraTransform.position.z);
+        }
+
         // 시작 위치 설정
         Vector3 startCamPos = cameraTransform.position;
-        Vector3 endCamPos = new Vector3(targetX, startCamPos.y, startCamPos.z);
+        Vector3 endCamPos = new Vector3(hor.currentStep != hor.lastStep ? targetX : cameraTransform.position.x,
+            ver.currentStep != ver.lastStep ? targetY : cameraTransform.position.y, startCamPos.z);
 
         /*Vector3 camTargetPos = new Vector3(targetX, startCamPos.y, startCamPos.z);
         Vector3 panelTargetOffset = inventoryController.BaseOffset;*/
@@ -71,25 +136,62 @@ public class ArrowController : MonoBehaviour
         // 최종 위치 보정
         cameraTransform.position = endCamPos;
 
-        if (currentStep == maxStep)
+        if (hor.currentStep == hor.maxStep)
         {
-            StartCoroutine(FadeOutArrow(Arrow[0], 0.3f));
+            if (ver.lastStep == ver.maxStep)
+            {
+                cameraTransform.position = new Vector3(customerScene2Transform.position.x,
+                    customerScene2Transform.position.y, cameraTransform.position.z);
+
+                ver.currentStep = CameraStep.Center;
+            }
+
+            StartCoroutine(FadeOutArrow(Arrow[(int)ArrowDirection.Left], 0.3f));
         }
-        else if (currentStep == minStep)
+        else if (hor.currentStep == hor.minStep)
         {
-            StartCoroutine(FadeOutArrow(Arrow[1], 0.3f));
+            if (ver.lastStep == ver.maxStep)
+            {
+                cameraTransform.position = new Vector3(counterSceneTransform.position.x,
+                    counterSceneTransform.position.y, cameraTransform.position.z);
+
+                ver.currentStep = CameraStep.Center;
+            }
+
+            StartCoroutine(FadeOutArrow(Arrow[(int)ArrowDirection.Right], 0.3f));
         }
         else
+            FadeInSelector(new[] { ArrowDirection.Left, ArrowDirection.Right });
+
+        if (ver.currentStep == ver.maxStep)
         {
-            for (int i = 0; i < Arrow.Length; i++)
-            {
-                var cg = Arrow[i].GetComponent<CanvasGroup>();
-                if (cg.alpha != 1f)
-                    StartCoroutine(FadeInArrow(Arrow[i], 0.3f));
-            }
+            cameraTransform.position = new Vector3(cookSceneTransform.position.x, cookSceneTransform.position.y,
+                cameraTransform.position.z);
+            hor.currentStep = CameraStep.One;
+
+            StartCoroutine(FadeOutArrow(Arrow[(int)ArrowDirection.Down], 0.3f));
+            FadeInSelector(new[] { ArrowDirection.Left, ArrowDirection.Right, ArrowDirection.Up });
         }
+        else if (ver.currentStep == ver.minStep)
+        {
+            StartCoroutine(FadeOutArrow(Arrow[(int)ArrowDirection.Up], 0.3f));
+            FadeInSelector(new[] { ArrowDirection.Down });
+        }
+
+        hor.lastStep = hor.currentStep;
+        ver.lastStep = ver.currentStep;
     }
 
+    private void FadeInSelector(ArrowDirection[] dirs)
+    {
+        foreach (ArrowDirection dir in dirs)
+        {
+            var arrow = Arrow[(int)dir];
+
+            if (arrow.GetComponent<CanvasGroup>().alpha != 1f)
+                StartCoroutine(FadeInArrow(arrow, 0.3f));
+        }
+    }
 
 
     private IEnumerator FadeOutArrow(GameObject arrowObj, float duration)
