@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using UnityEditor;
+using System;
 
 public class CustomerManager : MonoBehaviour
 {
@@ -83,7 +84,6 @@ public class CustomerManager : MonoBehaviour
 
     private IEnumerator MoveAndSeated(Transform seatLocation)
     {
-        Debug.Log(seatLocation.position.z.ToString());
         Vector3 moveTarget = new Vector3(seatLocation.position.x - 1f, transform.position.y, -0.1f);
 
         while (Vector3.Distance(transform.position, moveTarget) > 0.1f)
@@ -94,6 +94,10 @@ public class CustomerManager : MonoBehaviour
 
         transform.position = seatLocation.position;
         spriteRenderer.sprite = customerData.SeatedSprite;
+
+        CustomerClick customerClick = GetComponent<CustomerClick>();
+        customerClick.setCanClickTrue();
+        customerClick.setSeatedTrue();
         yield return new WaitForSeconds(0.3f);
     }
 
@@ -106,6 +110,9 @@ public class CustomerManager : MonoBehaviour
 
         transform.position = seatLocation.position;
         spriteRenderer.sprite = customerData.SeatedSprite;
+        CustomerClick customerClick = GetComponent<CustomerClick>();
+        customerClick.setCanClickTrue();
+        customerClick.setSeatedTrue();
     }
 
     public bool GetHasSeated()
