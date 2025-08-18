@@ -68,4 +68,24 @@ public class InventoryManager : MonoBehaviour
             isCentered = true;
         }
     }
+
+    public void ChangeToInventory()
+    {
+        panelObjects[0].SetActive(true);
+        panelObjects[1].SetActive(false);
+        panelObjects[2].SetActive(false);
+    }
+    public void ChangeToFoodInventory()
+    {
+        panelObjects[0].SetActive(false);
+        panelObjects[1].SetActive(false);
+        panelObjects[2].SetActive(true);
+    }
+
+    public void ChangeToIngredientInventory()
+    {
+        panelObjects[0].SetActive(false);
+        panelObjects[1].SetActive(true);
+        panelObjects[2].SetActive(false);
+    }
 }

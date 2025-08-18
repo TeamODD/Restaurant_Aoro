@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class SpawnCustomer : MonoBehaviour
@@ -13,7 +14,18 @@ public class SpawnCustomer : MonoBehaviour
     [Header("상호작용 상태 제어")]
     public TabletState tabletState;
 
-    private   GameObject currentCustomer;
+    [Header("클릭 이벤트용")]
+    public InventoryManager inventoryManager;
+    public InventoryController inventoryController;
+    public Camera mainCamera;
+    private Vector2 centerOffset = new Vector2(620f, 0f); //545f
+    public CanvasGroup[] arrowGroups;
+    public float zoomInSize = 4f;
+    public float zoomOutSize = 5f;
+    public float zoomDuration = 0.35f;
+    public float moveDuration = 0.35f;
+
+    private GameObject currentCustomer;
     private bool isSpawning = false;
 
     void Start()
@@ -57,6 +69,23 @@ public class SpawnCustomer : MonoBehaviour
         currentCustomer = Instantiate(randomCustomer, spawnPoint.position, Quaternion.identity);
         var manager = currentCustomer.GetComponent<CustomerManager>();
         manager.Init(this, stopPoint.position, tabletState);
+
+        var clickProxy = currentCustomer.GetComponent<CustomerClick>();
+        if (clickProxy == null) clickProxy = currentCustomer.AddComponent<CustomerClick>();
+
+        clickProxy.Setup(
+            manager,
+            inventoryManager,
+            tabletState,
+            inventoryController,    // InventoryController 참조
+            mainCamera,             // Orthographic 카메라
+            centerOffset,           // 중앙 anchoredPosition
+            arrowGroups,            // CanvasGroup[] (좌/우 화살표)
+            zoomInSize,             // 예: 3.5f
+            zoomOutSize,            // 예: 5f
+            zoomDuration,           // 예: 0.35f
+            moveDuration            // 예: 0.35f
+        );
 
         isSpawning = false;
         tabletState.canClicked = true;
