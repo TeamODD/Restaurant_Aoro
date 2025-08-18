@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,12 +15,12 @@ namespace Game.UI
     
     public interface ISlideIn: ISlidable
     {
-        public void SlideIn();
+        public void SlideIn(bool active = true, Action onComplete = null);
     }
     
     public interface ISlideOut: ISlidable
     {
-        public void SlideOut();
+        public void SlideOut(bool active = false, Action onComplete = null);
     }
     
     public class SlidingController : MonoBehaviour, ISlideIn, ISlideOut
@@ -41,28 +42,28 @@ namespace Game.UI
         }
         public Coroutine slidingCoroutine { get; set; }
 
-        public void SlideIn()
+        public void SlideIn(bool active = false, Action onComplete = null)
         {
             if (slidingCoroutine != null) return;
         
-            slidingCoroutine = StartCoroutine(SlideInCoroutine());
+            slidingCoroutine = StartCoroutine(SlideInCoroutine(active, onComplete));
         }
 
-        public void SlideOut()
+        public void SlideOut(bool active = false, Action onComplete = null)
         {
             if (slidingCoroutine != null) return;
 
-            slidingCoroutine = StartCoroutine(SlideOutCoroutine());
+            slidingCoroutine = StartCoroutine(SlideOutCoroutine(active, onComplete));
         }
 
-        protected virtual IEnumerator SlideInCoroutine()
+        protected virtual IEnumerator SlideInCoroutine(bool active, Action onComplete)
         {
-            yield return new WaitForEndOfFrame(); 
-            
+            yield return new WaitForEndOfFrame();
+
             for (var i = 1; i < objectTransforms.Count; i++)
             {
                 objectTransforms[i].gameObject.SetActive(true);
-                
+
                 var t = 0f;
                 var startPos = objectTransforms[i].position;
                 var endPos = targetTransforms[i].position;
@@ -75,11 +76,13 @@ namespace Game.UI
                     yield return null;
                 }
             }
-            
-            slidingCoroutine = null;
+
+            onComplete?.Invoke();
+
+        slidingCoroutine = null;
         }
 
-        protected virtual IEnumerator SlideOutCoroutine()
+        protected virtual IEnumerator SlideOutCoroutine(bool active, Action onComplete)
         {
             yield return new WaitForEndOfFrame(); 
             
@@ -97,11 +100,13 @@ namespace Game.UI
                     yield return null;
                 }
 
-                objectTransforms[i].gameObject.SetActive(false);
+                objectTransforms[i].gameObject.SetActive(active);
             }
 
+            onComplete?.Invoke();
+            
             slidingCoroutine = null;
-            gameObject.SetActive(false);
+            gameObject.SetActive(active);
         }
     }
 }

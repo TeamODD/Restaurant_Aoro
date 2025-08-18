@@ -46,6 +46,7 @@ public class ArrowController : MonoBehaviour
 
     public float horStepDistance = 19.58f;
     public float verStepDistance = 10.5f;
+    public float arrowRemovalDuration = 0.3f;
 
     private Axis hor = new(CameraStep.Center, CameraStep.Center, CameraStep.Two);
     private Axis ver = new(CameraStep.Center, CameraStep.Center, CameraStep.One);
@@ -182,6 +183,18 @@ public class ArrowController : MonoBehaviour
         ver.lastStep = ver.currentStep;
     }
 
+    private void FadeOutSelector(ArrowDirection[] dirs)
+    {
+        foreach (ArrowDirection dir in dirs)
+        {
+            var arrow = Arrow[(int)dir];
+
+            if (arrow.GetComponent<CanvasGroup>().alpha != 0f)
+                StartCoroutine(FadeOutArrow(arrow, 0.3f));
+        }
+    }
+
+    
     private void FadeInSelector(ArrowDirection[] dirs)
     {
         foreach (ArrowDirection dir in dirs)
@@ -228,5 +241,44 @@ public class ArrowController : MonoBehaviour
         }
 
         cg.alpha = 1f;
+    }
+
+    public void MoveArrowsInToScreen()
+    {
+        FadeInSelector(new [] { ArrowDirection.Left , ArrowDirection.Right, ArrowDirection.Down, ArrowDirection.Up});
+        StartCoroutine(MoveArrows(true));
+    }
+
+    public void MoveArrowsOutOfScreen()
+    {
+        FadeOutSelector(new [] { ArrowDirection.Left , ArrowDirection.Right, ArrowDirection.Down, ArrowDirection.Up});
+        StartCoroutine(MoveArrows());
+    }
+
+    private IEnumerator MoveArrows(bool toIn = false)
+    {
+        float t = 0f;
+        int direction = toIn ? 1 : -1;
+
+        Vector3 leftPos = Arrow[(int)ArrowDirection.Left].transform.position;
+        Vector3 rightPos = Arrow[(int)ArrowDirection.Right].transform.position;
+        Vector3 downPos = Arrow[(int)ArrowDirection.Down].transform.position;
+        Vector3 upPos = Arrow[(int)ArrowDirection.Up].transform.position;
+
+        while (t < 1f)
+        {
+            t += Time.deltaTime / arrowRemovalDuration;
+
+            Arrow[(int)ArrowDirection.Left].transform.position = Vector3.Lerp(leftPos,
+                new Vector3(leftPos.x + 200 * direction, leftPos.y, leftPos.z), t);
+            Arrow[(int)ArrowDirection.Right].transform.position = Vector3.Lerp(rightPos,
+                new Vector3(rightPos.x - 200 * direction, rightPos.y, rightPos.z), t);
+            Arrow[(int)ArrowDirection.Down].transform.position = Vector3.Lerp(downPos,
+                new Vector3(downPos.x, downPos.y + 100 * direction, downPos.z), t);
+            Arrow[(int)ArrowDirection.Up].transform.position = Vector3.Lerp(upPos,
+                new Vector3(upPos.x, upPos.y - 100 * direction, upPos.z), t);
+            
+            yield return null;
+        }
     }
 }
