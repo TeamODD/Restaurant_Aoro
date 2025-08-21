@@ -15,6 +15,7 @@ namespace Game.Cook
         [SerializeField] private SlidingController backBtn;
         [SerializeField] private SlidingController[] cookMenuBtns;
         [SerializeField] private FadingController[] cookTypeBtns;
+        [SerializeField] private GameObject background;
 
         [HideInInspector] public bool useHeat;
 
@@ -23,6 +24,24 @@ namespace Game.Cook
             if (instance != null) return;
 
             instance = this;
+        }
+
+        public void PrepareBackground(GameObject obj)
+        {
+            var slide = background.GetComponent<SlidingController>();
+            slide.targetTransforms[1] = obj.transform;
+            slide.SlideIn();
+
+            foreach (var btn in cookMenuBtns)
+            {
+                var b = btn.gameObject;
+                if (b.name != obj.name)
+                {
+                    b.GetComponent<FadingController>().FadeOut(false);
+                }
+            }
+
+            background.GetComponent<ResizingController>().ResizeIn();
         }
 
         public void EnterCook()
@@ -53,16 +72,31 @@ namespace Game.Cook
 
             slide.SlideOut(false, () =>
             {
+                foreach (var cookType in cookTypeBtns)
+                {
+                    cookType.FadeOut(false);
+                }
+
                 cooks.SetActive(false);
 
                 if (inventoryManager.isCentered)
                     inventoryManager.OnClickToggleInventoryPosition();
 
-                foreach (var s in cookMenuBtns)
+                background.GetComponent<SlidingController>().SlideOut(true);
+                background.GetComponent<ResizingController>().ResizeOut(true, () =>
                 {
-                    s.gameObject.SetActive(true);
-                    s.SlideOut(true);
-                }
+                    foreach (var btn in cookMenuBtns)
+                    {
+                        btn.gameObject.SetActive(true);
+                        btn.SlideOut(true, () =>
+                        {
+                            if (btn.GetComponent<SpriteRenderer>().color.a != 1)
+                            {
+                                btn.GetComponent<FadingController>().FadeIn();
+                            }
+                        });
+                    }
+                });
 
                 arrowController.MoveArrowsInToScreen();
                 backBtn.SlideOut(true);

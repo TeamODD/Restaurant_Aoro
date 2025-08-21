@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using Game.UI;
 using UnityEngine;
@@ -11,13 +10,12 @@ namespace Game.Cook
 
         private void OnMouseDown()
         {
-            disable.DisableOthers(gameObject.name);
-            SlideIn();
+            CookManager.instance.PrepareBackground(gameObject);
+            SlideIn(true, () => StartCoroutine(slideHelper()));
         }
 
-        protected override IEnumerator SlideInCoroutine(bool active, Action onComplete)
+        private IEnumerator slideHelper()
         {
-            yield return base.SlideInCoroutine(true, null);
             yield return new WaitForSeconds(0.5f);
 
             CookManager.instance.EnterCook();
