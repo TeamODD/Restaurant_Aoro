@@ -58,17 +58,28 @@ namespace Game.UI
                 obj.SetActive(true);
 
                 var sprite = obj.GetComponent<SpriteRenderer>();
-
+                
                 var t = 0f;
-
+                
+                var startColor = sprite.color;
+                var endColor = new Color(sprite.color.r, sprite.color.g, sprite.color.b, fadeIn ? 1f : 0f);
+                
                 while (t < duration)
                 {
                     t += Time.deltaTime;
                     var progress = Mathf.Clamp01(t / duration);
 
-                    var startColor = new Color(sprite.color.r, sprite.color.g, sprite.color.b, fadeIn ? 0f : 1f);
-                    var endColor = new Color(sprite.color.r, sprite.color.g, sprite.color.b, fadeIn ? 1f : 0f);
-                    sprite.color = Color.Lerp(startColor, endColor, progress);
+                    var initColor = new Color(sprite.color.r, sprite.color.g, sprite.color.b, fadeIn ? 0f : 1f);
+                    
+                    if (Mathf.Approximately(startColor.a, fadeIn ? 0f : 1f))
+                    {
+                        sprite.color = Color.Lerp(initColor, endColor, progress);
+                    }
+                    else
+                    {
+                        sprite.color = startColor = new Color(sprite.color.r, sprite.color.g, sprite.color.b, 1f);
+                    }
+                    
                     yield return null;
                 }
 

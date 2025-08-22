@@ -16,8 +16,8 @@ namespace Game.Cook
         [SerializeField] private SlidingController[] cookMenuBtns;
         [SerializeField] private FadingController[] cookTypeBtns;
         [SerializeField] private GameObject background;
-
         [HideInInspector] public bool useHeat;
+        private bool isWorking;
 
         private void OnEnable()
         {
@@ -26,11 +26,13 @@ namespace Game.Cook
             instance = this;
         }
 
-        public void PrepareBackground(GameObject obj)
+        public bool PrepareBackground(CookMenuBtn obj)
         {
+            if (inventoryManager.isCentered || isWorking) return false;
+
+            isWorking = true;
+            
             var slide = background.GetComponent<SlidingController>();
-            slide.targetTransforms[1] = obj.transform;
-            slide.SlideIn();
 
             foreach (var btn in cookMenuBtns)
             {
@@ -39,68 +41,78 @@ namespace Game.Cook
                 {
                     b.GetComponent<FadingController>().FadeOut(false);
                 }
+                else
+                {
+                    b.GetComponent<FadingController>().FadeIn(true, () =>
+                    {
+                        slide.targetTransforms[1] = obj.backgroundPosition;
+                        slide.SlideIn();
+                        
+                        background.GetComponent<ResizingController>().ResizeIn();
+                    });
+                }
             }
 
-            background.GetComponent<ResizingController>().ResizeIn();
+            return true;
         }
 
         public void EnterCook()
         {
-            if (inventoryManager.isCentered) return;
-
             var slide = cooks.GetComponent<ISlideIn>();
-            if (slide == null) throw new Exception("No cook objects!");
 
             cooks.SetActive(true);
             slide.SlideIn(true, () =>
             {
                 foreach (var cookType in cookTypeBtns)
                 {
-                    cookType.FadeIn();
+                    cookType.gameObject.SetActive(true);
+                    cookType.FadeIn(true, () => isWorking = false);
                 }
             });
 
             inventoryManager.OnClickToggleInventoryPosition();
             arrowController.MoveArrowsOutOfScreen();
-            backBtn.SlideIn();
+            backBtn.SlideIn(true);
         }
 
         public void ExitCook()
         {
-            var slide = cooks.GetComponent<ISlideOut>();
-            if (slide == null) throw new Exception("No cook objects!");
+            if (isWorking) return;
+            
+            Debug.Log("AA");
 
-            slide.SlideOut(false, () =>
+            isWorking = true;
+            
+            cooks.GetComponent<ISlideOut>().SlideOut(false, () =>
             {
-                foreach (var cookType in cookTypeBtns)
-                {
-                    cookType.FadeOut(false);
-                }
-
                 cooks.SetActive(false);
-
+                
                 if (inventoryManager.isCentered)
                     inventoryManager.OnClickToggleInventoryPosition();
 
-                background.GetComponent<SlidingController>().SlideOut(true);
-                background.GetComponent<ResizingController>().ResizeOut(true, () =>
+                foreach (var btn in cookMenuBtns)
                 {
-                    foreach (var btn in cookMenuBtns)
+                    btn.gameObject.SetActive(true);
+                    btn.SlideOut(true, () =>
                     {
-                        btn.gameObject.SetActive(true);
-                        btn.SlideOut(true, () =>
+                        if (!Mathf.Approximately(btn.GetComponent<SpriteRenderer>().color.a, 1))
                         {
-                            if (btn.GetComponent<SpriteRenderer>().color.a != 1)
-                            {
-                                btn.GetComponent<FadingController>().FadeIn();
-                            }
-                        });
-                    }
-                });
-
+                            btn.GetComponent<FadingController>().FadeIn();
+                        }
+                    });
+                }
+                
+                background.GetComponent<SlidingController>().SlideOut(true);
+                background.GetComponent<ResizingController>().ResizeOut();
+                
                 arrowController.MoveArrowsInToScreen();
-                backBtn.SlideOut(true);
+                backBtn.SlideOut(true, () => isWorking = false);
             });
+
+            foreach (var cookType in cookTypeBtns)
+            {
+                cookType.FadeOut(false);
+            }
         }
     }
 }

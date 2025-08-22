@@ -7,14 +7,15 @@ namespace Game.Cook
     public class CookMenuBtn : SlidingController
     {
         [SerializeField] private DisableOtherObjects disable;
+        public Transform backgroundPosition;
 
         private void OnMouseDown()
         {
-            CookManager.instance.PrepareBackground(gameObject);
-            SlideIn(true, () => StartCoroutine(slideHelper()));
+            var con = CookManager.instance.PrepareBackground(this);
+            if(con) SlideIn(true, () => StartCoroutine(SlideHelper()));
         }
 
-        private IEnumerator slideHelper()
+        private IEnumerator SlideHelper()
         {
             yield return new WaitForSeconds(0.5f);
 
