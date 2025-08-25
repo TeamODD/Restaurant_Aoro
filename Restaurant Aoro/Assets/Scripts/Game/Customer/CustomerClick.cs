@@ -1,7 +1,11 @@
 using AOT;
+using Game.UI;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
+
+
 
 public class CustomerClick : MonoBehaviour
 {
@@ -15,6 +19,7 @@ public class CustomerClick : MonoBehaviour
     private Camera mainCam;
     private Vector2 centerOffset;
     private CanvasGroup[] arrowGroups;
+    private SlidingController backBtn;
 
     private float zoomInSize;
     private float zoomOutSize;
@@ -50,7 +55,8 @@ public class CustomerClick : MonoBehaviour
         float zoomInSize,
         float zoomOutSize,
         float zoomDuration,
-        float moveDuration
+        float moveDuration,
+        SlidingController backbtn
     )
     {
         manager = m;
@@ -64,6 +70,7 @@ public class CustomerClick : MonoBehaviour
         this.zoomOutSize = zoomOutSize;
         this.zoomDuration = zoomDuration;
         this.moveDuration = moveDuration;
+        this.backBtn = backbtn;
     }
 
     public void setCanClickTrue() => canClick = true;
@@ -71,6 +78,16 @@ public class CustomerClick : MonoBehaviour
 
     public void setSeatedTrue() => isSeated = true;
 
+    private void Start()
+    {
+        Button btn = backBtn.GetComponent<Button>();
+
+        if (btn != null)
+        {
+            btn.onClick.RemoveListener(OnBackButtonClick);
+            btn.onClick.AddListener(OnBackButtonClick);
+        }
+    }
     private void OnMouseDown()
     {
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
@@ -97,9 +114,11 @@ public class CustomerClick : MonoBehaviour
             );
 
             LockToThis();
+            backBtn.SlideIn();
             Invmanager.ChangeToFoodInventory();
             zoomed = true;
         }
+        /*
         else
         {
             invController.ResetFromCenterWithCamera(
@@ -111,6 +130,26 @@ public class CustomerClick : MonoBehaviour
                 true
             );
             UnlockAll();
+            backBtn.SlideOut();
+            zoomed = false;
+        }
+        */
+    }
+
+    private void OnBackButtonClick()
+    {
+        if (zoomed)
+        {
+            invController.ResetFromCenterWithCamera(
+                mainCam,
+                zoomOutSize,
+                zoomDuration,
+                moveDuration,
+                arrowGroups,
+                true
+            );
+            UnlockAll();
+            backBtn.SlideOut(true);
             zoomed = false;
         }
     }

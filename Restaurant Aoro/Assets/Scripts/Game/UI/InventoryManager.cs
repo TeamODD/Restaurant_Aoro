@@ -1,3 +1,4 @@
+using Game.UI;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,6 +14,7 @@ public class InventoryManager : MonoBehaviour
     public InventoryController controller;
     public Camera mainCamera;
     public InventoryUIController uiController;
+    public SlidingController backBtn;
 
     public Vector2 offset = new Vector2(1065f, 0f); //10.65f, 0f
     public Vector2 offsetCenter = new Vector2(545f, 0f); //5.45f, 0f

@@ -62,11 +62,21 @@ public class ArrowController : MonoBehaviour
         if (upArrowCG != null) upArrowCG.alpha = 0f;
     }
 
+    public void CustomerSeat()
+    {
+        CustomerManager[] customers = FindObjectsOfType<CustomerManager>();
+
+        foreach (var cm in customers)
+        {
+             cm.ForceSeatImmediately();
+        }
+    }
     public void MoveLeft()
     {
         if (hor.currentStep < hor.maxStep && !inventoryController.IsAnimating)
         {
             hor.currentStep++;
+            CustomerSeat();
             StartMove();
         }
     }
@@ -76,6 +86,7 @@ public class ArrowController : MonoBehaviour
         if (hor.currentStep > hor.minStep && !inventoryController.IsAnimating)
         {
             hor.currentStep--;
+            CustomerSeat();
             StartMove();
         }
     }
@@ -85,6 +96,7 @@ public class ArrowController : MonoBehaviour
         if (ver.currentStep < ver.maxStep && !inventoryController.IsAnimating)
         {
             ver.currentStep++;
+            CustomerSeat();
             StartMove();
         }
     }
@@ -94,6 +106,7 @@ public class ArrowController : MonoBehaviour
         if (ver.currentStep > ver.minStep && !inventoryController.IsAnimating)
         {
             ver.currentStep--;
+            CustomerSeat();
             StartMove();
         }
     }
