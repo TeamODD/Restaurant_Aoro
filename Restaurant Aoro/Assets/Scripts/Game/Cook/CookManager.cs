@@ -78,8 +78,6 @@ namespace Game.Cook
         public void ExitCook()
         {
             if (isWorking) return;
-            
-            Debug.Log("AA");
 
             isWorking = true;
             
