@@ -259,7 +259,7 @@ GameObject:
   - component: {fileID: 5149118934569017114}
   - component: {fileID: 2487147513774756621}
   - component: {fileID: 1428110571463767568}
-  - component: {fileID: 2880840689169686029}
+  - component: {fileID: 1429430322488966162}
   m_Layer: 5
   m_Name: SlotItems
   m_TagString: Untagged
@@ -341,7 +341,7 @@ MonoBehaviour:
   itemImage: {fileID: 5363663236933552510}
   itemName: {fileID: 9190875134124472520}
   item_: {fileID: 0}
---- !u!114 &2880840689169686029
+--- !u!114 &1429430322488966162
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -350,10 +350,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 9068852727754792282}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 53268bfcdc83f4a4ab3c53e034c07664, type: 3}
+  m_Script: {fileID: 11500000, guid: 37e16448bcf6a4bb59a79d92894bab30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _objectTransforms: []
   _targetTransforms: []
   _duration: 0.1
   isDraggable: 1
+  isDragging: 0
+  proxyPrefab: {fileID: 1007990732782992797, guid: 0546064ab3b1b4c9fba7e4b415440893, type: 3}

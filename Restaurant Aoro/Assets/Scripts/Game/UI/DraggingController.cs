@@ -5,7 +5,8 @@ using UnityEngine.EventSystems;
 public class DraggingController : SlidingController, IDragHandler, IEndDragHandler
 {
     public bool isDraggable;
-
+    public bool isDragging;
+    
     private void Start()
     {
         for (int i = 0; i < 2; i++)
@@ -18,13 +19,15 @@ public class DraggingController : SlidingController, IDragHandler, IEndDragHandl
     public void OnDrag(PointerEventData eventData)
     {
         if (!isDraggable) return;
-
+        
         transform.position = eventData.position;
     }
     
-    public void OnEndDrag(PointerEventData eventData)
+    public virtual void OnEndDrag(PointerEventData eventData)
     {
         if (!isDraggable) return;
+
+        isDragging = false;
         SlideIn();
     }
 }

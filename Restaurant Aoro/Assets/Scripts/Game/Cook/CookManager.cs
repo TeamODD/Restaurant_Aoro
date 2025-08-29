@@ -5,6 +5,12 @@ using UnityEngine;
 
 namespace Game.Cook
 {
+    public enum CookType
+    {
+        UseHeat,
+        NonHeat,
+    }
+    
     public class CookManager : MonoBehaviour
     {
         public static CookManager instance;
@@ -16,7 +22,7 @@ namespace Game.Cook
         [SerializeField] private SlidingController[] cookMenuBtns;
         [SerializeField] private FadingController[] cookTypeBtns;
         [SerializeField] private GameObject background;
-        [HideInInspector] public bool useHeat;
+        [HideInInspector] public CookType cookType;
         private bool isWorking;
 
         private void OnEnable()

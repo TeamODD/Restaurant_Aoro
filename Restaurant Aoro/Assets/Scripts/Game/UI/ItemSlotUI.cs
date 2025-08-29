@@ -13,5 +13,7 @@ public class ItemSlotUI : MonoBehaviour
         itemImage.sprite = item.ItemSprite;
         itemName.text = item.ItemName;
         item_ = item;
+        
+        GetComponent<InventoryItemDrag>().Init(item);
     }
 }
