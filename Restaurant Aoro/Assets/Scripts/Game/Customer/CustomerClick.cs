@@ -99,6 +99,22 @@ public class CustomerClick : MonoBehaviour
 
         if (invController != null && invController.IsAnimating) return;
 
+        var cm = manager != null ? manager : GetComponent<CustomerManager>();
+        if (cm == null) return;
+
+        var anchor = cm.speechAnchor != null ? cm.speechAnchor : cm.transform;
+        Debug.Log(anchor.transform);
+
+        if (DialogueManager.Instance != null)
+        {
+            bool consumed = DialogueManager.Instance.TryPresentNext(
+                cm,
+                DialogueType.Order,
+                anchor
+            );
+            if (consumed) return;
+        }
+
         if (!zoomed)
         {
             invController.ZoomAndFrameTargetLeftCenter(
@@ -118,22 +134,6 @@ public class CustomerClick : MonoBehaviour
             Invmanager.ChangeToFoodInventory();
             zoomed = true;
         }
-        /*
-        else
-        {
-            invController.ResetFromCenterWithCamera(
-                mainCam,
-                zoomOutSize,
-                zoomDuration,
-                moveDuration,
-                arrowGroups,
-                true
-            );
-            UnlockAll();
-            backBtn.SlideOut();
-            zoomed = false;
-        }
-        */
     }
 
     private void OnBackButtonClick()

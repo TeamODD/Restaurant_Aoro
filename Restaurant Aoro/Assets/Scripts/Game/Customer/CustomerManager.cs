@@ -7,6 +7,7 @@ public class CustomerManager : MonoBehaviour
 {
     [Header("º’¥‘ µ•¿Ã≈Õ")]
     public Customer customerData;
+    public Transform speechAnchor;
 
     private SpriteRenderer spriteRenderer;
     private Vector3 stopPosition;
@@ -30,6 +31,10 @@ public class CustomerManager : MonoBehaviour
         spriteRenderer.sprite = customerData.leftSprite;
 
         StartCoroutine(MoveToStopPosition());
+    }
+    public Transform GetSpeechAnchor()
+    {
+        return speechAnchor != null ? speechAnchor : transform;
     }
 
     private IEnumerator MoveToStopPosition()
