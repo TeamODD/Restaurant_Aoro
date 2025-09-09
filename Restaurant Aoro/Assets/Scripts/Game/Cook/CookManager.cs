@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Linq;
 using Game.UI;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -25,6 +26,7 @@ namespace Game.Cook
         [SerializeField] private FadingController background;
         [HideInInspector] public CookType cookType;
         private GameObject itemOnHold;
+        [SerializeField] private CookTile[] cookTiles;
         [SerializeField] private GameObject tileOverlay;
         private bool isWorking;
 
@@ -99,6 +101,8 @@ namespace Game.Cook
 
         public void Cook()
         {
+            if (cookTiles.Any(cookTile => cookTile.item == null)) return;
+
             
         }
 
