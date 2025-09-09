@@ -16,7 +16,7 @@ public class InventoryItemDrag : DraggingController, IPointerDownHandler
     {
         isDragging = true;
         proxyObj = Instantiate(proxyPrefab);
-        proxyObj.GetComponent<IngredientHitCooktile>().Init(item);
+        proxyObj.GetComponent<IngredientHitCooktile>().Init(item, gameObject);
     }
 
     public override void OnEndDrag(PointerEventData eventData)

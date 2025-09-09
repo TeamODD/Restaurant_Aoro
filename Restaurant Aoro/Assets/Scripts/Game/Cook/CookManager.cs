@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using Game.UI;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Game.Cook
@@ -10,7 +11,7 @@ namespace Game.Cook
         UseHeat,
         NonHeat,
     }
-    
+
     public class CookManager : MonoBehaviour
     {
         public static CookManager instance;
@@ -21,8 +22,10 @@ namespace Game.Cook
         [SerializeField] private SlidingController backBtn;
         [SerializeField] private SlidingController[] cookMenuBtns;
         [SerializeField] private FadingController[] cookTypeBtns;
-        [SerializeField] private GameObject background;
+        [SerializeField] private FadingController background;
         [HideInInspector] public CookType cookType;
+        private GameObject itemOnHold;
+        [SerializeField] private GameObject tileOverlay;
         private bool isWorking;
 
         private void OnEnable()
@@ -37,8 +40,6 @@ namespace Game.Cook
             if (inventoryManager.isCentered || isWorking) return false;
 
             isWorking = true;
-            
-            var slide = background.GetComponent<SlidingController>();
 
             foreach (var btn in cookMenuBtns)
             {
@@ -51,10 +52,7 @@ namespace Game.Cook
                 {
                     b.GetComponent<FadingController>().FadeIn(true, () =>
                     {
-                        slide.targetTransforms[1] = obj.backgroundPosition;
-                        slide.SlideIn();
-                        
-                        background.GetComponent<ResizingController>().ResizeIn();
+                        background.FadeOut();
                     });
                 }
             }
@@ -81,16 +79,37 @@ namespace Game.Cook
             backBtn.SlideIn(true);
         }
 
+        public void AddIngredientToCookTile(GameObject obj)
+        {
+            tileOverlay.SetActive(true);
+            itemOnHold = obj;
+        }
+
+        public void IngredientAddedToCookTile(CookTile cookTile)
+        {
+            if (!itemOnHold) return;
+            
+            cookTile.AddItem(itemOnHold.GetComponent<ItemSlotUI>().item_);
+            Destroy(itemOnHold.transform.parent.gameObject);
+            itemOnHold = null;
+            tileOverlay.SetActive(false);
+        }
+
+        public void Cook()
+        {
+            
+        }
+
         public void ExitCook()
         {
             if (isWorking) return;
 
             isWorking = true;
-            
+
             cooks.GetComponent<ISlideOut>().SlideOut(false, () =>
             {
                 cooks.SetActive(false);
-                
+
                 if (inventoryManager.isCentered)
                     inventoryManager.OnClickToggleInventoryPosition();
 
@@ -105,10 +124,9 @@ namespace Game.Cook
                         }
                     });
                 }
-                
-                background.GetComponent<SlidingController>().SlideOut(true);
-                background.GetComponent<ResizingController>().ResizeOut();
-                
+
+                background.FadeIn();
+
                 arrowController.MoveArrowsInToScreen();
                 backBtn.SlideOut(true, () => isWorking = false);
             });

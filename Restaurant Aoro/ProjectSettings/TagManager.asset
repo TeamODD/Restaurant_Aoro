@@ -49,5 +49,8 @@ TagManager:
   - name: UI
     uniqueID: 4282776729
     locked: 0
+  - name: CookTile
+    uniqueID: 1307628917
+    locked: 0
   m_RenderingLayers:
   - Default

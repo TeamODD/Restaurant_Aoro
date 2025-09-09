@@ -6,7 +6,7 @@ namespace Game.Cook
     {
         [HideInInspector] public Item item;
         [SerializeField] private SpriteRenderer spriteRenderer;
-
+        
         public void AddItem(Item _item)
         {
             item = _item;
@@ -17,6 +17,12 @@ namespace Game.Cook
         {
             item = null;
             spriteRenderer.sprite = null;
+        }
+        
+        private void OnMouseDown()
+        {
+            if(item) RemoveItem();
+            else CookManager.instance.IngredientAddedToCookTile(this);
         }
     }
 }

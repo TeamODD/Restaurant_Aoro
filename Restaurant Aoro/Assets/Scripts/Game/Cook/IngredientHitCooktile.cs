@@ -5,9 +5,11 @@ using UnityEngine;
 public class IngredientHitCooktile : MonoBehaviour
 {
     private Item item;
+    public GameObject obj;
     
-    public void Init(Item _item)
+    public void Init(Item _item, GameObject _obj)
     {
+        obj = _obj;
         item = _item;
     }
     
@@ -17,6 +19,7 @@ public class IngredientHitCooktile : MonoBehaviour
         {
             if (item == null) throw new NullReferenceException();
             other.gameObject.GetComponent<CookTile>().AddItem(item);
+            Destroy(obj.transform.parent.gameObject);
         }
     }
 }

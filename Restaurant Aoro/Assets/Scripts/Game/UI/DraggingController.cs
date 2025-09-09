@@ -18,7 +18,7 @@ public class DraggingController : SlidingController, IDragHandler, IEndDragHandl
 
     public void OnDrag(PointerEventData eventData)
     {
-        if (!isDraggable) return;
+        if (!isDraggable || !eventData.dragging) return;
         
         transform.position = eventData.position;
     }
