@@ -70,6 +70,12 @@ public class SpawnCustomer : MonoBehaviour
         var manager = currentCustomer.GetComponent<CustomerManager>();
         manager.Init(this, stopPoint.position, tabletState);
 
+        //tmp
+        if (manager != null && manager.customerData != null)
+        {
+            DialogueManager.Instance.Register(manager, manager.customerData);
+        }
+
         var clickProxy = currentCustomer.GetComponent<CustomerClick>();
         if (clickProxy == null) clickProxy = currentCustomer.AddComponent<CustomerClick>();
 
@@ -84,7 +90,8 @@ public class SpawnCustomer : MonoBehaviour
             zoomInSize,             // 예: 3.5f
             zoomOutSize,            // 예: 5f
             zoomDuration,           // 예: 0.35f
-            moveDuration            // 예: 0.35f
+            moveDuration,            // 예: 0.35f
+            inventoryManager.backBtn
         );
 
         isSpawning = false;

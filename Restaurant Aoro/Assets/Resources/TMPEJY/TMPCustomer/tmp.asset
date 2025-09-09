@@ -19,3 +19,17 @@ MonoBehaviour:
   rightSprite: {fileID: 4699842155992170130, guid: 98bf944423c9c844b815d229f88ca06d, type: 3}
   SeatedSprite: {fileID: -2966960883527161926, guid: 70a91c24da2c9a649b99841d4853ef4c, type: 3}
   EatingSprite: {fileID: 3737642103207581742, guid: 4c6584066266b6442a9d7fe569030ba8, type: 3}
+  greetingLines:
+  - HI
+  orderLines:
+  - I like apple
+  resultBuckets:
+  - type: 0
+    lines:
+    - good
+  - type: 1
+    lines:
+    - Noooooo
+  - type: 2
+    lines:
+    - excellent!!

@@ -7,6 +7,7 @@ public class CustomerManager : MonoBehaviour
 {
     [Header("손님 데이터")]
     public Customer customerData;
+    public Transform speechAnchor;
 
     private SpriteRenderer spriteRenderer;
     private Vector3 stopPosition;
@@ -30,6 +31,10 @@ public class CustomerManager : MonoBehaviour
         spriteRenderer.sprite = customerData.leftSprite;
 
         StartCoroutine(MoveToStopPosition());
+    }
+    public Transform GetSpeechAnchor()
+    {
+        return speechAnchor != null ? speechAnchor : transform;
     }
 
     private IEnumerator MoveToStopPosition()
@@ -68,6 +73,7 @@ public class CustomerManager : MonoBehaviour
         SeatCoroutine = StartCoroutine(MoveAndSeated(seatLocation));
     }
 
+
     private IEnumerator MoveAndDestroy()
     {
         Vector3 exitPos = new Vector3(30f, transform.position.y, transform.position.z);
@@ -101,18 +107,21 @@ public class CustomerManager : MonoBehaviour
         yield return new WaitForSeconds(0.3f);
     }
 
-    public void ForceSeatImmediately(Transform seatLocation)
+    public void ForceSeatImmediately()
     {
-        if (SeatCoroutine != null)
+        if(hasSeated == true)
         {
-            StopCoroutine(SeatCoroutine); // 이동 중지
-        }
+            if (SeatCoroutine != null)
+            {
+                StopCoroutine(SeatCoroutine); // 이동 중지
+            }
 
-        transform.position = seatLocation.position;
-        spriteRenderer.sprite = customerData.SeatedSprite;
-        CustomerClick customerClick = GetComponent<CustomerClick>();
-        customerClick.setCanClickTrue();
-        customerClick.setSeatedTrue();
+            transform.position = customerSeat.position;
+            spriteRenderer.sprite = customerData.SeatedSprite;
+            CustomerClick customerClick = GetComponent<CustomerClick>();
+            customerClick.setCanClickTrue();
+            customerClick.setSeatedTrue();
+        }
     }
 
     public bool GetHasSeated()
