@@ -18,8 +18,8 @@ public class IngredientHitCooktile : MonoBehaviour
         if (other.gameObject.CompareTag("Cook"))
         {
             if (item == null) throw new NullReferenceException();
-            other.gameObject.GetComponent<CookTile>().AddItem(item);
-            Destroy(obj.transform.parent.gameObject);
+            var destroy = other.gameObject.GetComponent<CookTile>().AddItem(item);
+            if(destroy) Destroy(obj.transform.parent.gameObject);
         }
     }
 }

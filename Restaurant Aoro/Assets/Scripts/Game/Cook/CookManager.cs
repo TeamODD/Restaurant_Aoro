@@ -81,6 +81,8 @@ namespace Game.Cook
 
         public void AddIngredientToCookTile(GameObject obj)
         {
+            if (obj.GetComponent<ItemSlotUI>().item_.ItemType != ItemType.Ingredient) return;
+            
             tileOverlay.SetActive(true);
             itemOnHold = obj;
         }
@@ -89,8 +91,8 @@ namespace Game.Cook
         {
             if (!itemOnHold) return;
             
-            cookTile.AddItem(itemOnHold.GetComponent<ItemSlotUI>().item_);
-            Destroy(itemOnHold.transform.parent.gameObject);
+            var destroy = cookTile.AddItem(itemOnHold.GetComponent<ItemSlotUI>().item_);
+            if(destroy) Destroy(itemOnHold.transform.parent.gameObject);
             itemOnHold = null;
             tileOverlay.SetActive(false);
         }

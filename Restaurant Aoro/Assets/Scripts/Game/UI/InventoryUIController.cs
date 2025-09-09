@@ -16,7 +16,7 @@ public class InventoryUIController : MonoBehaviour
 
     public void AddItemToInventory(Item item)
     {
-        if (item.ItemType == "Food")
+        if (item.ItemType == ItemType.Food)
         {
             // FoodPanel (slot1Prefab)
             InstantiateSlot(slot1Prefab, foodPanelContent, item);
@@ -24,7 +24,7 @@ public class InventoryUIController : MonoBehaviour
             // FoodInventory (slot2Prefab)
             InstantiateSlot(slot2Prefab, foodInventoryContent, item);
         }
-        else if (item.ItemType == "Ingredient")
+        else if (item.ItemType == ItemType.Ingredient)
         {
             // IngredientPanel (slot1Prefab)
             InstantiateSlot(slot1Prefab, ingredientPanelContent, item);

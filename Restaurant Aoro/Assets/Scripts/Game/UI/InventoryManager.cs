@@ -1,8 +1,12 @@
+using System;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class InventoryManager : MonoBehaviour
 {
+    public static InventoryManager instance; 
+    
     public GameObject[] panelObjects; // Panel1, 2, 3 (GameObject)
     public ArrowController arrowController;
     public RectTransform rightArrow;
@@ -18,6 +22,11 @@ public class InventoryManager : MonoBehaviour
     public Vector2 offsetCenter = new Vector2(545f, 0f); //5.45f, 0f
 
     public bool isCentered = false;
+
+    private void Awake()
+    {
+        if(!instance) instance = this;
+    }
 
     void Start()
     {

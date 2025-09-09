@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ItemID: 2
   ItemName: applepie
-  ItemType: Food
+  ItemType: 1
   ItemSprite: {fileID: 1208040086343421634, guid: 00fde7d1dacad4345adc9006645f7d45, type: 3}
