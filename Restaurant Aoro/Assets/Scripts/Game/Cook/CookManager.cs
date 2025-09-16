@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Game.UI;
 using Unity.VisualScripting;
@@ -9,6 +10,7 @@ namespace Game.Cook
 {
     public enum CookType
     {
+        None,
         UseHeat,
         NonHeat,
     }
@@ -24,7 +26,7 @@ namespace Game.Cook
         [SerializeField] private SlidingController[] cookMenuBtns;
         [SerializeField] private FadingController[] cookTypeBtns;
         [SerializeField] private FadingController background;
-        [HideInInspector] public CookType cookType;
+        [HideInInspector] public CookType cookType = CookType.None;
         private GameObject itemOnHold;
         [SerializeField] private CookTile[] cookTiles;
         [SerializeField] private GameObject tileOverlay;
@@ -52,10 +54,7 @@ namespace Game.Cook
                 }
                 else
                 {
-                    b.GetComponent<FadingController>().FadeIn(true, () =>
-                    {
-                        background.FadeOut();
-                    });
+                    b.GetComponent<FadingController>().FadeIn(true, () => { background.FadeOut(); });
                 }
             }
 
@@ -84,7 +83,7 @@ namespace Game.Cook
         public void AddIngredientToCookTile(GameObject obj)
         {
             if (obj.GetComponent<ItemSlotUI>().item_.ItemType != ItemType.Ingredient) return;
-            
+
             tileOverlay.SetActive(true);
             itemOnHold = obj;
         }
@@ -92,18 +91,36 @@ namespace Game.Cook
         public void IngredientAddedToCookTile(CookTile cookTile)
         {
             if (!itemOnHold) return;
-            
+
             var destroy = cookTile.AddItem(itemOnHold.GetComponent<ItemSlotUI>().item_);
-            if(destroy) Destroy(itemOnHold.transform.parent.gameObject);
+            if (destroy) Destroy(itemOnHold.transform.parent.gameObject);
             itemOnHold = null;
             tileOverlay.SetActive(false);
         }
 
         public void Cook()
         {
-            if (cookTiles.Any(cookTile => cookTile.item == null)) return;
-
+            if (cookType == CookType.None) return;
             
+            var ingredients = new List<Item>();
+
+            foreach (var cookTile in cookTiles)
+            {
+                if (cookTile.item == null)
+                {
+                    Debug.Log("Cook Tile is empty!");
+                    return;
+                }
+
+                ingredients.Add(cookTile.item);
+            }
+
+            var mainCategory = ingredients.OrderBy(item => item.ItemMainCategory).First().ItemMainCategory;
+            var subCategory = ingredients.OrderBy(item => item.ItemSubCategory).First().ItemSubCategory;
+            var cookFactory = new CookFactory();
+
+            var result = cookFactory.Make(mainCategory, subCategory);
+            inventoryManager.AddItem(result);
         }
 
         public void ExitCook()

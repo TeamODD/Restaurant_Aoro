@@ -9,13 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 29bfb0340d1dd2d4eaf5ee4dd1cd78cc, type: 3}
-  m_Name: apple
+  m_Script: {fileID: 11500000, guid: fececf49610e4645bc7d641674a1bc69, type: 3}
+  m_Name: ApplePie
   m_EditorClassIdentifier: 
-  ItemID: 1
-  ItemName: apple
-  ItemType: 0
-  ItemMainCategory: 5
-  ItemSubCategory: 3
-  ItemGrade: 0
-  ItemSprite: {fileID: 1208040086343421634, guid: 00fde7d1dacad4345adc9006645f7d45, type: 3}
+  mainCategory: 5
+  subCategory: 3
+  foodPrefab: {fileID: 11400000, guid: fbb083c2ddf75ec449a9a87735d1794e, type: 2}
