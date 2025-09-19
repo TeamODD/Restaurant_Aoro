@@ -69,6 +69,7 @@ public class ArrowController : MonoBehaviour
         foreach (var cm in customers)
         {
              cm.ForceSeatImmediately();
+            Debug.Log("[CM] ForceSeatImmediately called: " + name);
         }
     }
     public void MoveLeft()

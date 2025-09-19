@@ -19,6 +19,8 @@ public class CustomerManager : MonoBehaviour
     private bool isLeaving = false;
     private bool hasSeated = false;
 
+    public event Action<CustomerManager> OnSeated;
+
     private Coroutine SeatCoroutine;
 
     public void Init(SpawnCustomer spawner, Vector3 stopPos, TabletState tabletState)
@@ -102,7 +104,8 @@ public class CustomerManager : MonoBehaviour
         spriteRenderer.sprite = customerData.SeatedSprite;
 
         CustomerClick customerClick = GetComponent<CustomerClick>();
-        customerClick.setCanClickTrue();
+        hasSeated = true;
+        OnSeated?.Invoke(this);
         customerClick.setSeatedTrue();
         yield return new WaitForSeconds(0.3f);
     }
@@ -119,7 +122,9 @@ public class CustomerManager : MonoBehaviour
             transform.position = customerSeat.position;
             spriteRenderer.sprite = customerData.SeatedSprite;
             CustomerClick customerClick = GetComponent<CustomerClick>();
-            customerClick.setCanClickTrue();
+            //customerClick.setCanClickTrue();
+            hasSeated = true;            
+            OnSeated?.Invoke(this);
             customerClick.setSeatedTrue();
         }
     }

@@ -10638,7 +10638,7 @@ MonoBehaviour:
   - {fileID: 1874132311}
   - {fileID: 1874132311}
   - {fileID: 1209643402}
-  _duration: 0.6
+  _duration: 0.35
 --- !u!114 &1400318362
 MonoBehaviour:
   m_ObjectHideFlags: 0

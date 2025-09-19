@@ -1,5 +1,6 @@
 using AOT;
 using Game.UI;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -33,6 +34,18 @@ public class CustomerClick : MonoBehaviour
     [SerializeField] private float viewportX = 0.4f;
     [SerializeField] private float viewportY = 0.5f;
 
+    [Header("Exclamation (느낌표)")]
+    [SerializeField] private GameObject exclamation;
+    [SerializeField] private float exclamationDelayMin = 1f;
+    [SerializeField] private float exclamationDelayMax = 3f;
+    private Coroutine exclamationRoutine;
+    private bool exclamationShownOnce = false;
+
+    private bool pendingZoomIn = false;
+    private Coroutine pendingRoutine;
+    private float clickDebounce = 2f; // 선택: 너무 빠른 중복 클릭 억제
+    private float lastClickTime = -999f;
+
     // ====== 라이프사이클: 전역 목록 관리 ======
     private void OnEnable()
     {
@@ -42,6 +55,7 @@ public class CustomerClick : MonoBehaviour
     {
         All.Remove(this);
         if (s_locked == this) UnlockAll();
+        if (manager != null) manager.OnSeated -= HandleSeated;
     }
 
     public void Setup(
@@ -71,6 +85,29 @@ public class CustomerClick : MonoBehaviour
         this.zoomDuration = zoomDuration;
         this.moveDuration = moveDuration;
         this.backBtn = backbtn;
+
+        if (exclamation == null)
+        {
+            var tr = transform.Find("Exclamation");
+            if (tr != null) exclamation = tr.gameObject;
+            Debug.Log("Find");
+        }
+        if (exclamation != null)
+        {
+            Debug.Log("OK");
+            exclamation.SetActive(false);
+        }
+
+        if (manager != null)
+        {
+            manager.OnSeated -= HandleSeated;  
+            manager.OnSeated += HandleSeated;
+
+            if (manager.GetHasSeated()) 
+            {
+                HandleSeated(manager); 
+            }
+        }
     }
 
     public void setCanClickTrue() => canClick = true;
@@ -88,56 +125,115 @@ public class CustomerClick : MonoBehaviour
             btn.onClick.AddListener(OnBackButtonClick);
         }
     }
+    private void HandleSeated(CustomerManager cm)
+    {
+        if (cm != manager) return;   // 안전: 내 매니저가 아닐 경우 무시
+        if (exclamationShownOnce) return;
+        isSeated = true;
+
+        // 기존 pending 코루틴이 있으면 정리
+        if (exclamationRoutine != null)
+        {
+            StopCoroutine(exclamationRoutine);
+            exclamationRoutine = null;
+        }
+        exclamationRoutine = StartCoroutine(ExclamationAfterDelay());
+    }
+
+    private IEnumerator ExclamationAfterDelay()
+    {
+        float delay = Random.Range(exclamationDelayMin, exclamationDelayMax);
+        yield return new WaitForSeconds(delay);
+
+        if (exclamation != null) exclamation.SetActive(true);
+        canClick = true;
+
+        exclamationShownOnce = true;
+
+        exclamationRoutine = null;
+    }
+
     private void OnMouseDown()
     {
+        if (Time.unscaledTime - lastClickTime < clickDebounce) return;
+        lastClickTime = Time.unscaledTime;
+
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
             return;
 
         if (s_locked != null && s_locked != this) return;
-
         if (!canClick || !isSeated) return;
-
-        if (invController != null && invController.IsAnimating) return;
 
         var cm = manager != null ? manager : GetComponent<CustomerManager>();
         if (cm == null) return;
-
         var anchor = cm.speechAnchor != null ? cm.speechAnchor : cm.transform;
-        Debug.Log(anchor.transform);
+
+        if (exclamation != null && exclamation.activeSelf)
+            exclamation.SetActive(false);
+
+        if (invController != null && invController.IsAnimating)
+        {
+            if (!pendingZoomIn) pendingRoutine = StartCoroutine(WaitAndZoomIn(cm, anchor));
+            return;
+        }
 
         if (DialogueManager.Instance != null)
         {
-            bool consumed = DialogueManager.Instance.TryPresentNext(
-                cm,
-                DialogueType.Order,
-                anchor
-            );
+            bool consumed = DialogueManager.Instance.TryPresentNext(cm, DialogueType.Order, anchor);
             if (consumed) return;
         }
 
-        if (!zoomed)
-        {
-            invController.ZoomAndFrameTargetLeftCenter(
-                mainCam,
-                transform,
-                zoomInSize,
-                zoomDuration,
-                centerOffset,
-                moveDuration,
-                arrowGroups,
-                true,
-                viewportX, viewportY
-            );
+        TryZoomInAndOpen();
+    }
 
-            LockToThis();
-            backBtn.SlideIn();
-            Invmanager.ChangeToFoodInventory();
-            zoomed = true;
+    private IEnumerator WaitAndZoomIn(CustomerManager cm, Transform anchor)
+    {
+        pendingZoomIn = true;
+
+        while (invController != null && invController.IsAnimating)
+            yield return null;
+
+        if (s_locked != null && s_locked != this) { pendingZoomIn = false; yield break; }
+        if (!canClick || !isSeated) { pendingZoomIn = false; yield break; }
+        if (zoomed) { pendingZoomIn = false; yield break; }
+
+        if (DialogueManager.Instance != null)
+        {
+            bool consumed = DialogueManager.Instance.TryPresentNext(cm, DialogueType.Order, anchor);
+            if (consumed) { pendingZoomIn = false; yield break; }
         }
+
+        TryZoomInAndOpen();
+        pendingZoomIn = false;
+    }
+
+    private void TryZoomInAndOpen()
+    {
+        if (zoomed) return;
+        invController.ZoomAndFrameTargetLeftCenter(
+            mainCam,
+            transform,
+            zoomInSize,
+            zoomDuration,
+            centerOffset,
+            moveDuration,
+            arrowGroups,
+            true,
+            viewportX, viewportY
+        );
+
+        LockToThis();
+        if (backBtn != null) backBtn.SlideIn();   
+        if (Invmanager != null) Invmanager.ChangeToFoodInventory();
+
+        zoomed = true;
     }
 
     private void OnBackButtonClick()
     {
+        if (pendingRoutine != null) { StopCoroutine(pendingRoutine); pendingRoutine = null; pendingZoomIn = false; }
+
+
         if (zoomed)
         {
             invController.ResetFromCenterWithCamera(
