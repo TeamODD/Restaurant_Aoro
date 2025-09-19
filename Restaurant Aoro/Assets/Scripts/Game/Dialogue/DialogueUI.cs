@@ -18,9 +18,11 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
     [SerializeField] private float fadeTime = 0.15f;                       // 페이드 시간
     [SerializeField] private float charInterval = 0.02f;                   // 타자기 간격(초당 50자 0.02)
     [SerializeField] private bool clampToScreen = true;                    // 화면 밖으로 나가지 않기
-    [SerializeField] private Vector2 padding = new Vector2(32f, 18f);      // 텍스트 밖 여백(px)
+    [SerializeField] private Vector2 padding = new Vector2(320f, 180f);      // 텍스트 밖 여백(px)
     [SerializeField] private float maxWidth = 650f;                        // 말풍선 최대 너비(px), 자동 줄바꿈 기반
 
+    [SerializeField] private float minBubbleWidth = 140f;
+    [SerializeField] private float minBubbleHeight = 64f;
     // 내부 상태
     private Transform worldAnchor;
     private Coroutine followRoutine;
@@ -35,7 +37,16 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
     private void Awake()
     {
         if (group == null) group = GetComponent<CanvasGroup>();
+        if (panel) FixCenterAnchor(panel);
+        if (text) FixCenterAnchor(text.rectTransform);
+
         HideImmediate();
+    }
+
+    private static void FixCenterAnchor(RectTransform rt)
+    {
+        rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f);
+        rt.pivot = new Vector2(0.5f, 0.5f);
     }
 
     private void EnsureActive()
@@ -164,14 +175,19 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
     {
         if (typeRoutine != null) StopCoroutine(typeRoutine);
 
+        text.enableAutoSizing = false;
         text.textWrappingMode = TextWrappingModes.Normal;
+        text.enableWordWrapping = true;
+        text.overflowMode = TextOverflowModes.Overflow;
+        text.margin = Vector4.zero;
+
         text.text = line;
 
         // 최대 너비 제한
-        var rt = text.rectTransform;
+        /*var rt = text.rectTransform;
         var size = rt.sizeDelta;
         size.x = maxWidth;
-        rt.sizeDelta = size;
+        rt.sizeDelta = size;*/
 
         RebuildAndResizePanel();
 
@@ -219,11 +235,19 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
 
     private void RebuildAndResizePanel()
     {
-        LayoutRebuilder.ForceRebuildLayoutImmediate(text.rectTransform);
-        float w = Mathf.Min(text.preferredWidth, maxWidth);
-        float h = text.preferredHeight;
+        text.ForceMeshUpdate();
 
-        panel.sizeDelta = new Vector2(w + padding.x, h + padding.y);
+        Vector2 pref = text.GetPreferredValues(text.text, maxWidth, Mathf.Infinity);
+        float textW = Mathf.Min(pref.x, maxWidth);
+        float textH = pref.y;
+
+        var rt = text.rectTransform;
+        rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, textW);
+        rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, textH);
+
+        float bubbleW = Mathf.Max(minBubbleWidth, textW + padding.x * 2f);
+        float bubbleH = Mathf.Max(minBubbleHeight, textH + padding.y * 2f);
+        panel.sizeDelta = new Vector2(bubbleW, bubbleH);
     }
 
     private IEnumerator FollowAnchor()
