@@ -23,6 +23,11 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
 
     [SerializeField] private float minBubbleWidth = 140f;
     [SerializeField] private float minBubbleHeight = 64f;
+
+    [Header("Blocker")]
+    [SerializeField] private GameObject clickBlocker;
+    [SerializeField] private bool closeOnBlockerClick = true;
+
     // 내부 상태
     private Transform worldAnchor;
     private Coroutine followRoutine;
@@ -41,6 +46,32 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
         if (text) FixCenterAnchor(text.rectTransform);
 
         HideImmediate();
+
+        if (clickBlocker != null)
+        {
+            var blk = clickBlocker.GetComponent<DialogueClickBlocker>();
+            if (blk == null) blk = clickBlocker.AddComponent<DialogueClickBlocker>();
+            blk.target = this;
+
+            clickBlocker.SetActive(false);
+
+            var rt = clickBlocker.GetComponent<RectTransform>();
+            if (rt != null)
+            {
+                rt.anchorMin = Vector2.zero;
+                rt.anchorMax = Vector2.one;
+                rt.offsetMin = Vector2.zero;
+                rt.offsetMax = Vector2.zero;
+            }
+        }
+    }
+    private void EnableBlocker(bool on)
+    {
+        if (clickBlocker == null) return;
+        clickBlocker.SetActive(on);
+
+        if (on)
+            clickBlocker.transform.SetSiblingIndex(transform.GetSiblingIndex());
     }
 
     private static void FixCenterAnchor(RectTransform rt)
@@ -102,6 +133,7 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
         lineQueue.Clear();
 
         group.alpha = 0f;
+        EnableBlocker(false);
         gameObject.SetActive(false);
     }
 
@@ -129,8 +161,8 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
     private void ShowNextInternal(Transform anchor, float holdLastSeconds = 0f)
     {
         EnsureActive();
-
         worldAnchor = anchor;  
+
         if (lineQueue.Count == 0)
         {
             if (holdLastSeconds > 0f) { StartCoroutine(ShowAndHideLast(holdLastSeconds)); }
@@ -142,6 +174,8 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
 
         gameObject.SetActive(true);
         isShowing = true;
+
+        EnableBlocker(true);
 
         if (followRoutine != null) StopCoroutine(followRoutine);
         followRoutine = StartCoroutine(FollowAnchor()); 
@@ -164,6 +198,8 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
             gameObject.SetActive(true);
             isShowing = true;
         }
+        EnableBlocker(true);
+
         if (fadeRoutine != null) StopCoroutine(fadeRoutine);
         fadeRoutine = StartCoroutine(FadeTo(1f, fadeTime));
 
@@ -182,12 +218,6 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
         text.margin = Vector4.zero;
 
         text.text = line;
-
-        // 최대 너비 제한
-        /*var rt = text.rectTransform;
-        var size = rt.sizeDelta;
-        size.x = maxWidth;
-        rt.sizeDelta = size;*/
 
         RebuildAndResizePanel();
 
@@ -317,8 +347,28 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
         isTyping = false;
         isShowing = false;
 
-        if (group != null) group.blocksRaycasts = false;  
+        if (group != null) group.blocksRaycasts = false;
+        EnableBlocker(false);
         gameObject.SetActive(false);     
+    }
+
+    public void OnBlockerClicked()
+    {
+        if (!closeOnBlockerClick || !isShowing) return;
+
+        if (isTyping)
+        {
+            ForceCompleteTyping();
+            return;
+        }
+
+        if (lineQueue.Count > 0)
+        {
+            ShowNextInternal(worldAnchor);
+            return;
+        }
+
+        StartCoroutine(FadeOutAndHide());
     }
 
     private IEnumerator FadeTo(float target, float duration)
