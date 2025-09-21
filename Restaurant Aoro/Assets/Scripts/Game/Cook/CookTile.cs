@@ -9,7 +9,8 @@ namespace Game.Cook
         
         public bool AddItem(Item _item)
         {
-            if (_item.ItemType != ItemType.Ingredient || item) return false;
+            if (_item.ItemType != ItemType.Ingredient) return false;
+            if(item) RemoveItem();
             
             item = _item;
             spriteRenderer.sprite = item.ItemSprite;
