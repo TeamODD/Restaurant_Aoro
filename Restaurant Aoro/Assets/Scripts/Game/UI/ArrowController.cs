@@ -184,8 +184,8 @@ public class ArrowController : MonoBehaviour
                 cameraTransform.position.z);
             hor.currentStep = CameraStep.One;
 
-            StartCoroutine(FadeOutArrow(Arrow[(int)ArrowDirection.Down], 0.3f));
-            FadeInSelector(new[] { ArrowDirection.Left, ArrowDirection.Right, ArrowDirection.Up });
+            FadeOutSelector(new[] { ArrowDirection.Down, ArrowDirection.Left, ArrowDirection.Right });
+            FadeInSelector(new[] { ArrowDirection.Up });
         }
         else if (ver.currentStep == ver.minStep)
         {
@@ -259,7 +259,7 @@ public class ArrowController : MonoBehaviour
 
     public void MoveArrowsInToScreen()
     {
-        FadeInSelector(new [] { ArrowDirection.Left , ArrowDirection.Right, ArrowDirection.Down, ArrowDirection.Up});
+        FadeInSelector(new [] { ArrowDirection.Up});
         StartCoroutine(MoveArrows(true));
     }
 

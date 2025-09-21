@@ -4,6 +4,8 @@ using UnityEngine.UI;
 
 public class InventoryManager : MonoBehaviour
 {
+    public static InventoryManager instance; 
+    
     public GameObject[] panelObjects; // Panel1, 2, 3 (GameObject)
     public ArrowController arrowController;
     public RectTransform rightArrow;
@@ -20,6 +22,11 @@ public class InventoryManager : MonoBehaviour
     public Vector2 offsetCenter = new Vector2(545f, 0f); //5.45f, 0f
 
     public bool isCentered = false;
+
+    private void Awake()
+    {
+        if(!instance) instance = this;
+    }
 
     void Start()
     {
@@ -59,13 +66,13 @@ public class InventoryManager : MonoBehaviour
     {
         if (isCentered)
         {
-            // ¿ø·¡ À§Ä¡·Î º¹±Í
+            // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             controller.MovePanelToCenter(offset, 0.2f);
             isCentered = false;
         }
         else
         {
-            // Ä«¸Þ¶ó Áß¾ÓÀ¸·Î ÀÌµ¿
+            // Ä«ï¿½Þ¶ï¿½ ï¿½ß¾ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½
             controller.MovePanelToCenter(offsetCenter, 0.2f);
             isCentered = true;
         }

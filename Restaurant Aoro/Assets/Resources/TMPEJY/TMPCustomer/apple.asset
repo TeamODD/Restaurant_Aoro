@@ -14,5 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ItemID: 1
   ItemName: apple
-  ItemType: Ingredient
+  ItemType: 0
+  ItemMainCategory: 5
+  ItemSubCategory: 3
+  ItemGrade: 0
   ItemSprite: {fileID: 1208040086343421634, guid: 00fde7d1dacad4345adc9006645f7d45, type: 3}

@@ -56,7 +56,7 @@ namespace Game.UI
             slidingCoroutine = StartCoroutine(SlideOutCoroutine(active, onComplete));
         }
 
-        protected virtual IEnumerator SlideInCoroutine(bool active, Action onComplete)
+        private IEnumerator SlideInCoroutine(bool active, Action onComplete)
         {
             yield return new WaitForEndOfFrame();
 
@@ -82,7 +82,7 @@ namespace Game.UI
         slidingCoroutine = null;
         }
 
-        protected virtual IEnumerator SlideOutCoroutine(bool active, Action onComplete)
+        private IEnumerator SlideOutCoroutine(bool active, Action onComplete)
         {
             yield return new WaitForEndOfFrame(); 
             
