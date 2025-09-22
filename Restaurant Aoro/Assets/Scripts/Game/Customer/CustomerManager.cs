@@ -18,6 +18,7 @@ public class CustomerManager : MonoBehaviour
     private float speed = 5f;
     private bool isLeaving = false;
     private bool hasSeated = false;
+    private bool greetedOnce = false;
 
     public event Action<CustomerManager> OnSeated;
 
@@ -49,8 +50,18 @@ public class CustomerManager : MonoBehaviour
 
         transform.position = stopPosition;
         spriteRenderer.sprite = customerData.frontSprite;
+
+        if (!greetedOnce && DialogueManager.Instance != null && customerData.greetingLines.Count > 0)
+        {
+            var anchor = speechAnchor != null ? speechAnchor : transform;
+            DialogueManager.Instance.RequestGreeting(this, customerData.greetingLines, anchor);
+        }
+
         tabletState.canClicked = true;
     }
+
+    public void MarkGreeted() => greetedOnce = true;
+    public bool HasGreeted() => greetedOnce;
 
     public void Refuse()
     {
