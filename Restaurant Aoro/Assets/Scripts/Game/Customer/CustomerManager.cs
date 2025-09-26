@@ -8,8 +8,10 @@ public class CustomerManager : MonoBehaviour
     [Header("º’¥‘ µ•¿Ã≈Õ")]
     public Customer customerData;
     public Transform speechAnchor;
+    public GameObject idle_up;
 
     private Animator animator;
+    private Animator animator_idle_up;
     private SpriteRenderer spriteRenderer;
     private Vector3 stopPosition;
     private SpawnCustomer spawner;
@@ -31,9 +33,8 @@ public class CustomerManager : MonoBehaviour
         this.stopPosition = stopPos;
         this.tabletState = tabletState;
 
-        /*spriteRenderer = GetComponent<SpriteRenderer>();
-        spriteRenderer.sprite = customerData.leftSprite;*/
-
+        animator_idle_up = idle_up.GetComponent<Animator>();
+        idle_up.SetActive(false);
         animator = GetComponent<Animator>();
         animator.Play(customerData.leftAnim.name);
 
@@ -53,7 +54,7 @@ public class CustomerManager : MonoBehaviour
         }
 
         transform.position = stopPosition;
-        //spriteRenderer.sprite = customerData.frontSprite;
+
         animator.Play(customerData.frontAnim.name);
 
         if (!greetedOnce && DialogueManager.Instance != null && customerData.greetingLines.Count > 0)
@@ -74,7 +75,6 @@ public class CustomerManager : MonoBehaviour
         isLeaving = true;
 
         tabletState.canClicked = false;
-        //spriteRenderer.sprite = customerData.rightSprite;
         //To rotation setting y=180
         Vector3 currentRotation = transform.eulerAngles;
         currentRotation.y = 180f;
@@ -89,7 +89,6 @@ public class CustomerManager : MonoBehaviour
     public void Accept(Transform seatLocation)
     {
         tabletState.canClicked = false;
-        //spriteRenderer.sprite = customerData.leftSprite;
         animator.Play(customerData.rightAnim.name);
         hasSeated = true;
         customerSeat = seatLocation;
@@ -124,8 +123,9 @@ public class CustomerManager : MonoBehaviour
         }
 
         transform.position = seatLocation.position;
-        //spriteRenderer.sprite = customerData.SeatedSprite;
         animator.Play(customerData.seatedAnim.name);
+        idle_up.SetActive(true);
+        animator_idle_up.Play(customerData.upAnim.name);
 
         CustomerClick customerClick = GetComponent<CustomerClick>();
         hasSeated = true;
@@ -144,8 +144,9 @@ public class CustomerManager : MonoBehaviour
             }
 
             transform.position = customerSeat.position;
-            //spriteRenderer.sprite = customerData.SeatedSprite;
             animator.Play(customerData.seatedAnim.name);
+            idle_up.SetActive(true);
+            animator_idle_up.Play(customerData.upAnim.name);
             CustomerClick customerClick = GetComponent<CustomerClick>();
             //customerClick.setCanClickTrue();
             hasSeated = true;            

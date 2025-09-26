@@ -21,6 +21,7 @@ public class Customer : ScriptableObject
     public AnimationClip rightAnim;
     public AnimationClip seatedAnim;
     public AnimationClip eatingAnim;
+    public AnimationClip upAnim;
 
     /*public Sprite leftSprite;
     public Sprite frontSprite;

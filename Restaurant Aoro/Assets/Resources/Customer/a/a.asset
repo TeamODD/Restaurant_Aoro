@@ -19,6 +19,7 @@ MonoBehaviour:
   rightAnim: {fileID: 7400000, guid: 880eae305cf8ca244912abc5dadff3eb, type: 2}
   seatedAnim: {fileID: 7400000, guid: 2f55f35ffdd2dbd45a50aa6d9b79e9d6, type: 2}
   eatingAnim: {fileID: 7400000, guid: 45159da6097b3af4f81e179779fc8c9a, type: 2}
+  upAnim: {fileID: 7400000, guid: 6ce7ca848882dd247b2d92368eec3042, type: 2}
   greetingLines:
   - HI
   orderLines:
