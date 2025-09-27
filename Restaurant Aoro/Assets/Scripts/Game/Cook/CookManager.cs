@@ -123,13 +123,25 @@ namespace Game.Cook
                 ingredients.Add(cookTile.item);
             }
 
-            var mainCategory = ingredients.OrderBy(item => item.ItemMainCategory).First().ItemMainCategory;
-            var subCategory = ingredients.OrderBy(item => item.ItemSubCategory).First().ItemSubCategory;
             var cookFactory = new CookFactory();
-            var result = cookFactory.Make(mainCategory, subCategory);
-            Debug.Log($"[CookManager] Will output {result.ItemName}");
+            var ingredientsByMainCategory = ingredients.OrderBy(item => item.ItemMainCategory).ToArray();
+            var ingredientsBySubCategory = ingredients.OrderBy(item => item.ItemSubCategory).ToArray();
             
-            ExitCook(result);
+            for (var i = 0; i < ingredients.Count; i++)
+            {
+                var mainCategory = ingredientsByMainCategory[i].ItemMainCategory;
+                for (var j = 0; j < ingredients.Count; j++)
+                {
+                    var subCategory = ingredientsBySubCategory[j].ItemSubCategory;
+                    var result = cookFactory.Make(mainCategory, subCategory);
+                    if (!result) continue;
+                    Debug.Log($"[CookManager] Will output {result.ItemName}");
+                    ExitCook(result);
+                    return;
+                }
+            }
+            
+            Debug.Log("[CookManager] No available recipe for this set!");
         }
 
         private IEnumerator CookingCoroutine(Item cookItem)
