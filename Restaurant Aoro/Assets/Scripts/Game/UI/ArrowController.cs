@@ -60,6 +60,20 @@ public class ArrowController : MonoBehaviour
 
         var upArrowCG = Arrow[(int)ArrowDirection.Up].GetComponent<CanvasGroup>();
         if (upArrowCG != null) upArrowCG.alpha = 0f;
+
+        UpdateCounterVisibility();
+    }
+
+    private bool IsAtCounter()
+    {
+        return hor.currentStep == CameraStep.Center && ver.currentStep == CameraStep.Center;
+    }
+
+    private void UpdateCounterVisibility()
+    {
+        var dm = DialogueManager.Instance;
+        if (dm == null) return;
+        dm.SetCounterVisible(IsAtCounter());
     }
 
     public void CustomerSeat()
@@ -195,6 +209,8 @@ public class ArrowController : MonoBehaviour
 
         hor.lastStep = hor.currentStep;
         ver.lastStep = ver.currentStep;
+
+        UpdateCounterVisibility();
     }
 
     private void FadeOutSelector(ArrowDirection[] dirs)

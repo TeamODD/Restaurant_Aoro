@@ -20,10 +20,22 @@ public class DialogueManager : MonoBehaviour
 
     [SerializeField] private DialogueUI dialogueUI;
 
+    private bool counterVisible = true;
+
+    private CustomerManager pendingGreetingOwner;
+    private List<string> pendingGreetingLines;
+    private Transform pendingGreetingAnchor;
+
     private void Awake()
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
+    }
+
+    public void SetCounterVisible(bool visible)
+    {
+        counterVisible = visible;
+        TryFlushGreeting();
     }
 
     public void Register(CustomerManager cm, Customer data)
@@ -69,6 +81,44 @@ public class DialogueManager : MonoBehaviour
         string line = q.Dequeue();
         PresentOne(line, cm, anchor);
         return true;
+    }
+
+    public void RequestGreeting(CustomerManager cm, IList<string> lines, Transform anchor)
+    {
+        if (cm == null || lines == null || lines.Count == 0) return;
+        if (cm.HasGreeted()) return;   
+
+        pendingGreetingOwner = cm;
+        pendingGreetingLines = new List<string>(lines);
+        pendingGreetingAnchor = anchor;
+
+        TryFlushGreeting(); 
+    }
+
+    private void TryFlushGreeting()
+    {
+        if (!counterVisible) return;             
+        if (dialogueUI == null) return;
+        if (dialogueUI.IsShowing()) return;     
+        if (pendingGreetingOwner == null) return;  
+        if (pendingGreetingOwner.HasGreeted())
+        {
+            ClearPending();
+            return;
+        }
+
+        dialogueUI.ShowLines(pendingGreetingLines, pendingGreetingAnchor != null ? pendingGreetingAnchor : pendingGreetingOwner.transform);
+
+        pendingGreetingOwner.MarkGreeted();
+
+        ClearPending();
+    }
+
+    private void ClearPending()
+    {
+        pendingGreetingOwner = null;
+        pendingGreetingLines = null;
+        pendingGreetingAnchor = null;
     }
 
     public bool TryPresentResult(CustomerManager cm, ResultType resultType, Transform anchor = null, bool randomPick = false)

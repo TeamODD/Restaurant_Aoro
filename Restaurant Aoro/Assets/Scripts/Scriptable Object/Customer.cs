@@ -15,11 +15,19 @@ public class Customer : ScriptableObject
     public string CustomerID;
     public string CustomerName;
 
-    public Sprite leftSprite;
+    [Header("Animations")]
+    public AnimationClip frontAnim;
+    public AnimationClip leftAnim;
+    public AnimationClip rightAnim;
+    public AnimationClip seatedAnim;
+    public AnimationClip eatingAnim;
+    public AnimationClip upAnim;
+
+    /*public Sprite leftSprite;
     public Sprite frontSprite;
     public Sprite rightSprite;
     public Sprite SeatedSprite;
-    public Sprite EatingSprite;
+    public Sprite EatingSprite;*/
 
     [Header("ด๋ป็")]
     [TextArea(2, 5)] public List<string> greetingLines = new();
