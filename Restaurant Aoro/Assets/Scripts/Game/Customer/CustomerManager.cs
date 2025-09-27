@@ -124,6 +124,9 @@ public class CustomerManager : MonoBehaviour
 
         transform.position = seatLocation.position;
         animator.Play(customerData.seatedAnim.name);
+        var lp = idle_up.transform.localPosition;
+        lp.z -= 0.3f;
+        idle_up.transform.localPosition = lp;
         idle_up.SetActive(true);
         animator_idle_up.Play(customerData.upAnim.name);
 
@@ -145,6 +148,9 @@ public class CustomerManager : MonoBehaviour
 
             transform.position = customerSeat.position;
             animator.Play(customerData.seatedAnim.name);
+            var lp = idle_up.transform.localPosition;
+            lp.z -= 0.3f;
+            idle_up.transform.localPosition = lp;
             idle_up.SetActive(true);
             animator_idle_up.Play(customerData.upAnim.name);
             CustomerClick customerClick = GetComponent<CustomerClick>();
