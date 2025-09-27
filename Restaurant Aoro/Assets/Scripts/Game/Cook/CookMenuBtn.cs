@@ -8,20 +8,38 @@ namespace Game.Cook
     {
         [SerializeField] private DisableOtherObjects disable;
         [SerializeField] private Transform cookingBar;
+        [SerializeField] private Animator cookingIndicator;
+        [SerializeField] private Sprite cookingSprite, notCookingSprite;
         private Vector3 barOrgScale;
         public Transform backgroundPosition;
         private bool cooking;
+        private SpriteRenderer sr;
 
         private void Start()
         {
+            sr = GetComponent<SpriteRenderer>();
             barOrgScale = cookingBar.localScale;
             cookingBar.gameObject.SetActive(false);
+            cookingIndicator.gameObject.SetActive(false);
         }
-        
+
+        public void PrepareCook()
+        {
+            sr.sprite = cookingSprite;
+        }
+
+        public void EndCook()
+        {
+            sr.sprite = notCookingSprite;
+        }
+
         public void StartCookingBar(float cookingTime)
         {
             cooking = true;
+            PrepareCook();
             cookingBar.gameObject.SetActive(true);
+            cookingIndicator.gameObject.SetActive(true);
+            cookingIndicator.SetBool("Cooking!", true);
             CookManager.instance.StartCoroutine(ProceedCookingBar(cookingTime));
             CookManager.instance.StartCoroutine(ColorAlpha());
         }
@@ -29,7 +47,7 @@ namespace Game.Cook
         private IEnumerator ColorAlpha()
         {
             var sr = GetComponent<SpriteRenderer>();
-            
+
             while (cooking)
             {
                 cookingBar.GetComponent<SpriteRenderer>().color = sr.color;
@@ -46,16 +64,23 @@ namespace Game.Cook
                 cookingBar.localScale = new Vector3(barOrgScale.x * ((float)i / 100), barOrgScale.y, barOrgScale.z);
             }
 
+            FinishCook();
+        }
+
+        private void FinishCook()
+        {
+            EndCook();
+            cookingIndicator.SetBool("Cooking!", false);
             cookingBar.gameObject.SetActive(false);
             cooking = false;
         }
-        
+
         private void OnMouseDown()
         {
             if (cooking) return;
-            
+
             var con = CookManager.instance.PrepareBackground(this);
-            if(con) SlideIn(true, () => StartCoroutine(SlideHelper()));
+            if (con) SlideIn(true, () => StartCoroutine(SlideHelper()));
         }
 
         private IEnumerator SlideHelper()

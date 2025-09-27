@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cookRules:
   - {fileID: 11400000, guid: f993c2e2920a54f38b39d103e3078c36, type: 2}
+  - {fileID: 11400000, guid: f993c2e2920a54f38b39d103e3078c36, type: 2}
