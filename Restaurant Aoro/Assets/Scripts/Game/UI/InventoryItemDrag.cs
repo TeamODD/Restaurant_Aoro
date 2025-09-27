@@ -35,6 +35,7 @@ public class InventoryItemDrag : DraggingController, IPointerDownHandler
     private void Update()
     {
         if (!isDragging) return;
+        
         var pos = Camera.main.ScreenToWorldPoint(transform.position);
         pos.z = 0;
 

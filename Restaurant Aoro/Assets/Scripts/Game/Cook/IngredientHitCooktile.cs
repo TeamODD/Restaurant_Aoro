@@ -14,6 +14,12 @@ public class IngredientHitCooktile : MonoBehaviour
     
     private void OnCollisionStay2D(Collision2D other)
     {
+        if(obj == null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        
         if (other.gameObject.CompareTag("Cook") && !obj.GetComponent<DraggingController>().isDragging)
         {
             var destroy = other.gameObject.GetComponent<CookTile>().AddItem(item);

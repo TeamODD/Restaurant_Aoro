@@ -10,6 +10,8 @@ namespace Game.Cook
 
         public Item Make(ItemMainCategory mainCategory, ItemSubCategory subCategory)
         {
+            if (cookRulesSO == null) throw new NullReferenceException("[CookFactory] Cook Rule is Empty!");
+            
             foreach (var cookRule in cookRulesSO.cookRules)
             {
                 if (cookRule.mainCategory == mainCategory && cookRule.subCategory == subCategory)

@@ -17,6 +17,12 @@ namespace Game.Cook
             return true;
         }
 
+        public void RemoveItemWithoutAdding()
+        {
+            item = null;
+            spriteRenderer.sprite = null;
+        }
+
         public void RemoveItem()
         {
             InventoryManager.instance.AddItem(item);

@@ -28,9 +28,12 @@ namespace Game.Cook
         [SerializeField] private FadingController background;
         [HideInInspector] public CookType cookType = CookType.None;
         private GameObject itemOnHold;
+        private CookMenuBtn menuBtnOnHold;
         [SerializeField] private CookTile[] cookTiles;
+        [SerializeField] private SlidingController cookBtn;
         [SerializeField] private GameObject tileOverlay;
         private bool isWorking;
+        public float cookingTime = 60f;
 
         private void OnEnable()
         {
@@ -44,6 +47,7 @@ namespace Game.Cook
             if (inventoryManager.isCentered || isWorking) return false;
 
             isWorking = true;
+            menuBtnOnHold = obj;
 
             foreach (var btn in cookMenuBtns)
             {
@@ -55,6 +59,7 @@ namespace Game.Cook
                 else
                 {
                     b.GetComponent<FadingController>().FadeIn(true, () => { background.FadeOut(); });
+                    b.GetComponent<BoxCollider2D>().enabled = false;
                 }
             }
 
@@ -68,10 +73,12 @@ namespace Game.Cook
             cooks.SetActive(true);
             slide.SlideIn(true, () =>
             {
-                foreach (var cookType in cookTypeBtns)
+                foreach (var cookTypeBtn in cookTypeBtns)
                 {
-                    cookType.gameObject.SetActive(true);
-                    cookType.FadeIn(true, () => isWorking = false);
+                    cookTypeBtn.gameObject.SetActive(true);
+                    cookTypeBtn.FadeIn(true, () => isWorking = false);
+                    cookBtn.gameObject.SetActive(true);
+                    cookBtn.SlideIn(true);
                 }
             });
 
@@ -80,11 +87,11 @@ namespace Game.Cook
             backBtn.SlideIn(true);
         }
 
-        public void AddIngredientToCookTile(GameObject obj)
+        public void AddIngredientToCookTile(GameObject obj, bool activeOverlay = true)  
         {
             if (obj.GetComponent<ItemSlotUI>().item_.ItemType != ItemType.Ingredient) return;
 
-            tileOverlay.SetActive(true);
+            tileOverlay.SetActive(activeOverlay);
             itemOnHold = obj;
         }
 
@@ -101,7 +108,8 @@ namespace Game.Cook
         public void Cook()
         {
             if (cookType == CookType.None) return;
-            
+         
+            Debug.Log("[CookManager] Cook Started!");
             var ingredients = new List<Item>();
 
             foreach (var cookTile in cookTiles)
@@ -118,46 +126,81 @@ namespace Game.Cook
             var mainCategory = ingredients.OrderBy(item => item.ItemMainCategory).First().ItemMainCategory;
             var subCategory = ingredients.OrderBy(item => item.ItemSubCategory).First().ItemSubCategory;
             var cookFactory = new CookFactory();
-
             var result = cookFactory.Make(mainCategory, subCategory);
-            inventoryManager.AddItem(result);
+            Debug.Log($"[CookManager] Will output {result.ItemName}");
+            
+            ExitCook(result);
         }
 
-        public void ExitCook()
+        private IEnumerator CookingCoroutine(Item cookItem)
+        {
+            yield return new WaitForSeconds(cookingTime);
+            inventoryManager.AddItem(cookItem);
+            Debug.Log("[CookManager] Cooking Complete!");
+            //Add notifier here!
+        }
+
+        public void ExitCookBtn()
+        {
+            ExitCook(null);
+        }
+
+        public void ExitCook(Item cookItem)
         {
             if (isWorking) return;
 
             isWorking = true;
 
-            cooks.GetComponent<ISlideOut>().SlideOut(false, () =>
+            cookBtn.SlideOut(false, () =>
             {
-                cooks.SetActive(false);
-
-                if (inventoryManager.isCentered)
-                    inventoryManager.OnClickToggleInventoryPosition();
-
-                foreach (var btn in cookMenuBtns)
+                cooks.GetComponent<ISlideOut>().SlideOut(false, () =>
                 {
-                    btn.gameObject.SetActive(true);
-                    btn.SlideOut(true, () =>
+                    cooks.SetActive(false);
+
+                    if (inventoryManager.isCentered)
+                        inventoryManager.OnClickToggleInventoryPosition();
+
+                    if (cookItem)
                     {
-                        if (!Mathf.Approximately(btn.GetComponent<SpriteRenderer>().color.a, 1))
+                        Debug.Log("[CookManager] Cleaning Cook Elements");
+                
+                        menuBtnOnHold.StartCookingBar(cookingTime);
+                        menuBtnOnHold = null;
+                
+                        StartCoroutine(CookingCoroutine(cookItem));
+                    }
+                    
+                    foreach (var btn in cookMenuBtns)
+                    {
+                        btn.gameObject.SetActive(true);
+                        btn.GetComponent<BoxCollider2D>().enabled = true;
+                        btn.SlideOut(true, () =>
                         {
-                            btn.GetComponent<FadingController>().FadeIn();
-                        }
-                    });
+                            if (!Mathf.Approximately(btn.GetComponent<SpriteRenderer>().color.a, 1))
+                            {
+                                btn.GetComponent<FadingController>().FadeIn(true, () =>
+                                {
+                                    foreach (var cookTile in cookTiles)
+                                    {
+                                        if(!cookItem) cookTile.RemoveItem();
+                                        else cookTile.RemoveItemWithoutAdding();
+                                    }
+                                });
+                            }
+                        });
+                    }
+
+                    background.FadeIn();
+
+                    arrowController.MoveArrowsInToScreen();
+                    backBtn.SlideOut(true, () => isWorking = false);
+                });
+
+                foreach (var cookTypeBtn in cookTypeBtns)
+                {
+                    cookTypeBtn.FadeOut(false);
                 }
-
-                background.FadeIn();
-
-                arrowController.MoveArrowsInToScreen();
-                backBtn.SlideOut(true, () => isWorking = false);
             });
-
-            foreach (var cookType in cookTypeBtns)
-            {
-                cookType.FadeOut(false);
-            }
         }
     }
 }

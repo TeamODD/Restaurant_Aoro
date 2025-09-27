@@ -8,6 +8,7 @@ namespace Game.Cook
 
         private void OnMouseDown()
         {
+            Debug.Log($"[CookTypeBtn] Changing Cook Type to {cookType}.");
             CookManager.instance.cookType = cookType;
         }
     }
