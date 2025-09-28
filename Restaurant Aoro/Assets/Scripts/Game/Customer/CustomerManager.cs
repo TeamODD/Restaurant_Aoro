@@ -10,6 +10,8 @@ public class CustomerManager : MonoBehaviour
     public Transform speechAnchor;
     public GameObject idle_up;
 
+    public static event Action OnAnyCustomerAccepted;
+
     private Animator animator;
     private Animator animator_idle_up;
     private SpriteRenderer spriteRenderer;
@@ -92,6 +94,8 @@ public class CustomerManager : MonoBehaviour
         animator.Play(customerData.rightAnim.name);
         hasSeated = true;
         customerSeat = seatLocation;
+
+        OnAnyCustomerAccepted?.Invoke();
 
         spawner.ClearCurrentCustomer();
         SeatCoroutine = StartCoroutine(MoveAndSeated(seatLocation));
