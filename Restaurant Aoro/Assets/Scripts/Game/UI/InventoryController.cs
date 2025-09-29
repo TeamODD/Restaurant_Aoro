@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Linq;
+using System.Collections.Generic;
 
 public class InventoryController : MonoBehaviour
 {
@@ -14,6 +16,8 @@ public class InventoryController : MonoBehaviour
     private Coroutine moveCoroutine;
     private Coroutine focusRoutine;
     private Vector3 originalCamPos;
+
+    private HashSet<CanvasGroup> _lastOpaqueArrows;
 
     public Vector2 BaseOffset { get; private set; }
     public Vector2 CurrentOffset => currentOffset;
@@ -148,6 +152,10 @@ public class InventoryController : MonoBehaviour
         // 1) 화살표 페이드아웃 & 비활성화
         if (arrowGroups != null)
         {
+            _lastOpaqueArrows = new HashSet<CanvasGroup>(
+                arrowGroups.Where(cg => cg != null && cg.alpha >= 0.99f)
+            );
+
             foreach (var cg in arrowGroups)
                 if (cg != null) StartCoroutine(FadeCanvasGroup(cg, 0f, 0.25f));
             if (deactivateArrows)
@@ -227,6 +235,8 @@ public class InventoryController : MonoBehaviour
         foreach (var cg in groups)
         {
             if (cg == null) continue;
+
+
             if (cg.alpha <= 0.001f)
             {
                 cg.gameObject.SetActive(false);
@@ -298,6 +308,15 @@ public class InventoryController : MonoBehaviour
                     cg.gameObject.SetActive(true);
                     cg.interactable = true;
                     cg.blocksRaycasts = true;
+                    //StartCoroutine(FadeCanvasGroup(cg, 1f, 0.25f));
+                }
+                
+            }
+            if (_lastOpaqueArrows != null)
+            {
+                foreach (var cg in _lastOpaqueArrows)
+                {
+                    if (cg == null) continue;;
                     StartCoroutine(FadeCanvasGroup(cg, 1f, 0.25f));
                 }
             }
