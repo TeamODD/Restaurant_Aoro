@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+public enum DialogueInputMode { Global, Blocker }
+
 public class DialogueUI : MonoBehaviour, IPointerClickHandler
 {
     [Header("Refs")]
@@ -16,7 +18,7 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
     [Header("Options")]
     [SerializeField] private Vector2 screenOffset = new Vector2(0f, 80f);  // 말풍선을 앵커 위로 띄우는 픽셀 오프셋
     [SerializeField] private float fadeTime = 0.15f;                       // 페이드 시간
-    [SerializeField] private float charInterval = 0.02f;                   // 타자기 간격(초당 50자 0.02)
+    [SerializeField] private float charInterval = 0.2f;                   // 타자기 간격(초당 50자 0.02)
     [SerializeField] private bool clampToScreen = true;                    // 화면 밖으로 나가지 않기
     [SerializeField] private Vector2 padding = new Vector2(320f, 180f);      // 텍스트 밖 여백(px)
     [SerializeField] private float maxWidth = 650f;                        // 말풍선 최대 너비(px), 자동 줄바꿈 기반
@@ -27,6 +29,11 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
     [Header("Blocker")]
     [SerializeField] private GameObject clickBlocker;
     [SerializeField] private bool closeOnBlockerClick = true;
+    [SerializeField] private bool useInternalClick = false;
+
+    [SerializeField] private DialogueInputMode defaultInputMode = DialogueInputMode.Blocker;
+    private DialogueInputMode currentMode;
+    public DialogueInputMode CurrentMode => currentMode;
 
     // 내부 상태
     private Transform worldAnchor;
@@ -65,6 +72,26 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
             }
         }
     }
+
+    public void AdvanceOrComplete()
+    {
+        if (!isShowing) return;
+
+        if (isTyping)
+        {
+            ForceCompleteTyping();
+            return;
+        }
+
+        if (lineQueue.Count > 0)
+        {
+            ShowNextInternal(worldAnchor);
+            return;
+        }
+
+        StartCoroutine(FadeOutAndHide());
+    }
+
     private void EnableBlocker(bool on)
     {
         if (clickBlocker == null) return;
@@ -98,7 +125,7 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
         }
     }
 
-    public void ShowLines(IEnumerable<string> lines, Transform anchor, float holdLastSeconds = 0f)
+    public void ShowLines(IEnumerable<string> lines, Transform anchor, float holdLastSeconds = 0f, DialogueInputMode? mode = null)
     {
         EnsureActive();
         ClearQueue();
@@ -107,10 +134,11 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
             foreach (var s in lines)
                 if (!string.IsNullOrWhiteSpace(s)) lineQueue.Enqueue(s.Trim());
 
+        currentMode = mode ?? defaultInputMode;
         ShowNextInternal(anchor, holdLastSeconds);
     }
 
-    public void ShowOne(string line, Transform anchor, float holdSeconds = 1.6f)
+    public void ShowOne(string line, Transform anchor, float holdSeconds = 1.6f, DialogueInputMode? mode = null)
     {
         EnsureActive();
         ClearQueue();
@@ -118,6 +146,7 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
         if (!string.IsNullOrWhiteSpace(line))
             lineQueue.Enqueue(line.Trim());
 
+        currentMode = mode ?? defaultInputMode;
         ShowNextInternal(anchor, holdSeconds);
     }
 
@@ -156,6 +185,9 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
         }
 
         StartCoroutine(FadeOutAndHide());
+
+        if (!useInternalClick) return;
+        AdvanceOrComplete();
     }
 
     private void ShowNextInternal(Transform anchor, float holdLastSeconds = 0f)
@@ -175,7 +207,8 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
         gameObject.SetActive(true);
         isShowing = true;
 
-        EnableBlocker(true);
+        if (currentMode == DialogueInputMode.Blocker)
+            EnableBlocker(true);  
 
         if (followRoutine != null) StopCoroutine(followRoutine);
         followRoutine = StartCoroutine(FollowAnchor()); 
@@ -198,7 +231,8 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
             gameObject.SetActive(true);
             isShowing = true;
         }
-        EnableBlocker(true);
+        if (currentMode == DialogueInputMode.Blocker)
+            EnableBlocker(true);
 
         if (fadeRoutine != null) StopCoroutine(fadeRoutine);
         fadeRoutine = StartCoroutine(FadeTo(1f, fadeTime));

@@ -1127,7 +1127,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isClicked: 0
   isSeated: 0
-  SeatLocation: {fileID: 1014905217}
+  SeatLocation: {fileID: 871662266}
 --- !u!114 &106212903
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3519,7 +3519,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isClicked: 0
   isSeated: 0
-  SeatLocation: {fileID: 1695367453}
+  SeatLocation: {fileID: 428981373}
 --- !u!114 &401133131
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3967,7 +3967,7 @@ GameObject:
   m_Component:
   - component: {fileID: 428981374}
   m_Layer: 0
-  m_Name: Seat5
+  m_Name: Seat4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5158,7 +5158,7 @@ GameObject:
   m_Component:
   - component: {fileID: 681056956}
   m_Layer: 0
-  m_Name: Seat2
+  m_Name: Seat7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7214,7 +7214,7 @@ GameObject:
   m_Component:
   - component: {fileID: 871662267}
   m_Layer: 0
-  m_Name: Seat8
+  m_Name: Seat1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7997,7 +7997,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1014905218}
   m_Layer: 0
-  m_Name: Seat1
+  m_Name: Seat8
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8115,7 +8115,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isClicked: 0
   isSeated: 0
-  SeatLocation: {fileID: 681056955}
+  SeatLocation: {fileID: 1569372491}
 --- !u!114 &1030418802
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8570,7 +8570,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isClicked: 0
   isSeated: 0
-  SeatLocation: {fileID: 871662266}
+  SeatLocation: {fileID: 1014905217}
 --- !u!114 &1064022035
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10167,7 +10167,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isClicked: 0
   isSeated: 0
-  SeatLocation: {fileID: 1569372491}
+  SeatLocation: {fileID: 681056955}
 --- !u!114 &1286721920
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10883,7 +10883,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isClicked: 0
   isSeated: 0
-  SeatLocation: {fileID: 1833303062}
+  SeatLocation: {fileID: 2072499174}
 --- !u!114 &1435551739
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11526,6 +11526,7 @@ GameObject:
   - component: {fileID: 1480738926}
   - component: {fileID: 1480738925}
   - component: {fileID: 1480738924}
+  - component: {fileID: 1480738927}
   m_Layer: 5
   m_Name: UICanvas
   m_TagString: Untagged
@@ -11629,6 +11630,19 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &1480738927
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1480738922}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a284e63de7626fc498b0f657aaa9a64b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dialogueUI: {fileID: 1879352775}
 --- !u!1 &1495557946
 GameObject:
   m_ObjectHideFlags: 0
@@ -12327,7 +12341,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1569372492}
   m_Layer: 0
-  m_Name: Seat7
+  m_Name: Seat2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12646,7 +12660,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isClicked: 0
   isSeated: 0
-  SeatLocation: {fileID: 428981373}
+  SeatLocation: {fileID: 1695367453}
 --- !u!114 &1600953645
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13415,7 +13429,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1695367454}
   m_Layer: 0
-  m_Name: Seat4
+  m_Name: Seat5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14126,6 +14140,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dialogueUI: {fileID: 1879352775}
+  greetingMode: 0
+  normalMode: 1
 --- !u!114 &1782296695
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14508,7 +14524,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1833303063}
   m_Layer: 0
-  m_Name: Seat3
+  m_Name: Seat6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14818,6 +14834,8 @@ MonoBehaviour:
   minBubbleHeight: 64
   clickBlocker: {fileID: 1001997713}
   closeOnBlockerClick: 1
+  useInternalClick: 0
+  defaultInputMode: 1
 --- !u!225 &1879352776
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -15078,14 +15096,14 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1014905218}
-  - {fileID: 681056956}
-  - {fileID: 1833303063}
-  - {fileID: 1695367454}
-  - {fileID: 428981374}
-  - {fileID: 2072499175}
-  - {fileID: 1569372492}
   - {fileID: 871662267}
+  - {fileID: 1569372492}
+  - {fileID: 2072499175}
+  - {fileID: 428981374}
+  - {fileID: 1695367454}
+  - {fileID: 1833303063}
+  - {fileID: 681056956}
+  - {fileID: 1014905218}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1909031844
@@ -16448,7 +16466,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isClicked: 0
   isSeated: 0
-  SeatLocation: {fileID: 2072499174}
+  SeatLocation: {fileID: 1833303062}
 --- !u!114 &2015495689
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17058,7 +17076,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2072499175}
   m_Layer: 0
-  m_Name: Seat6
+  m_Name: Seat3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
