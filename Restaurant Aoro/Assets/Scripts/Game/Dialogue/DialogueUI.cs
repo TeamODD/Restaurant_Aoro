@@ -31,15 +31,16 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
     [SerializeField] private bool closeOnBlockerClick = true;
     [SerializeField] private bool useInternalClick = false;
 
-    // === Tail ===
-    [SerializeField] private RectTransform tail;        // Panel의 자식
-    [SerializeField] private Vector2 tailBaseSize = new Vector2(64, 48);     // 기준 꼬리 크기(px)
-    [SerializeField] private Vector2 tailBasePanelSize = new Vector2(500, 200); // 기준 패널 크기(px)
+    [Header("Tail")]
+    [SerializeField] private RectTransform tail;        // 꼬리 이미지
+    [SerializeField] private RectTransform tailAnchor;  // 새로 만든 앵커 (패널 자식)
 
-    [SerializeField] private Vector2 tailMarginLB = new Vector2(16f, 8f);
-
-    // 스케일 옵션
-    [SerializeField] private bool tailUniformScale = true; // true면 x,y 같은 비율로
+    [SerializeField, Range(0f, 1f)] private float tailAnchorX = 0.28f; // 0=왼쪽, 1=오른쪽
+    [SerializeField, Range(-0.5f, 1f)] private float tailAnchorY = -0.09f;
+    // 크기/스케일 옵션
+    [SerializeField] private Vector2 tailBaseSize = new Vector2(64, 48);          // 기준 꼬리 크기
+    [SerializeField] private Vector2 tailBasePanelSize = new Vector2(1000, 200);   // 기준 패널 크기
+    [SerializeField] private bool tailUniformScale = true;
     [SerializeField] private float tailMinScale = 0.5f;
     [SerializeField] private float tailMaxScale = 1.75f;
 
@@ -113,6 +114,27 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
             clickBlocker.transform.SetSiblingIndex(transform.GetSiblingIndex());
     }
 
+    private void UpdateTailSize()
+    {
+        if (tail == null || panel == null) return;
+
+        var p = panel.sizeDelta;
+        float sx = p.x / Mathf.Max(1f, tailBasePanelSize.x);
+        float sy = p.y / Mathf.Max(1f, tailBasePanelSize.y);
+
+        if (tailUniformScale)
+        {
+            float s = Mathf.Clamp(Mathf.Min(sx, sy), tailMinScale, tailMaxScale);
+            tail.sizeDelta = tailBaseSize * s;
+        }
+        else
+        {
+            sx = Mathf.Clamp(sx, tailMinScale, tailMaxScale);
+            sy = Mathf.Clamp(sy, tailMinScale, tailMaxScale);
+            tail.sizeDelta = new Vector2(tailBaseSize.x * sx, tailBaseSize.y * sy);
+        }
+    }
+
     private static void FixCenterAnchor(RectTransform rt)
     {
         rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f);
@@ -137,33 +159,6 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
         }
     }
 
-    private void UpdateTailLayout()
-    {
-        if (tail == null || panel == null) return;
-
-        Vector2 p = panel.sizeDelta;
-
-        float sx = p.x / Mathf.Max(1f, tailBasePanelSize.x);
-        float sy = p.y / Mathf.Max(1f, tailBasePanelSize.y);
-        float s = tailUniformScale ? Mathf.Min(sx, sy) : 1f;
-
-        if (tailUniformScale)
-        {
-            s = Mathf.Clamp(s, tailMinScale, tailMaxScale);
-            tail.sizeDelta = tailBaseSize * s;
-        }
-        else
-        {
-            sx = Mathf.Clamp(sx, tailMinScale, tailMaxScale);
-            sy = Mathf.Clamp(sy, tailMinScale, tailMaxScale);
-            tail.sizeDelta = new Vector2(tailBaseSize.x * sx, tailBaseSize.y * sy);
-        }
-
-        float x = -p.x * 0.5f + tailMarginLB.x;
-        float y = -p.y * 0.5f + tailMarginLB.y;
-
-        tail.anchoredPosition = new Vector2(x, y);
-    }
 
 
     public void ShowLines(IEnumerable<string> lines, Transform anchor, float holdLastSeconds = 0f, DialogueInputMode? mode = null)
@@ -259,7 +254,6 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
 
         StartTyping(currentLine);
 
-        UpdateTailLayout();
     }
 
     private void ShowNextInternal(Transform anchor)
@@ -356,7 +350,23 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
         float bubbleH = Mathf.Max(minBubbleHeight, textH + padding.y * 2f);
         panel.sizeDelta = new Vector2(bubbleW, bubbleH);
 
-        UpdateTailLayout();
+        if (tail != null)
+        {
+            float tx = (bubbleW * tailAnchorX) - (bubbleW * 0.5f);
+            float ty = (bubbleH * tailAnchorY) - (bubbleH * 0.5f);
+            tail.anchoredPosition = new Vector2(tx, ty);
+
+            // 스케일 조정 (선택적)
+            float scaleFactor = bubbleW / tailBasePanelSize.x;
+            if (tailUniformScale)
+                tail.localScale = Vector3.one * Mathf.Clamp(scaleFactor, tailMinScale, tailMaxScale);
+            else
+                tail.localScale = new Vector3(
+                    Mathf.Clamp(scaleFactor, tailMinScale, tailMaxScale),
+                    Mathf.Clamp(bubbleH / tailBasePanelSize.y, tailMinScale, tailMaxScale),
+                    1f
+                );
+        }
     }
 
     private IEnumerator FollowAnchor()
