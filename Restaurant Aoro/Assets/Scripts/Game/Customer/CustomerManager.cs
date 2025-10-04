@@ -14,7 +14,6 @@ public class CustomerManager : MonoBehaviour
 
     private Animator animator;
     private Animator animator_idle_up;
-    private SpriteRenderer spriteRenderer;
     private Vector3 stopPosition;
     private SpawnCustomer spawner;
     private TabletState tabletState;
@@ -101,6 +100,23 @@ public class CustomerManager : MonoBehaviour
         SeatCoroutine = StartCoroutine(MoveAndSeated(seatLocation));
     }
 
+    public void LeaveRestaurant()
+    {
+        if (isLeaving) return;
+        isLeaving = true;
+
+        //To rotation setting y=180
+        Vector3 currentRotation = transform.eulerAngles;
+        currentRotation.y = 180f;
+        transform.eulerAngles = currentRotation;
+
+        animator.Play(customerData.rightAnim.name);
+
+        CustomerClick customerClick = GetComponent<CustomerClick>();
+        customerClick.setCanClickFalse();
+
+        StartCoroutine(MoveAndDestroy());
+    }
 
     private IEnumerator MoveAndDestroy()
     {

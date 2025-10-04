@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
-public enum ResultType { Success, Fail, Perfect, Late, WrongOrder}
+public enum ResultType { Success, Fail, Perfect, Excellent, Late, WrongOrder}
 
 [System.Serializable]
 public class ResultBucket
