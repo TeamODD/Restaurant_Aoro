@@ -46,7 +46,6 @@ public class CustomerClick : MonoBehaviour
     private float clickDebounce = 2f; // 선택: 너무 빠른 중복 클릭 억제
     private float lastClickTime = -999f;
 
-    // ====== 라이프사이클: 전역 목록 관리 ======
     private void OnEnable()
     {
         if (!All.Contains(this)) All.Add(this);
@@ -127,11 +126,10 @@ public class CustomerClick : MonoBehaviour
     }
     private void HandleSeated(CustomerManager cm)
     {
-        if (cm != manager) return;   // 안전: 내 매니저가 아닐 경우 무시
+        if (cm != manager) return;
         if (exclamationShownOnce) return;
         isSeated = true;
 
-        // 기존 pending 코루틴이 있으면 정리
         if (exclamationRoutine != null)
         {
             StopCoroutine(exclamationRoutine);

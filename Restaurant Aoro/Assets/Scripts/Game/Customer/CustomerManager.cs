@@ -9,6 +9,10 @@ public class CustomerManager : MonoBehaviour
     public Customer customerData;
     public Transform speechAnchor;
     public GameObject idle_up;
+    public GameObject gaugeBG;
+    public GameObject gaugeFilled;
+    public Transform gaugeFilledTransform;
+    public float fillSpeed = 1f;
 
     public static event Action OnAnyCustomerAccepted;
 
@@ -27,6 +31,8 @@ public class CustomerManager : MonoBehaviour
     public event Action<CustomerManager> OnSeated;
 
     private Coroutine SeatCoroutine;
+    private Coroutine fillRoutine;
+    private Vector3 baseScale;
 
     public void Init(SpawnCustomer spawner, Vector3 stopPos, TabletState tabletState)
     {
@@ -38,6 +44,12 @@ public class CustomerManager : MonoBehaviour
         idle_up.SetActive(false);
         animator = GetComponent<Animator>();
         animator.Play(customerData.leftAnim.name);
+
+        if (gaugeFilledTransform != null)
+            baseScale = gaugeFilledTransform.localScale;
+
+        gaugeBG.SetActive(false);
+        gaugeFilled.SetActive(false);
 
         StartCoroutine(MoveToStopPosition());
     }
@@ -116,6 +128,41 @@ public class CustomerManager : MonoBehaviour
         customerClick.setCanClickFalse();
 
         StartCoroutine(MoveAndDestroy());
+    }
+
+    public void Eating()
+    {
+        animator.Play(customerData.eatingAnim.name);
+
+        CustomerClick customerClick = GetComponent<CustomerClick>();
+        customerClick.setCanClickFalse();
+    }
+
+    public void FillToFull()
+    {
+        gaugeBG.SetActive(true);
+        gaugeFilled.SetActive(true);
+
+        if (fillRoutine != null)
+            StopCoroutine(fillRoutine);
+        fillRoutine = StartCoroutine(FillRoutine());
+    }
+
+    private IEnumerator FillRoutine()
+    {
+        gaugeFilledTransform.localScale = new Vector3(0, baseScale.y, baseScale.z);
+
+        float t = 0f;
+        while (t < 1f)
+        {
+            t += Time.deltaTime * fillSpeed;
+            float clamped = Mathf.Clamp01(t);
+
+            gaugeFilledTransform.localScale = new Vector3(baseScale.x * clamped, baseScale.y, baseScale.z);
+
+            yield return null;
+        }
+        gaugeFilledTransform.localScale = baseScale;
     }
 
     private IEnumerator MoveAndDestroy()
