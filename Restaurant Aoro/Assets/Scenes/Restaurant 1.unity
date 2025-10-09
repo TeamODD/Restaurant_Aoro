@@ -10070,6 +10070,56 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1266808324}
   m_CullTransparentMesh: 1
+--- !u!1 &1270272997
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1270272999}
+  - component: {fileID: 1270272998}
+  m_Layer: 0
+  m_Name: TabletManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1270272998
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1270272997}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 779e6ea6fec82ca47820029737dbcff3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Customer_1: {fileID: 0}
+  Customer_2: {fileID: 0}
+  Customer_3: {fileID: 0}
+  Youkai_1: {fileID: 0}
+  Youkai_2: {fileID: 0}
+  Youkai_3: {fileID: 0}
+--- !u!4 &1270272999
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1270272997}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 841.98145, y: 950.8409, z: -1.4300649}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1286721916
 GameObject:
   m_ObjectHideFlags: 0
@@ -18066,6 +18116,7 @@ SceneRoots:
   - {fileID: 1265061790}
   - {fileID: 1782296688}
   - {fileID: 2043858668}
+  - {fileID: 1270272999}
   - {fileID: 1744694721}
   - {fileID: 935563484}
   - {fileID: 245379573}
