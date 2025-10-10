@@ -1,5 +1,6 @@
 using Unity.VisualScripting;
 using UnityEngine;
+using System;
 
 public class ReputationState : MonoBehaviour
 {
@@ -16,6 +17,17 @@ public class ReputationState : MonoBehaviour
     private Sprite CustomerSprite;
     private Sprite YoukaiSprite;
 
+    public static event Action OnReputationChanged;
+
+    public Sprite getCustomerSprite()
+    {
+        return CustomerSprite;
+    }
+
+    public Sprite getYoukaiSprite()
+    {
+        return YoukaiSprite;
+    }
     public void setSprite()
     {
         if(Youkai_Human_reputation >= 33)
@@ -43,15 +55,19 @@ public class ReputationState : MonoBehaviour
         {
             CustomerSprite = Customer_1;
         }
+
+        OnReputationChanged?.Invoke();
     }
 
     public void addCustomerReputation(int value)
     {
         Customer_reputation += value;
+        setSprite();
     }
 
     public void addYoukaiReputation(int value)
     {
         Youkai_Human_reputation += value;
+        setSprite();
     }
 }
