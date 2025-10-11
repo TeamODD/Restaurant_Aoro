@@ -9,6 +9,7 @@ public class CustomerManager : MonoBehaviour
     public Customer customerData;
     public Transform speechAnchor;
     public GameObject idle_up;
+    public GameObject Plate;
     public GameObject gaugeBG;
     public GameObject gaugeFilled;
     public Transform gaugeFilledTransform;
@@ -42,8 +43,13 @@ public class CustomerManager : MonoBehaviour
 
         animator_idle_up = idle_up.GetComponent<Animator>();
         idle_up.SetActive(false);
+
         animator = GetComponent<Animator>();
         animator.Play(customerData.leftAnim.name);
+
+        var lp = Plate.transform.localPosition;
+        lp.z -= 0.4f;
+        Plate.transform.localPosition = lp;
 
         if (gaugeFilledTransform != null)
             baseScale = gaugeFilledTransform.localScale;

@@ -359,3 +359,6 @@ MonoBehaviour:
   isDraggable: 1
   isDragging: 0
   proxyPrefab: {fileID: 1007990732782992797, guid: 0546064ab3b1b4c9fba7e4b415440893, type: 3}
+  plateProxyPrefab: {fileID: 1007990732782992797, guid: 5bde2fcd7f401444faa988496b1d0d1e, type: 3}
+  autoSelectByItemType: 1
+  forcedTarget: 0
