@@ -64,7 +64,9 @@ public class InventoryManager : MonoBehaviour
 
     public void OnClickToggleInventoryPosition()
     {
-        if (isCentered)
+        bool centered = controller.IsInventoryOpen;
+
+        if (centered) //isCentered
         {
             // ���� ��ġ�� ����
             controller.MovePanelToCenter(offset, 0.2f);

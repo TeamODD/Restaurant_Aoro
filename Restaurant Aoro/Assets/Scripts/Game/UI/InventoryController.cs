@@ -7,6 +7,7 @@ using System.Collections.Generic;
 public class InventoryController : MonoBehaviour
 {
     public InventoryManager invmanager;
+    public bool IsInventoryOpen => isArrowCentered;
     private RectTransform[] panels;
     private Vector2 currentOffset;
     private RectTransform rightArrow { get; set; }

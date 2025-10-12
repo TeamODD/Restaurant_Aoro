@@ -46,6 +46,8 @@ public class CustomerClick : MonoBehaviour
     private float clickDebounce = 2f; // 선택: 너무 빠른 중복 클릭 억제
     private float lastClickTime = -999f;
 
+    private Coroutine foldRoutine;
+
     private void OnEnable()
     {
         if (!All.Contains(this)) All.Add(this);
@@ -208,6 +210,14 @@ public class CustomerClick : MonoBehaviour
     private void TryZoomInAndOpen()
     {
         if (zoomed) return;
+
+        if (invController != null && invController.IsInventoryOpen)
+        {
+            if (foldRoutine != null) StopCoroutine(foldRoutine);
+            foldRoutine = StartCoroutine(FoldThenZoomIn());
+            return;
+        }
+
         invController.ZoomAndFrameTargetLeftCenter(
             mainCam,
             transform,
@@ -280,5 +290,42 @@ public class CustomerClick : MonoBehaviour
         if (col2d != null) { col2d.enabled = enabled; return; }
         var col3d = GetComponent<Collider>();
         if (col3d != null) { col3d.enabled = enabled; }
+    }
+
+    private IEnumerator FoldThenZoomIn()
+    {
+        float half = Mathf.Max(0.01f, moveDuration * 0.5f);
+
+        // 1) 패널이 열려 있다면(=중앙) 먼저 절반 시간으로 닫기(=BaseOffset으로)
+        if (invController != null && invController.IsInventoryOpen)
+        {
+            // MovePanelToCenter는 토글: "열림 상태"에서 호출하면 "닫힘"으로 갑니다.
+            invController.MovePanelToCenter(centerOffset, half);
+            // 패널 이동이 끝날 때까지 대기
+            while (invController != null && invController.IsAnimating)
+                yield return null;
+        }
+
+        // 2) 나머지 절반 시간 동안 기존처럼 열면서(=중앙으로) 카메라 프레이밍/줌인
+        invController.ZoomAndFrameTargetLeftCenter(
+            mainCam,
+            transform,
+            zoomInSize,
+            zoomDuration,
+            centerOffset,   // 중앙 오프셋으로 열림
+            half,           // 패널 이동 시간 = 절반
+            arrowGroups,
+            true,
+            viewportX,
+            viewportY
+        );
+
+        while (invController != null && invController.IsAnimating)
+            yield return null;
+
+        LockToThis();
+        if (backBtn != null) backBtn.SlideIn();
+        if (Invmanager != null) Invmanager.ChangeToFoodInventory();
+        zoomed = true;
     }
 }
