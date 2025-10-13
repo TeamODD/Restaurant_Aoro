@@ -13,7 +13,17 @@ public class PlateManager : MonoBehaviour
         if (instance == null) instance = this;
     }
 
-    public void AddIngredientToPlateTile(GameObject slotObj)
+    public void RemoveAllFromPlate()
+    {
+        var tiles = FindObjectsOfType<PlateTile>();
+        foreach (var t in tiles)
+        {
+            if (t != null && t.item != null)
+                t.RemoveItem();
+        }
+    }
+
+    public void AddFoodToPlateTile(GameObject slotObj)
     {
         var slot = slotObj.GetComponent<ItemSlotUI>();
         if (slot == null || slot.item_ == null) return;
@@ -23,7 +33,7 @@ public class PlateManager : MonoBehaviour
         itemOnHold = slotObj;
     }
 
-    public void IngredientAddedToPlateTile(PlateTile plateTile)
+    public void FoodAddedToPlateTile(PlateTile plateTile)
     {
         if (itemOnHold == null || plateTile == null) { ClearHold(); return; }
 

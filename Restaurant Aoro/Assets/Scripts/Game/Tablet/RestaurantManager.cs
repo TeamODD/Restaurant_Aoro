@@ -9,7 +9,7 @@ public class RestaurantManager : MonoBehaviour
     public TMP_Text CreditText;
     public Image Customer_Icon;
     public Image Youkai_Icon;
-
+    public Button ServeBtn;
 
     public ReputationState ReputationState;
 
@@ -19,12 +19,16 @@ public class RestaurantManager : MonoBehaviour
     {
         CustomerManager.OnAnyCustomerAccepted += HandleAccepted;
         ReputationState.OnReputationChanged += UpdateReputationIcon;
+        PlateTile.AddServeListener(OnServeBtn);
+        InventoryController.AddOffServeListener(OffServeBtn);
     }
 
     private void OnDisable()
     {
         CustomerManager.OnAnyCustomerAccepted -= HandleAccepted;
         ReputationState.OnReputationChanged -= UpdateReputationIcon;
+        PlateTile.RemoveServeListener(OnServeBtn);
+        InventoryController.RemoveOffServeListener(OffServeBtn);
     }
 
     private void HandleAccepted()
@@ -42,5 +46,15 @@ public class RestaurantManager : MonoBehaviour
     private void UpdateAcceptedVisitingText()
     {
         VisitingText.text = acceptedCustomer.ToString("D3");
+    }
+
+    private void OnServeBtn()
+    {
+        ServeBtn.gameObject.SetActive(true);
+    }
+
+    private void OffServeBtn()
+    {
+        ServeBtn.gameObject.SetActive(false);
     }
 }

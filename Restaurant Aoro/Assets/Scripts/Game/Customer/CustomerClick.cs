@@ -13,6 +13,8 @@ public class CustomerClick : MonoBehaviour
     private static readonly List<CustomerClick> All = new List<CustomerClick>();
     private static CustomerClick s_locked;
 
+    
+
     private CustomerManager manager;
     private InventoryManager Invmanager;
     private TabletState tablet;
@@ -58,6 +60,7 @@ public class CustomerClick : MonoBehaviour
         if (s_locked == this) UnlockAll();
         if (manager != null) manager.OnSeated -= HandleSeated;
     }
+    
 
     public void Setup(
         CustomerManager m,
@@ -241,6 +244,10 @@ public class CustomerClick : MonoBehaviour
     {
         if (pendingRoutine != null) { StopCoroutine(pendingRoutine); pendingRoutine = null; pendingZoomIn = false; }
 
+        if (PlateManager.instance != null)
+            PlateManager.instance.RemoveAllFromPlate();
+
+        InventoryController.InvokeServe();
 
         if (zoomed)
         {
@@ -256,6 +263,7 @@ public class CustomerClick : MonoBehaviour
             backBtn.SlideOut(true);
             zoomed = false;
         }
+
     }
 
     private void LockToThis()
@@ -296,24 +304,20 @@ public class CustomerClick : MonoBehaviour
     {
         float half = Mathf.Max(0.01f, moveDuration * 0.5f);
 
-        // 1) 패널이 열려 있다면(=중앙) 먼저 절반 시간으로 닫기(=BaseOffset으로)
         if (invController != null && invController.IsInventoryOpen)
         {
-            // MovePanelToCenter는 토글: "열림 상태"에서 호출하면 "닫힘"으로 갑니다.
             invController.MovePanelToCenter(centerOffset, half);
-            // 패널 이동이 끝날 때까지 대기
             while (invController != null && invController.IsAnimating)
                 yield return null;
         }
 
-        // 2) 나머지 절반 시간 동안 기존처럼 열면서(=중앙으로) 카메라 프레이밍/줌인
         invController.ZoomAndFrameTargetLeftCenter(
             mainCam,
             transform,
             zoomInSize,
             zoomDuration,
-            centerOffset,   // 중앙 오프셋으로 열림
-            half,           // 패널 이동 시간 = 절반
+            centerOffset,  
+            half,           
             arrowGroups,
             true,
             viewportX,
@@ -327,5 +331,6 @@ public class CustomerClick : MonoBehaviour
         if (backBtn != null) backBtn.SlideIn();
         if (Invmanager != null) Invmanager.ChangeToFoodInventory();
         zoomed = true;
+
     }
 }

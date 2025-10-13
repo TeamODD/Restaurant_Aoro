@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
@@ -26,12 +27,18 @@ public class InventoryController : MonoBehaviour
 
     public void SetIsAnimating(bool value) => IsAnimating = value;
 
+    private static event Action OffServeBtn;
+
     public void Initialize(RectTransform[] panelRects, Vector2 positionOffset)
     {
         panels = panelRects;
         currentOffset = positionOffset;
         BaseOffset = positionOffset;
     }
+    
+    public static void AddOffServeListener(Action listener) => OffServeBtn += listener;
+    public static void RemoveOffServeListener(Action lister) => OffServeBtn -= lister;
+    public static void InvokeServe() => OffServeBtn?.Invoke();
 
     public bool GetArrowCentered() => isArrowCentered;
 
@@ -169,6 +176,10 @@ public class InventoryController : MonoBehaviour
         // 3) Ä«¸Þ¶ó ÆÒ + ÁÜ (Å¸±êÀ» ºäÆ÷Æ® ÁÂÇ¥ (viewportX, viewportY)¿¡ ¿Àµµ·Ï)
         if (cam != null && target != null)
             yield return StartCoroutine(PanAndZoomCameraToViewport(cam, target.position, targetZoom, duration, viewportX, viewportY));
+
+        while (IsAnimating)
+            yield return null;
+
     }
 
     private IEnumerator PanAndZoomCameraToViewport(
@@ -256,6 +267,7 @@ public class InventoryController : MonoBehaviour
         bool activateArrows = true
     )
     {
+
         if (focusRoutine != null) StopCoroutine(focusRoutine);
         focusRoutine = StartCoroutine(ResetFromCenterWithCameraRoutine(
             cam, originalZoom, zoomDuration, moveDuration, arrowGroups, activateArrows
@@ -322,6 +334,7 @@ public class InventoryController : MonoBehaviour
                 }
             }
         }
+
         invmanager.ChangeToInventory();
     }
 
