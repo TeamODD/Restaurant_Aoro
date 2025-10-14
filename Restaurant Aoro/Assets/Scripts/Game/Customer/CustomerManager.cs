@@ -13,7 +13,7 @@ public class CustomerManager : MonoBehaviour
     public GameObject gaugeBG;
     public GameObject gaugeFilled;
     public Transform gaugeFilledTransform;
-    public float fillSpeed = 1f;
+    public float fillSpeed = 0.1f;
 
     public static event Action OnAnyCustomerAccepted;
 
@@ -94,10 +94,6 @@ public class CustomerManager : MonoBehaviour
         isLeaving = true;
 
         tabletState.canClicked = false;
-        //To rotation setting y=180
-        Vector3 currentRotation = transform.eulerAngles;
-        currentRotation.y = 180f;
-        transform.eulerAngles = currentRotation;
 
         animator.Play(customerData.rightAnim.name);
 
@@ -108,7 +104,7 @@ public class CustomerManager : MonoBehaviour
     public void Accept(Transform seatLocation)
     {
         tabletState.canClicked = false;
-        animator.Play(customerData.rightAnim.name);
+        animator.Play(customerData.leftAnim.name);
         hasSeated = true;
         customerSeat = seatLocation;
 
@@ -123,11 +119,6 @@ public class CustomerManager : MonoBehaviour
         if (isLeaving) return;
         isLeaving = true;
 
-        //To rotation setting y=180
-        Vector3 currentRotation = transform.eulerAngles;
-        currentRotation.y = 180f;
-        transform.eulerAngles = currentRotation;
-
         animator.Play(customerData.rightAnim.name);
 
         CustomerClick customerClick = GetComponent<CustomerClick>();
@@ -136,8 +127,15 @@ public class CustomerManager : MonoBehaviour
         StartCoroutine(MoveAndDestroy());
     }
 
+    public void StartEatingAndFill()
+    {
+        Eating();     
+        FillToFull();
+    }
+
     public void Eating()
     {
+        idle_up.SetActive(false);
         animator.Play(customerData.eatingAnim.name);
 
         CustomerClick customerClick = GetComponent<CustomerClick>();

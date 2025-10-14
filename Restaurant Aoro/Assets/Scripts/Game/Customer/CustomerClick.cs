@@ -188,7 +188,21 @@ public class CustomerClick : MonoBehaviour
 
         TryZoomInAndOpen();
     }
+    public static void ServeLockedCustomer()
+    {
+        if (s_locked == null) return;
+        s_locked.ServeAndExit();
+    }
+    public void ServeAndExit()
+    {
+        var cm = manager != null ? manager : GetComponent<CustomerManager>();
+        if (cm != null)
+        {
+            cm.StartEatingAndFill();
+        }
 
+        ExitFocus();
+    }
     private IEnumerator WaitAndZoomIn(CustomerManager cm, Transform anchor)
     {
         pendingZoomIn = true;
@@ -238,6 +252,26 @@ public class CustomerClick : MonoBehaviour
         if (Invmanager != null) Invmanager.ChangeToFoodInventory();
 
         zoomed = true;
+    }
+
+    private void ExitFocus()
+    {
+        if (pendingRoutine != null) { StopCoroutine(pendingRoutine); pendingRoutine = null; pendingZoomIn = false; }
+
+        if (zoomed)
+        {
+            invController.ResetFromCenterWithCamera(
+                mainCam,
+                zoomOutSize,
+                zoomDuration,
+                moveDuration,
+                arrowGroups,
+                true
+            );
+            UnlockAll();
+            backBtn.SlideOut(true);
+            zoomed = false;
+        }
     }
 
     private void OnBackButtonClick()
