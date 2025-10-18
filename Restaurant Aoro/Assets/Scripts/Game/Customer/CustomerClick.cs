@@ -50,6 +50,8 @@ public class CustomerClick : MonoBehaviour
 
     private Coroutine foldRoutine;
 
+    private bool awaitingResult = false;
+
     private void OnEnable()
     {
         if (!All.Contains(this)) All.Add(this);
@@ -174,6 +176,21 @@ public class CustomerClick : MonoBehaviour
         if (exclamation != null && exclamation.activeSelf)
             exclamation.SetActive(false);
 
+        if (awaitingResult)
+        {
+            if (exclamation != null && exclamation.activeSelf)
+                exclamation.SetActive(false);
+
+            awaitingResult = false;
+
+            if (cm != null)
+            {
+                cm.RequestResultDialogue();
+                cm.StartCoroutine(LeaveAfterDelay(cm, 2f));
+            }
+            return;
+        }
+
         if (invController != null && invController.IsAnimating)
         {
             if (!pendingZoomIn) pendingRoutine = StartCoroutine(WaitAndZoomIn(cm, anchor));
@@ -188,6 +205,13 @@ public class CustomerClick : MonoBehaviour
 
         TryZoomInAndOpen();
     }
+
+    private IEnumerator LeaveAfterDelay(CustomerManager cm, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        cm.LeaveRestaurant();
+    }
+
     public static void ServeLockedCustomer()
     {
         if (s_locked == null) return;
@@ -199,6 +223,7 @@ public class CustomerClick : MonoBehaviour
         if (cm != null)
         {
             cm.StartEatingAndFill();
+            InventoryController.InvokeServe();
         }
 
         ExitFocus();
@@ -341,9 +366,14 @@ public class CustomerClick : MonoBehaviour
         if (invController != null && invController.IsInventoryOpen)
         {
             invController.MovePanelToCenter(centerOffset, half);
+
             while (invController != null && invController.IsAnimating)
                 yield return null;
         }
+
+        if (Invmanager != null)
+            Invmanager.ChangeToFoodInventory();
+        yield return new WaitForEndOfFrame();
 
         invController.ZoomAndFrameTargetLeftCenter(
             mainCam,
@@ -363,8 +393,22 @@ public class CustomerClick : MonoBehaviour
 
         LockToThis();
         if (backBtn != null) backBtn.SlideIn();
-        if (Invmanager != null) Invmanager.ChangeToFoodInventory();
         zoomed = true;
 
     }
+
+    public void ShowResultExclamation()
+    {
+        awaitingResult = true;
+
+        if (exclamationRoutine != null)
+        {
+            StopCoroutine(exclamationRoutine);
+            exclamationRoutine = null;
+        }
+
+        if (exclamation != null) exclamation.SetActive(true);
+        canClick = true;
+    }
+
 }

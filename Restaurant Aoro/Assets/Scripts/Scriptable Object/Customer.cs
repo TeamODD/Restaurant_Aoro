@@ -13,7 +13,7 @@ public enum FoodTaste
     Bitter,   
 }
 
-public enum FoodType
+/*public enum FoodType
 {
     Noodle,   
     Soup,   
@@ -22,7 +22,7 @@ public enum FoodType
     Seafood,  
     Vegetable, 
     Drink    
-}
+}*/
 
 [System.Serializable]
 public class ResultBucket
@@ -44,8 +44,8 @@ public class Customer : ScriptableObject
     [TextArea(3, 8)] public string codexDescription;
     public List<FoodTaste> favoriteTastes = new();
     public List<FoodTaste> dislikedTastes = new();
-    public List<FoodType> favoriteFoods = new();
-    public List<FoodType> dislikedFoods = new();
+    public List<ItemMainCategory> favoriteFoods = new();
+    public List<ItemMainCategory> dislikedFoods = new();
     public int payable;
 
     [Header("Animations")]

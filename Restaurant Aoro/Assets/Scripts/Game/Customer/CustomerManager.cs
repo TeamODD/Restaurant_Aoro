@@ -35,6 +35,10 @@ public class CustomerManager : MonoBehaviour
     private Coroutine fillRoutine;
     private Vector3 baseScale;
 
+    [SerializeField] private PlateTile myPlateTile;
+    private Item lastServedItem;     
+    public ResultType resultTypeOnLastServe;   // 디버깅용
+
     public void Init(SpawnCustomer spawner, Vector3 stopPos, TabletState tabletState)
     {
         this.spawner = spawner;
@@ -56,6 +60,9 @@ public class CustomerManager : MonoBehaviour
 
         gaugeBG.SetActive(false);
         gaugeFilled.SetActive(false);
+
+        if (myPlateTile == null)
+            myPlateTile = GetComponentInChildren<PlateTile>(includeInactive: true);
 
         StartCoroutine(MoveToStopPosition());
     }
@@ -167,6 +174,90 @@ public class CustomerManager : MonoBehaviour
             yield return null;
         }
         gaugeFilledTransform.localScale = baseScale;
+
+        animator.Play(customerData.seatedAnim.name);
+
+        lastServedItem = myPlateTile != null ? myPlateTile.PeekItem() : null;
+        if (myPlateTile != null) myPlateTile.ClearSpriteOnly();
+
+        resultTypeOnLastServe = EvaluateResult(lastServedItem, customerData);
+
+        var click = GetComponent<CustomerClick>();
+        if (click != null) click.ShowResultExclamation();
+
+    }
+
+    public void RequestResultDialogue(bool randomPick = false)
+    {
+        var anchor = GetSpeechAnchor();
+
+        if (DialogueManager.Instance == null)
+            return;
+
+        bool shown = DialogueManager.Instance.TryPresentResult(
+            this,
+            resultTypeOnLastServe,
+            anchor,
+            randomPick
+        );
+    }
+    
+
+    private ResultType EvaluateResult(Item served, Customer cust)
+    {
+        if (served == null)
+            return ResultType.Fail;
+
+        int score = 0;
+
+        // 가중치 정의
+        const int FAVOR_TASTE = 2;
+        const int DISLIKE_TASTE = -2;
+        const int FAVOR_CATEGORY = 2;
+        const int DISLIKE_CATEGORY = -2;
+
+        if (cust.favoriteTastes != null && cust.favoriteTastes.Contains(served.Foodtaste))
+        {
+            score += FAVOR_TASTE;
+            Debug.Log($"[{cust.CustomerID}] 좋아하는 맛({served.Foodtaste}) → +{FAVOR_TASTE}");
+        }
+        else if (cust.dislikedTastes != null && cust.dislikedTastes.Contains(served.Foodtaste))
+        {
+            score += DISLIKE_TASTE;
+            Debug.Log($"[{cust.CustomerID}] 싫어하는 맛({served.Foodtaste}) → {DISLIKE_TASTE}");
+        }
+
+        if (cust.favoriteFoods != null && cust.favoriteFoods.Contains(served.ItemMainCategory))
+        {
+            score += FAVOR_CATEGORY;
+            Debug.Log($"[{cust.CustomerID}] 좋아하는 종류({served.ItemMainCategory}) → +{FAVOR_CATEGORY}");
+        }
+        else if (cust.dislikedFoods != null && cust.dislikedFoods.Contains(served.ItemMainCategory))
+        {
+            score += DISLIKE_CATEGORY;
+            Debug.Log($"[{cust.CustomerID}] 싫어하는 종류({served.ItemMainCategory}) → {DISLIKE_CATEGORY}");
+        }
+
+        if (score >= 4)
+        {
+            Debug.Log($"[{cust.CustomerID}] 결과: Perfect ({score})");
+            return ResultType.Perfect;
+        }
+        else if (score >= 2)
+        {
+            Debug.Log($"[{cust.CustomerID}] 결과: Excellent ({score})");
+            return ResultType.Excellent;
+        }
+        else if (score >= 0)
+        {
+            Debug.Log($"[{cust.CustomerID}] 결과: Success ({score})");
+            return ResultType.Success;
+        }
+        else
+        {
+            Debug.Log($"[{cust.CustomerID}] 결과: Fail ({score})");
+            return ResultType.Fail;
+        }
     }
 
     private IEnumerator MoveAndDestroy()

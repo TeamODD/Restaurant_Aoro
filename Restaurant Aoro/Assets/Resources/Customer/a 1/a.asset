@@ -19,9 +19,9 @@ MonoBehaviour:
   appearStartHour: 17
   appearEndHour: 20
   codexDescription: 
-  favoriteTastes: 
+  favoriteTastes: 00000000
   dislikedTastes: 
-  favoriteFoods: 
+  favoriteFoods: 05000000
   dislikedFoods: 
   payable: 0
   frontAnim: {fileID: 7400000, guid: f0750c496b0118644bac4b11e545c7bf, type: 2}

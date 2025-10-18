@@ -12,6 +12,8 @@ public class PlateTile : MonoBehaviour
     Vector3 baseLocalPos;
     BoxCollider2D box;
 
+    public Item PeekItem() => item;
+
     private static event Action OnServeBtn;
     public static void AddServeListener(Action listener) => OnServeBtn += listener;
     public static void RemoveServeListener(Action listener) => OnServeBtn -= listener;
@@ -43,7 +45,6 @@ public class PlateTile : MonoBehaviour
         var s = spriteRenderer.sprite;
         if (s == null) return;
 
-        // sprite.bounds는 localScale=1 기준 유니티 단위 크기
         Vector2 size = s.bounds.size;
         if (size.x <= 0f || size.y <= 0f) { spriteRenderer.transform.localScale = baseScale; return; }
 
@@ -97,5 +98,18 @@ public class PlateTile : MonoBehaviour
     {
         if (item) RemoveItem();
         else PlateManager.instance.FoodAddedToPlateTile(this);
+    }
+
+    public void ClearSpriteOnly()
+    {
+        spriteRenderer.sprite = null;
+        spriteRenderer.transform.localScale = baseScale;
+        spriteRenderer.transform.localPosition = baseLocalPos;
+
+        if (box != null)
+        {
+            box.size = Vector2.zero;
+            box.offset = Vector2.zero;
+        }
     }
 }
