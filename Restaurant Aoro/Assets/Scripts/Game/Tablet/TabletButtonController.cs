@@ -29,7 +29,6 @@ public class TabletButtonController : MonoBehaviour
         }
     }
 
-    // 좌석 클릭 함수 (UI 버튼에 연결)
     public void SeatButtonClicked(int seatIndex)
     {
         if (!tabletState.canClicked) return;

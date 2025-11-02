@@ -7,6 +7,8 @@ public class PlateTile : MonoBehaviour
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private Vector2 maxSizeOnPlate = new Vector2(0.8f, 0.8f);
 
+    private bool interactable = true;
+    public void SetInteractable(bool value) => interactable = value;
 
     Vector3 baseScale;
     Vector3 baseLocalPos;
@@ -96,6 +98,8 @@ public class PlateTile : MonoBehaviour
 
     private void OnMouseDown()
     {
+        if (!interactable) return;
+
         if (item) RemoveItem();
         else PlateManager.instance.FoodAddedToPlateTile(this);
     }

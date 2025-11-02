@@ -68,13 +68,11 @@ public class InventoryManager : MonoBehaviour
 
         if (centered) //isCentered
         {
-            // ���� ��ġ�� ����
             controller.MovePanelToCenter(offset, 0.2f);
             isCentered = false;
         }
         else
         {
-            // ī�޶� �߾����� �̵�
             controller.MovePanelToCenter(offsetCenter, 0.2f);
             isCentered = true;
         }

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CustomerID: 1
   CustomerName: jiyong
-  tribe: 0
+  tribe: 1
   NPCType: 0
   appearStartHour: 17
   appearEndHour: 20
@@ -23,7 +23,11 @@ MonoBehaviour:
   dislikedTastes: 
   favoriteFoods: 05000000
   dislikedFoods: 
-  payable: 0
+  payable: 
+  payItem:
+  - {fileID: 11400000, guid: f0ad64e262a230c439b12ccb9fa89302, type: 2}
+  - {fileID: 11400000, guid: f0ad64e262a230c439b12ccb9fa89302, type: 2}
+  - {fileID: 11400000, guid: f0ad64e262a230c439b12ccb9fa89302, type: 2}
   frontAnim: {fileID: 7400000, guid: f0750c496b0118644bac4b11e545c7bf, type: 2}
   leftAnim: {fileID: 7400000, guid: ccae1b03b6b4de14f8b194ebb834d17f, type: 2}
   rightAnim: {fileID: 7400000, guid: 5a31a9ceb97ddbd4fae06645e0be7429, type: 2}

@@ -46,7 +46,8 @@ public class Customer : ScriptableObject
     public List<FoodTaste> dislikedTastes = new();
     public List<ItemMainCategory> favoriteFoods = new();
     public List<ItemMainCategory> dislikedFoods = new();
-    public int payable;
+    public List<int> payable;
+    public List<Item> payItem;
 
     [Header("Animations")]
     public AnimationClip frontAnim;

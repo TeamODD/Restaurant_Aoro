@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEditor;
 using System;
+using UnityEngine.UI;
 
 public class CustomerManager : MonoBehaviour
 {
@@ -30,6 +31,7 @@ public class CustomerManager : MonoBehaviour
     private bool greetedOnce = false;
 
     public event Action<CustomerManager> OnSeated;
+    public static event Action<int> OnMoneyEarned;
 
     private Coroutine SeatCoroutine;
     private Coroutine fillRoutine;
@@ -38,6 +40,10 @@ public class CustomerManager : MonoBehaviour
     [SerializeField] private PlateTile myPlateTile;
     private Item lastServedItem;     
     public ResultType resultTypeOnLastServe;   // 디버깅용
+
+    private bool hasPaidOut = false;
+    private Coroutine leaveRoutine;
+    public bool IsLeaveScheduled => leaveRoutine != null || isLeaving;
 
     public void Init(SpawnCustomer spawner, Vector3 stopPos, TabletState tabletState)
     {
@@ -126,6 +132,9 @@ public class CustomerManager : MonoBehaviour
         if (isLeaving) return;
         isLeaving = true;
 
+        FreeCurrentSeat();
+
+        hasSeated = false;
         animator.Play(customerData.rightAnim.name);
 
         CustomerClick customerClick = GetComponent<CustomerClick>();
@@ -134,8 +143,46 @@ public class CustomerManager : MonoBehaviour
         StartCoroutine(MoveAndDestroy());
     }
 
+    private void FreeCurrentSeat()
+    {
+        if (tabletState == null || customerSeat == null) return;
+
+        foreach (var seatGO in tabletState.Seats)
+        {
+            if (seatGO == null) continue;
+
+            var state = seatGO.GetComponent<SeatState>();
+            if (state == null || state.SeatLocation == null) continue;
+
+            if (state.SeatLocation.transform == customerSeat)
+            {
+                state.isSeated = false;
+                state.isClicked = false;
+
+                var img = seatGO.GetComponent<Image>();
+                if (img != null && tabletState.seatBlankSprite != null)
+                    img.sprite = tabletState.seatBlankSprite;
+
+                break;
+            }
+        }
+        bool anyEmpty = false;
+        foreach (var seatGO in tabletState.Seats)
+        {
+            var st = seatGO?.GetComponent<SeatState>();
+            if (st != null && !st.isSeated) { anyEmpty = true; break; }
+        }
+        tabletState.canSeat = anyEmpty;
+    }
+
     public void StartEatingAndFill()
     {
+        if (myPlateTile != null)
+            myPlateTile.SetInteractable(false);
+
+        var customerClick = GetComponent<CustomerClick>();
+        if (customerClick != null) customerClick.SuppressForEating();
+
         Eating();     
         FillToFull();
     }
@@ -145,8 +192,8 @@ public class CustomerManager : MonoBehaviour
         idle_up.SetActive(false);
         animator.Play(customerData.eatingAnim.name);
 
-        CustomerClick customerClick = GetComponent<CustomerClick>();
-        customerClick.setCanClickFalse();
+        var customerClick = GetComponent<CustomerClick>();
+        if (customerClick != null) customerClick.SuppressForEating();
     }
 
     public void FillToFull()
@@ -174,8 +221,12 @@ public class CustomerManager : MonoBehaviour
             yield return null;
         }
         gaugeFilledTransform.localScale = baseScale;
-
+        gaugeBG.SetActive(false);
+        gaugeFilled.SetActive(false);
         animator.Play(customerData.seatedAnim.name);
+
+        var customerClick = GetComponent<CustomerClick>();
+        if (customerClick != null) customerClick.setCanClickTrue();
 
         lastServedItem = myPlateTile != null ? myPlateTile.PeekItem() : null;
         if (myPlateTile != null) myPlateTile.ClearSpriteOnly();
@@ -210,7 +261,6 @@ public class CustomerManager : MonoBehaviour
 
         int score = 0;
 
-        // 가중치 정의
         const int FAVOR_TASTE = 2;
         const int DISLIKE_TASTE = -2;
         const int FAVOR_CATEGORY = 2;
@@ -260,6 +310,119 @@ public class CustomerManager : MonoBehaviour
         }
     }
 
+    private int ResultToPayIndex(ResultType r)
+    {
+        switch (r)
+        {
+            case ResultType.Perfect:
+            case ResultType.Excellent: return 2; 
+            case ResultType.Success: return 1; 
+            case ResultType.Fail:
+            case ResultType.Late:
+            case ResultType.WrongOrder:
+            default: return 0; 
+        }
+    }
+
+    private void ResolvePayment()
+    {
+        if (customerData == null) return;
+
+        int idx = ResultToPayIndex(resultTypeOnLastServe);
+
+        if (customerData.tribe == TribeType.Human)
+        {
+            int amount = 0;
+            if (customerData.payable != null && idx >= 0 && idx < customerData.payable.Count)
+                amount = customerData.payable[idx];
+
+            if (amount > 0)
+            {
+                OnMoneyEarned?.Invoke(amount);
+                Debug.Log($"[Pay] Human paid {amount} (idx:{idx})");
+            }
+            else
+            {
+                Debug.LogWarning($"[Pay] payable[{idx}] is empty/zero. Customer:{customerData.CustomerID}");
+            }
+        }
+        else // Youkai
+        {
+            Item reward = null;
+            if (customerData.payItem != null && idx >= 0 && idx < customerData.payItem.Count)
+                reward = customerData.payItem[idx];
+
+            if (reward != null)
+            {
+                InventoryManager.instance.AddItem(reward);
+                Debug.Log($"[Pay] Youkai gave item {reward.name} (idx:{idx})");
+            }
+            else
+            {
+                Debug.LogWarning($"[Pay] payItem[{idx}] is null. Customer:{customerData.CustomerID}");
+            }
+        }
+    }
+    private Vector3 GetExitPos()
+    {
+        return new Vector3(30f, transform.position.y, transform.position.z);
+    }
+
+    private void InstantDespawn()
+    {
+        if (gaugeBG) gaugeBG.SetActive(false);
+        if (gaugeFilled) gaugeFilled.SetActive(false);
+        if (idle_up) idle_up.SetActive(false);
+
+        transform.position = GetExitPos();
+
+        Destroy(gameObject);
+    }
+    public void ConfirmResultAndLeave(float delay = 1.6f)
+    {
+        if (leaveRoutine != null) StopCoroutine(leaveRoutine);
+        leaveRoutine = StartCoroutine(ConfirmResultAndLeaveRoutine(delay));
+    }
+
+    private IEnumerator ConfirmResultAndLeaveRoutine(float delay)
+    {
+        if (delay > 0f) yield return new WaitForSeconds(delay);
+
+        ResolvePayment();
+        LeaveRestaurant();
+
+        leaveRoutine = null;
+    }
+
+    public void ForceLeaveNow()
+    {
+        if (isLeaving)
+        {
+            InstantDespawn();
+            return;
+        }
+
+        if (leaveRoutine != null)
+        {
+            StopCoroutine(leaveRoutine);
+            leaveRoutine = null;
+        }
+
+        if (!hasPaidOut)
+        {
+            ResolvePayment();
+            hasPaidOut = true;
+        }
+
+        isLeaving = true;
+        hasSeated = false;
+
+        var customerClick = GetComponent<CustomerClick>();
+        if (customerClick != null) customerClick.setCanClickFalse();
+
+        InstantDespawn();
+    }
+
     private IEnumerator MoveAndDestroy()
     {
         Vector3 exitPos = new Vector3(30f, transform.position.y, transform.position.z);
@@ -301,7 +464,13 @@ public class CustomerManager : MonoBehaviour
 
     public void ForceSeatImmediately()
     {
-        if(hasSeated == true)
+        if (IsLeaveScheduled)
+        {
+            ForceLeaveNow();
+            return;
+        }
+
+        if (hasSeated == true)
         {
             if (SeatCoroutine != null)
             {
@@ -316,13 +485,11 @@ public class CustomerManager : MonoBehaviour
             idle_up.SetActive(true);
             animator_idle_up.Play(customerData.upAnim.name);
             CustomerClick customerClick = GetComponent<CustomerClick>();
-            //customerClick.setCanClickTrue();
             hasSeated = true;            
             OnSeated?.Invoke(this);
             customerClick.setSeatedTrue();
         }
     }
-
     public bool GetHasSeated()
     {
         return hasSeated;

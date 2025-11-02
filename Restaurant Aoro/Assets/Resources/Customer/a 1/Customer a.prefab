@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 3191016604242318182}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2.9999998, y: 5.67, z: -0.2}
+  m_LocalPosition: {x: -2.9999998, y: 5.67, z: -0.3}
   m_LocalScale: {x: 6, y: 1, z: 0.33333334}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -203,6 +203,8 @@ MonoBehaviour:
   gaugeFilled: {fileID: 3191016604242318182}
   gaugeFilledTransform: {fileID: 7843048610208991260}
   fillSpeed: 0.1
+  myPlateTile: {fileID: 0}
+  resultTypeOnLastServe: 0
 --- !u!61 &-8520623053444044722
 BoxCollider2D:
   m_ObjectHideFlags: 0

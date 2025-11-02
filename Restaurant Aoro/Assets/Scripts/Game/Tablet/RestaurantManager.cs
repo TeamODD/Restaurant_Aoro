@@ -15,12 +15,15 @@ public class RestaurantManager : MonoBehaviour
 
     private int acceptedCustomer;
 
+    private int currentMoney = 0;
+
     private void OnEnable()
     {
         CustomerManager.OnAnyCustomerAccepted += HandleAccepted;
         ReputationState.OnReputationChanged += UpdateReputationIcon;
         PlateTile.AddServeListener(OnServeBtn);
         InventoryController.AddOffServeListener(OffServeBtn);
+        CustomerManager.OnMoneyEarned += HandleMoneyEarned;
     }
 
     private void OnDisable()
@@ -29,6 +32,7 @@ public class RestaurantManager : MonoBehaviour
         ReputationState.OnReputationChanged -= UpdateReputationIcon;
         PlateTile.RemoveServeListener(OnServeBtn);
         InventoryController.RemoveOffServeListener(OffServeBtn);
+        CustomerManager.OnMoneyEarned -= HandleMoneyEarned;
     }
 
     private void HandleAccepted()
@@ -56,5 +60,22 @@ public class RestaurantManager : MonoBehaviour
     private void OffServeBtn()
     {
         ServeBtn.gameObject.SetActive(false);
+    }
+
+    private void HandleMoneyEarned(int amount)
+    {
+        AddMoney(amount);
+    }
+
+    private void AddMoney(int amount)
+    {
+        if (amount <= 0) return;
+        currentMoney += amount;
+        UpdateCreditText();
+    }
+
+    private void UpdateCreditText()
+    {
+        CreditText.text = currentMoney.ToString("N0");
     }
 }

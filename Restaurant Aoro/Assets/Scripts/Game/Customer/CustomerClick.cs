@@ -158,6 +158,22 @@ public class CustomerClick : MonoBehaviour
         exclamationRoutine = null;
     }
 
+    public void SuppressForEating()
+    {
+        canClick = false;
+
+        if (exclamationRoutine != null)
+        {
+            StopCoroutine(exclamationRoutine);
+            exclamationRoutine = null;
+        }
+
+        if (exclamation != null) exclamation.SetActive(false);
+
+        SetColliderEnabled(false);
+    }
+    public void SetColliderEnabledPublic(bool enabled) => SetColliderEnabled(enabled);
+
     private void OnMouseDown()
     {
         if (Time.unscaledTime - lastClickTime < clickDebounce) return;
@@ -186,7 +202,8 @@ public class CustomerClick : MonoBehaviour
             if (cm != null)
             {
                 cm.RequestResultDialogue();
-                cm.StartCoroutine(LeaveAfterDelay(cm, 2f));
+                cm.ConfirmResultAndLeave(1.6f);
+                //cm.StartCoroutine(LeaveAfterDelay(cm, 2f));
             }
             return;
         }
