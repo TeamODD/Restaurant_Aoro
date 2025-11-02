@@ -1507,6 +1507,7 @@ MonoBehaviour:
   isTabletClicked: 0
   canClicked: 1
   canSeat: 0
+  seatBlankSprite: {fileID: 0}
 --- !u!1 &118085144
 GameObject:
   m_ObjectHideFlags: 0
@@ -11816,6 +11817,7 @@ MonoBehaviour:
   isTabletClicked: 0
   canClicked: 1
   canSeat: 0
+  seatBlankSprite: {fileID: 3501914021870339875, guid: c549953ce1a5b46488c89c553aafd061, type: 3}
 --- !u!224 &1470087777
 RectTransform:
   m_ObjectHideFlags: 0
