@@ -4,6 +4,13 @@ using UnityEngine.UI;
 
 public class RestaurantManager : MonoBehaviour
 {
+    [Header("UI Buttons")]
+    public Button openButton;
+    public Button closeButton;
+
+    [Header("Spawner")]
+    public SpawnCustomer spawnCustomer;
+
     public GameObject Tablet3;
     public TMP_Text VisitingText;
     public TMP_Text CreditText;
@@ -14,8 +21,16 @@ public class RestaurantManager : MonoBehaviour
     public ReputationState ReputationState;
 
     private int acceptedCustomer;
-
     private int currentMoney = 0;
+    private bool isOpen = false;
+    public bool IsOpen() => isOpen;
+
+    private void Start()
+    {
+        isOpen = false;
+        openButton.onClick.AddListener(OpenRestaurant);
+        closeButton.onClick.AddListener(CloseRestaurant);
+    }
 
     private void OnEnable()
     {
@@ -33,6 +48,30 @@ public class RestaurantManager : MonoBehaviour
         PlateTile.RemoveServeListener(OnServeBtn);
         InventoryController.RemoveOffServeListener(OffServeBtn);
         CustomerManager.OnMoneyEarned -= HandleMoneyEarned;
+    }
+
+    private void OpenRestaurant()
+    {
+        if (isOpen) return;
+        isOpen = true;
+
+        Debug.Log("°¡°Ô ¿­¸²");
+        spawnCustomer.StartCustomerFlow();
+
+        openButton.interactable = false;
+        closeButton.interactable = true;
+    }
+
+    private void CloseRestaurant()
+    {
+        if (!isOpen) return;
+        isOpen = false;
+
+        Debug.Log("°¡°Ô ´ÝÈû");
+        spawnCustomer.StopCustomerFlow();
+
+        openButton.interactable = true;
+        closeButton.interactable = false;
     }
 
     private void HandleAccepted()

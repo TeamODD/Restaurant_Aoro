@@ -28,25 +28,47 @@ public class SpawnCustomer : MonoBehaviour
     private GameObject currentCustomer;
     private bool isSpawning = false;
 
-    void Start()
+    private bool allowSpawning = false;
+    private Coroutine spawnLoopCo = null;
+    private Coroutine spawnDelayCo = null;
+
+    public void StartCustomerFlow()
     {
-        StartCoroutine(SpawnLoop());
+        allowSpawning = true;
+        if (spawnLoopCo == null)
+            spawnLoopCo = StartCoroutine(SpawnLoop());
+    }
+
+    public void StopCustomerFlow()
+    {
+        allowSpawning = false;
+
+        if (spawnDelayCo != null)
+        {
+            StopCoroutine(spawnDelayCo);
+            spawnDelayCo = null;
+        }
+
+        if (spawnLoopCo != null)
+        {
+            StopCoroutine(spawnLoopCo);
+            spawnLoopCo = null;
+        }
+
+        isSpawning = false;
     }
 
     private IEnumerator SpawnLoop()
     {
-        while (true)
+        while (allowSpawning)
         {
-            if (currentCustomer == null && !isSpawning && tabletState.canSeat)
+            if (allowSpawning && currentCustomer == null && !isSpawning && tabletState.canSeat)
             {
-                float delay = Random.Range(0.5f, 3f); //2second to 10second spawn time
-                yield return new WaitForSeconds(delay);
-                TrySpawnCustomer();
+                float delay = Random.Range(0.5f, 3f);
+                if (spawnDelayCo == null)
+                    spawnDelayCo = StartCoroutine(SpawnAfterDelay(delay));
             }
-            else
-            {
-                yield return null;
-            }
+            yield return null;
         }
     }
 
@@ -62,6 +84,19 @@ public class SpawnCustomer : MonoBehaviour
     {
         isSpawning = true;
         yield return new WaitForSeconds(delay);
+
+        float t = 0f;
+        while (t < delay)
+        {
+            if (!allowSpawning) 
+            {
+                isSpawning = false;
+                spawnDelayCo = null;
+                yield break;
+            }
+            t += Time.deltaTime;
+            yield return null;
+        }
 
         int randomIndex = Random.Range(0, customerPrefabs.Length);
         GameObject randomCustomer = customerPrefabs[randomIndex];
