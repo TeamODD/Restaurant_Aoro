@@ -14669,6 +14669,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0d4ab91f4045a348aa155446bdf0002, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  openButton: {fileID: 903819048}
+  closeButton: {fileID: 1946275681}
+  spawnCustomer: {fileID: 1782296690}
   Tablet3: {fileID: 1033617729}
   VisitingText: {fileID: 1495557948}
   CreditText: {fileID: 2132450540}
