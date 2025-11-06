@@ -232,4 +232,5 @@ public class DialogueManager : MonoBehaviour
         foreach (var s in lines)
             if (!string.IsNullOrWhiteSpace(s)) q.Enqueue(s.Trim());
     }
+
 }

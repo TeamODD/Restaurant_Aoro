@@ -490,6 +490,50 @@ public class CustomerManager : MonoBehaviour
             customerClick.setSeatedTrue();
         }
     }
+
+    public void ForceCloseAndLeaveUnhappy()
+    {
+        if (isLeaving) return;
+
+        spawner?.ClearCurrentCustomer();
+
+        if (leaveRoutine != null) { StopCoroutine(leaveRoutine); leaveRoutine = null; }
+        if (SeatCoroutine != null) { StopCoroutine(SeatCoroutine); SeatCoroutine = null; }
+        if (fillRoutine != null) { StopCoroutine(fillRoutine); fillRoutine = null; }
+
+        if (speechAnchor != null)
+        {
+            foreach (Transform child in speechAnchor)
+            {
+                if (child != null) child.gameObject.SetActive(false);
+            }
+        }
+
+        if (gaugeBG) gaugeBG.SetActive(false);
+        if (gaugeFilled) gaugeFilled.SetActive(false);
+        if (idle_up) idle_up.SetActive(false);
+        if (Plate) Plate.SetActive(false);
+
+        if (myPlateTile != null)
+        {
+            myPlateTile.ClearSpriteOnly();
+            myPlateTile.SetInteractable(false);
+        }
+
+        resultTypeOnLastServe = ResultType.Fail;
+
+        var click = GetComponent<CustomerClick>();
+
+        FreeCurrentSeat();
+
+        isLeaving = true;
+        hasSeated = false;
+        animator.Play(customerData.rightAnim.name);
+
+        StartCoroutine(MoveAndDestroy());
+
+        hasPaidOut = true;
+    }
     public bool GetHasSeated()
     {
         return hasSeated;

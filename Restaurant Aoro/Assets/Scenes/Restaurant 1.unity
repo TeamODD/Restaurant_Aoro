@@ -14671,6 +14671,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   openButton: {fileID: 903819048}
   closeButton: {fileID: 1946275681}
+  closeButtonLabel: {fileID: 728860187}
+  Dialogue: {fileID: 1879352774}
   spawnCustomer: {fileID: 1782296690}
   Tablet3: {fileID: 1033617729}
   VisitingText: {fileID: 1495557948}
