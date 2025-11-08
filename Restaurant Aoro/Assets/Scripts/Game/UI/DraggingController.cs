@@ -9,6 +9,8 @@ public class DraggingController : SlidingController, IDragHandler, IEndDragHandl
     
     private void Start()
     {
+        isDraggable = false;
+        
         for (int i = 0; i < 2; i++)
         {
             objectTransforms.Add(transform);
@@ -25,8 +27,6 @@ public class DraggingController : SlidingController, IDragHandler, IEndDragHandl
     
     public virtual void OnEndDrag(PointerEventData eventData)
     {
-        if (!isDraggable) return;
-
         isDragging = false;
         SlideIn();
     }

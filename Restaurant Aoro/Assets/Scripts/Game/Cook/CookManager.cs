@@ -80,6 +80,8 @@ namespace Game.Cook
                     cookBtn.gameObject.SetActive(true);
                     cookBtn.SlideIn(true);
                 }
+                
+                inventoryManager.EnableDrag();
             });
 
             inventoryManager.OnClickToggleInventoryPosition();
@@ -161,6 +163,8 @@ namespace Game.Cook
         {
             if (isWorking) return;
 
+            inventoryManager.DisableDrag();
+            
             isWorking = true;
 
             cookBtn.SlideOut(false, () =>
@@ -180,6 +184,18 @@ namespace Game.Cook
                         menuBtnOnHold = null;
                 
                         StartCoroutine(CookingCoroutine(cookItem));
+                        
+                        foreach (var cookTile in cookTiles)
+                        {
+                            cookTile.RemoveItemWithoutAdding();
+                        }
+                    }
+                    else
+                    {
+                        foreach (var cookTile in cookTiles)
+                        {
+                            cookTile.RemoveItem();
+                        }
                     }
                     
                     foreach (var btn in cookMenuBtns)
@@ -190,14 +206,7 @@ namespace Game.Cook
                         {
                             if (!Mathf.Approximately(btn.GetComponent<SpriteRenderer>().color.a, 1))
                             {
-                                btn.GetComponent<FadingController>().FadeIn(true, () =>
-                                {
-                                    foreach (var cookTile in cookTiles)
-                                    {
-                                        if(!cookItem) cookTile.RemoveItem();
-                                        else cookTile.RemoveItemWithoutAdding();
-                                    }
-                                });
+                                btn.GetComponent<FadingController>().FadeIn();
                             }
                         });
                     }

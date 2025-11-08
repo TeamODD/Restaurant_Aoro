@@ -20,7 +20,6 @@ namespace Game.Cook
             sr = GetComponent<SpriteRenderer>();
             barOrgScale = cookingBar.localScale;
             cookingBar.gameObject.SetActive(false);
-            cookingIndicator.gameObject.SetActive(false);
         }
 
         public void PrepareCook()
@@ -38,7 +37,7 @@ namespace Game.Cook
             cooking = true;
             PrepareCook();
             cookingBar.gameObject.SetActive(true);
-            cookingIndicator.gameObject.SetActive(true);
+            cookingIndicator.GetComponent<FadingController>().FadeIn();
             cookingIndicator.SetBool("Cooking!", true);
             CookManager.instance.StartCoroutine(ProceedCookingBar(cookingTime));
             CookManager.instance.StartCoroutine(ColorAlpha());
@@ -69,9 +68,9 @@ namespace Game.Cook
 
         private void FinishCook()
         {
-            EndCook();
+            //EndCook();
             cookingIndicator.SetBool("Cooking!", false);
-            cookingBar.gameObject.SetActive(false);
+            //cookingBar.gameObject.SetActive(false);
             cooking = false;
         }
 

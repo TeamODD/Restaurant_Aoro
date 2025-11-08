@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class InventoryUIController : MonoBehaviour
@@ -16,21 +17,24 @@ public class InventoryUIController : MonoBehaviour
 
     public void AddItemToInventory(Item item)
     {
-        if (item.ItemType == ItemType.Food)
+        switch (item.ItemType)
         {
-            // FoodPanel (slot1Prefab)
-            InstantiateSlot(slot1Prefab, foodPanelContent, item);
+            case ItemType.Food:
+                // FoodPanel (slot1Prefab)
+                InstantiateSlot(slot1Prefab, foodPanelContent, item);
 
-            // FoodInventory (slot2Prefab)
-            InstantiateSlot(slot2Prefab, foodInventoryContent, item);
-        }
-        else if (item.ItemType == ItemType.Ingredient)
-        {
-            // IngredientPanel (slot1Prefab)
-            InstantiateSlot(slot1Prefab, ingredientPanelContent, item);
+                // FoodInventory (slot2Prefab)
+                InstantiateSlot(slot2Prefab, foodInventoryContent, item);
+                break;
+            case ItemType.Ingredient:
+                // IngredientPanel (slot1Prefab)
+                InstantiateSlot(slot1Prefab, ingredientPanelContent, item);
 
-            // IngredientInventory (slot2Prefab)
-            InstantiateSlot(slot2Prefab, ingredientInventoryContent, item);
+                // IngredientInventory (slot2Prefab)
+                InstantiateSlot(slot2Prefab, ingredientInventoryContent, item);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
         }
     }
 

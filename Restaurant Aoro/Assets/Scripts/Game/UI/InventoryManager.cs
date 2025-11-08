@@ -97,4 +97,34 @@ public class InventoryManager : MonoBehaviour
         panelObjects[1].SetActive(true);
         panelObjects[2].SetActive(false);
     }
+
+    public void EnableDrag()
+    {
+        var foodPanel = uiController.foodPanelContent;
+        var igPanel = uiController.ingredientPanelContent;
+
+        foreach (var panel in foodPanel.GetComponentsInChildren<DraggingController>())
+        {
+            panel.isDraggable = true;
+        }
+        foreach (var panel in igPanel.GetComponentsInChildren<DraggingController>())
+        {
+            panel.isDraggable = true;
+        }
+    }
+
+    public void DisableDrag()
+    {
+        var foodPanel = uiController.foodPanelContent;
+        var igPanel = uiController.ingredientPanelContent;
+
+        foreach (var panel in foodPanel.GetComponentsInChildren<DraggingController>())
+        {
+            panel.isDraggable = false;
+        }
+        foreach (var panel in igPanel.GetComponentsInChildren<DraggingController>())
+        {
+            panel.isDraggable = false;
+        }
+    }
 }
