@@ -2,6 +2,8 @@
 <project version="4">
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/Assets/Editor/SceneParameterEditor.cs" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/Assets/Scripts/Game/Customer/CustomerClick.cs" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/Assets/Scripts/Game/Customer/CustomerManager.cs" charset="ISO-8859-1" />
     <file url="file://$PROJECT_DIR$/Assets/Scripts/Game/Dialogue/DialogueManager.cs" charset="ISO-8859-1" />
     <file url="file://$PROJECT_DIR$/Assets/Scripts/Game/GameManager.cs" charset="ISO-8859-1" />
     <file url="file://$PROJECT_DIR$/Assets/Scripts/Game/UI/ArrowController.cs" charset="ISO-8859-1" />
