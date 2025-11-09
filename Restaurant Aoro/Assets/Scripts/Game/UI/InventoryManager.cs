@@ -102,12 +102,22 @@ public class InventoryManager : MonoBehaviour
     {
         var foodPanel = uiController.foodPanelContent;
         var igPanel = uiController.ingredientPanelContent;
+        var foodInven = panelObjects[1];
+        var igInven = panelObjects[2];
 
         foreach (var panel in foodPanel.GetComponentsInChildren<DraggingController>())
         {
             panel.isDraggable = true;
         }
         foreach (var panel in igPanel.GetComponentsInChildren<DraggingController>())
+        {
+            panel.isDraggable = true;
+        }
+        foreach (var panel in foodInven.GetComponentsInChildren<DraggingController>())
+        {
+            panel.isDraggable = true;
+        }
+        foreach (var panel in igInven.GetComponentsInChildren<DraggingController>())
         {
             panel.isDraggable = true;
         }
@@ -117,12 +127,22 @@ public class InventoryManager : MonoBehaviour
     {
         var foodPanel = uiController.foodPanelContent;
         var igPanel = uiController.ingredientPanelContent;
+        var foodInven = panelObjects[1];
+        var igInven = panelObjects[2];
 
         foreach (var panel in foodPanel.GetComponentsInChildren<DraggingController>())
         {
             panel.isDraggable = false;
         }
         foreach (var panel in igPanel.GetComponentsInChildren<DraggingController>())
+        {
+            panel.isDraggable = false;
+        }
+        foreach (var panel in foodInven.GetComponentsInChildren<DraggingController>())
+        {
+            panel.isDraggable = false;
+        }
+        foreach (var panel in igInven.GetComponentsInChildren<DraggingController>())
         {
             panel.isDraggable = false;
         }

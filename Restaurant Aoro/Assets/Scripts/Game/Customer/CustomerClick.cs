@@ -290,9 +290,9 @@ public class CustomerClick : MonoBehaviour
         );
 
         LockToThis();
-        if (backBtn != null) backBtn.SlideIn();   
         if (Invmanager != null) Invmanager.ChangeToFoodInventory();
-
+        if (backBtn != null) backBtn.SlideIn();
+        StartCoroutine(EnableDragAfterInventorySwap());
         zoomed = true;
     }
 
@@ -302,6 +302,8 @@ public class CustomerClick : MonoBehaviour
 
         if (zoomed)
         {
+            Invmanager.DisableDrag();
+
             invController.ResetFromCenterWithCamera(
                 mainCam,
                 zoomOutSize,
@@ -312,7 +314,7 @@ public class CustomerClick : MonoBehaviour
             );
             UnlockAll();
             backBtn.SlideOut(true);
-            zoomed = false;
+            zoomed = false;  
         }
     }
 
@@ -411,9 +413,15 @@ public class CustomerClick : MonoBehaviour
         LockToThis();
         if (backBtn != null) backBtn.SlideIn();
         zoomed = true;
-
+        StartCoroutine(EnableDragAfterInventorySwap());
     }
+    private IEnumerator EnableDragAfterInventorySwap()
+    {
+        yield return null;
+        yield return new WaitForEndOfFrame();
 
+        Invmanager?.EnableDrag();
+    }
     public void ShowResultExclamation()
     {
         awaitingResult = true;

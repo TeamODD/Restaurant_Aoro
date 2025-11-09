@@ -6377,7 +6377,7 @@ MonoBehaviour:
   - {fileID: 2018043158}
   cookBtn: {fileID: 1821848976}
   tileOverlay: {fileID: 1163602097}
-  cookingTime: 5
+  cookingTime: 60
 --- !u!1 &792616877
 GameObject:
   m_ObjectHideFlags: 0
@@ -9516,13 +9516,14 @@ GameObject:
   - component: {fileID: 1143019624}
   - component: {fileID: 1143019625}
   - component: {fileID: 1143019626}
+  - component: {fileID: 1143019627}
   m_Layer: 5
   m_Name: Cooking Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1143019624
 Transform:
   m_ObjectHideFlags: 0
@@ -9618,6 +9619,21 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1143019627
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1143019623}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2877a01fff884a728b01ce7f478b2f09, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.UI.FadingController
+  _objects:
+  - {fileID: 1143019623}
+  _duration: 2
 --- !u!1 &1143776145
 GameObject:
   m_ObjectHideFlags: 0
@@ -10323,13 +10339,14 @@ GameObject:
   - component: {fileID: 1238135530}
   - component: {fileID: 1238135531}
   - component: {fileID: 1238135532}
+  - component: {fileID: 1238135533}
   m_Layer: 5
   m_Name: Cooking Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1238135530
 Transform:
   m_ObjectHideFlags: 0
@@ -10425,6 +10442,21 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1238135533
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1238135529}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2877a01fff884a728b01ce7f478b2f09, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.UI.FadingController
+  _objects:
+  - {fileID: 1238135529}
+  _duration: 2
 --- !u!1 &1245149748
 GameObject:
   m_ObjectHideFlags: 0
@@ -11161,13 +11193,14 @@ GameObject:
   - component: {fileID: 1311353027}
   - component: {fileID: 1311353028}
   - component: {fileID: 1311353029}
+  - component: {fileID: 1311353030}
   m_Layer: 5
   m_Name: Cooking Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1311353027
 Transform:
   m_ObjectHideFlags: 0
@@ -11263,6 +11296,21 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1311353030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1311353026}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2877a01fff884a728b01ce7f478b2f09, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.UI.FadingController
+  _objects:
+  - {fileID: 1311353026}
+  _duration: 2
 --- !u!1 &1352007570
 GameObject:
   m_ObjectHideFlags: 0
@@ -13461,13 +13509,14 @@ GameObject:
   - component: {fileID: 1572531883}
   - component: {fileID: 1572531884}
   - component: {fileID: 1572531885}
+  - component: {fileID: 1572531886}
   m_Layer: 5
   m_Name: Cooking Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1572531883
 Transform:
   m_ObjectHideFlags: 0
@@ -13563,6 +13612,21 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1572531886
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1572531882}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2877a01fff884a728b01ce7f478b2f09, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.UI.FadingController
+  _objects:
+  - {fileID: 1572531882}
+  _duration: 2
 --- !u!1 &1598814291
 GameObject:
   m_ObjectHideFlags: 0
@@ -16314,7 +16378,7 @@ MonoBehaviour:
   maxWidth: 500
   minBubbleWidth: 140
   minBubbleHeight: 64
-  clickBlocker: {fileID: 0}
+  clickBlocker: {fileID: 1001997713}
   closeOnBlockerClick: 1
   useInternalClick: 0
   tail: {fileID: 662501419}
