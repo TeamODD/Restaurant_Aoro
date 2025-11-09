@@ -12,7 +12,7 @@ namespace Game.Cook
         [SerializeField] private Sprite cookingSprite, notCookingSprite;
         private Vector3 barOrgScale;
         public Transform backgroundPosition;
-        private bool cooking;
+        private bool cooking, cookFinish;
         private SpriteRenderer sr;
 
         private void Start()
@@ -20,6 +20,7 @@ namespace Game.Cook
             sr = GetComponent<SpriteRenderer>();
             barOrgScale = cookingBar.localScale;
             cookingBar.gameObject.SetActive(false);
+            cookingIndicator.gameObject.SetActive(false);
         }
 
         public void PrepareCook()
@@ -29,7 +30,10 @@ namespace Game.Cook
 
         public void EndCook()
         {
+            cookFinish = false;
             sr.sprite = notCookingSprite;
+            cookingBar.gameObject.SetActive(false);
+            cookingIndicator.gameObject.SetActive(false);
         }
 
         public void StartCookingBar(float cookingTime)
@@ -37,19 +41,20 @@ namespace Game.Cook
             cooking = true;
             PrepareCook();
             cookingBar.gameObject.SetActive(true);
-            cookingIndicator.GetComponent<FadingController>().FadeIn();
+            cookingIndicator.gameObject.SetActive(true);
+            CookManager.instance.StartCoroutine(ColorAlpha(cookingIndicator.gameObject));
             cookingIndicator.SetBool("Cooking!", true);
             CookManager.instance.StartCoroutine(ProceedCookingBar(cookingTime));
-            CookManager.instance.StartCoroutine(ColorAlpha());
+            CookManager.instance.StartCoroutine(ColorAlpha(cookingBar.gameObject));
         }
 
-        private IEnumerator ColorAlpha()
+        private IEnumerator ColorAlpha(GameObject obj)
         {
             var sr = GetComponent<SpriteRenderer>();
 
             while (cooking)
             {
-                cookingBar.GetComponent<SpriteRenderer>().color = sr.color;
+                obj.GetComponent<SpriteRenderer>().color = sr.color;
                 yield return null;
             }
         }
@@ -72,11 +77,18 @@ namespace Game.Cook
             cookingIndicator.SetBool("Cooking!", false);
             //cookingBar.gameObject.SetActive(false);
             cooking = false;
+            cookFinish = true;
         }
 
         private void OnMouseDown()
         {
             if (cooking) return;
+            
+            if (cookFinish)
+            {
+                EndCook();
+                return;
+            }
 
             var con = CookManager.instance.PrepareBackground(this);
             if (con) SlideIn(true, () => StartCoroutine(SlideHelper()));
