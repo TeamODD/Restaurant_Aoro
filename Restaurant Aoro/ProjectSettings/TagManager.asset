@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Cook
   - SubCamera
+  - Plate
   layers:
   - Default
   - TransparentFX

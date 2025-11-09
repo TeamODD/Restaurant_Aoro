@@ -13,6 +13,8 @@ public class CustomerClick : MonoBehaviour
     private static readonly List<CustomerClick> All = new List<CustomerClick>();
     private static CustomerClick s_locked;
 
+    
+
     private CustomerManager manager;
     private InventoryManager Invmanager;
     private TabletState tablet;
@@ -46,7 +48,10 @@ public class CustomerClick : MonoBehaviour
     private float clickDebounce = 2f; // 선택: 너무 빠른 중복 클릭 억제
     private float lastClickTime = -999f;
 
-    // ====== 라이프사이클: 전역 목록 관리 ======
+    private Coroutine foldRoutine;
+
+    private bool awaitingResult = false;
+
     private void OnEnable()
     {
         if (!All.Contains(this)) All.Add(this);
@@ -57,6 +62,7 @@ public class CustomerClick : MonoBehaviour
         if (s_locked == this) UnlockAll();
         if (manager != null) manager.OnSeated -= HandleSeated;
     }
+    
 
     public void Setup(
         CustomerManager m,
@@ -127,11 +133,10 @@ public class CustomerClick : MonoBehaviour
     }
     private void HandleSeated(CustomerManager cm)
     {
-        if (cm != manager) return;   // 안전: 내 매니저가 아닐 경우 무시
+        if (cm != manager) return;
         if (exclamationShownOnce) return;
         isSeated = true;
 
-        // 기존 pending 코루틴이 있으면 정리
         if (exclamationRoutine != null)
         {
             StopCoroutine(exclamationRoutine);
@@ -153,6 +158,22 @@ public class CustomerClick : MonoBehaviour
         exclamationRoutine = null;
     }
 
+    public void SuppressForEating()
+    {
+        canClick = false;
+
+        if (exclamationRoutine != null)
+        {
+            StopCoroutine(exclamationRoutine);
+            exclamationRoutine = null;
+        }
+
+        if (exclamation != null) exclamation.SetActive(false);
+
+        SetColliderEnabled(false);
+    }
+    public void SetColliderEnabledPublic(bool enabled) => SetColliderEnabled(enabled);
+
     private void OnMouseDown()
     {
         if (Time.unscaledTime - lastClickTime < clickDebounce) return;
@@ -171,6 +192,22 @@ public class CustomerClick : MonoBehaviour
         if (exclamation != null && exclamation.activeSelf)
             exclamation.SetActive(false);
 
+        if (awaitingResult)
+        {
+            if (exclamation != null && exclamation.activeSelf)
+                exclamation.SetActive(false);
+
+            awaitingResult = false;
+
+            if (cm != null)
+            {
+                cm.RequestResultDialogue();
+                cm.ConfirmResultAndLeave(1.6f);
+                //cm.StartCoroutine(LeaveAfterDelay(cm, 2f));
+            }
+            return;
+        }
+
         if (invController != null && invController.IsAnimating)
         {
             if (!pendingZoomIn) pendingRoutine = StartCoroutine(WaitAndZoomIn(cm, anchor));
@@ -186,6 +223,28 @@ public class CustomerClick : MonoBehaviour
         TryZoomInAndOpen();
     }
 
+    private IEnumerator LeaveAfterDelay(CustomerManager cm, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        cm.LeaveRestaurant();
+    }
+
+    public static void ServeLockedCustomer()
+    {
+        if (s_locked == null) return;
+        s_locked.ServeAndExit();
+    }
+    public void ServeAndExit()
+    {
+        var cm = manager != null ? manager : GetComponent<CustomerManager>();
+        if (cm != null)
+        {
+            cm.StartEatingAndFill();
+            InventoryController.InvokeServe();
+        }
+
+        ExitFocus();
+    }
     private IEnumerator WaitAndZoomIn(CustomerManager cm, Transform anchor)
     {
         pendingZoomIn = true;
@@ -210,6 +269,14 @@ public class CustomerClick : MonoBehaviour
     private void TryZoomInAndOpen()
     {
         if (zoomed) return;
+
+        if (invController != null && invController.IsInventoryOpen)
+        {
+            if (foldRoutine != null) StopCoroutine(foldRoutine);
+            foldRoutine = StartCoroutine(FoldThenZoomIn());
+            return;
+        }
+
         invController.ZoomAndFrameTargetLeftCenter(
             mainCam,
             transform,
@@ -229,10 +296,9 @@ public class CustomerClick : MonoBehaviour
         zoomed = true;
     }
 
-    private void OnBackButtonClick()
+    private void ExitFocus()
     {
         if (pendingRoutine != null) { StopCoroutine(pendingRoutine); pendingRoutine = null; pendingZoomIn = false; }
-
 
         if (zoomed)
         {
@@ -248,6 +314,32 @@ public class CustomerClick : MonoBehaviour
             backBtn.SlideOut(true);
             zoomed = false;
         }
+    }
+
+    private void OnBackButtonClick()
+    {
+        if (pendingRoutine != null) { StopCoroutine(pendingRoutine); pendingRoutine = null; pendingZoomIn = false; }
+
+        if (PlateManager.instance != null)
+            PlateManager.instance.RemoveAllFromPlate();
+
+        InventoryController.InvokeServe();
+
+        if (zoomed)
+        {
+            invController.ResetFromCenterWithCamera(
+                mainCam,
+                zoomOutSize,
+                zoomDuration,
+                moveDuration,
+                arrowGroups,
+                true
+            );
+            UnlockAll();
+            backBtn.SlideOut(true);
+            zoomed = false;
+        }
+
     }
 
     private void LockToThis()
@@ -283,4 +375,57 @@ public class CustomerClick : MonoBehaviour
         var col3d = GetComponent<Collider>();
         if (col3d != null) { col3d.enabled = enabled; }
     }
+
+    private IEnumerator FoldThenZoomIn()
+    {
+        float half = Mathf.Max(0.01f, moveDuration * 0.5f);
+
+        if (invController != null && invController.IsInventoryOpen)
+        {
+            invController.MovePanelToCenter(centerOffset, half);
+
+            while (invController != null && invController.IsAnimating)
+                yield return null;
+        }
+
+        if (Invmanager != null)
+            Invmanager.ChangeToFoodInventory();
+        yield return new WaitForEndOfFrame();
+
+        invController.ZoomAndFrameTargetLeftCenter(
+            mainCam,
+            transform,
+            zoomInSize,
+            zoomDuration,
+            centerOffset,  
+            half,           
+            arrowGroups,
+            true,
+            viewportX,
+            viewportY
+        );
+
+        while (invController != null && invController.IsAnimating)
+            yield return null;
+
+        LockToThis();
+        if (backBtn != null) backBtn.SlideIn();
+        zoomed = true;
+
+    }
+
+    public void ShowResultExclamation()
+    {
+        awaitingResult = true;
+
+        if (exclamationRoutine != null)
+        {
+            StopCoroutine(exclamationRoutine);
+            exclamationRoutine = null;
+        }
+
+        if (exclamation != null) exclamation.SetActive(true);
+        canClick = true;
+    }
+
 }

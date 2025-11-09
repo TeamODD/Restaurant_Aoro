@@ -1,10 +1,14 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 using System.Collections;
+using System.Linq;
+using System.Collections.Generic;
 
 public class InventoryController : MonoBehaviour
 {
     public InventoryManager invmanager;
+    public bool IsInventoryOpen => isArrowCentered;
     private RectTransform[] panels;
     private Vector2 currentOffset;
     private RectTransform rightArrow { get; set; }
@@ -15,11 +19,15 @@ public class InventoryController : MonoBehaviour
     private Coroutine focusRoutine;
     private Vector3 originalCamPos;
 
+    private HashSet<CanvasGroup> _lastOpaqueArrows;
+
     public Vector2 BaseOffset { get; private set; }
     public Vector2 CurrentOffset => currentOffset;
     public bool IsAnimating { get; private set; }
 
     public void SetIsAnimating(bool value) => IsAnimating = value;
+
+    private static event Action OffServeBtn;
 
     public void Initialize(RectTransform[] panelRects, Vector2 positionOffset)
     {
@@ -27,6 +35,10 @@ public class InventoryController : MonoBehaviour
         currentOffset = positionOffset;
         BaseOffset = positionOffset;
     }
+    
+    public static void AddOffServeListener(Action listener) => OffServeBtn += listener;
+    public static void RemoveOffServeListener(Action lister) => OffServeBtn -= lister;
+    public static void InvokeServe() => OffServeBtn?.Invoke();
 
     public bool GetArrowCentered() => isArrowCentered;
 
@@ -148,6 +160,10 @@ public class InventoryController : MonoBehaviour
         // 1) È­»ìÇ¥ ÆäÀÌµå¾Æ¿ô & ºñÈ°¼ºÈ­
         if (arrowGroups != null)
         {
+            _lastOpaqueArrows = new HashSet<CanvasGroup>(
+                arrowGroups.Where(cg => cg != null && cg.alpha >= 0.99f)
+            );
+
             foreach (var cg in arrowGroups)
                 if (cg != null) StartCoroutine(FadeCanvasGroup(cg, 0f, 0.25f));
             if (deactivateArrows)
@@ -160,6 +176,10 @@ public class InventoryController : MonoBehaviour
         // 3) Ä«¸Þ¶ó ÆÒ + ÁÜ (Å¸±êÀ» ºäÆ÷Æ® ÁÂÇ¥ (viewportX, viewportY)¿¡ ¿Àµµ·Ï)
         if (cam != null && target != null)
             yield return StartCoroutine(PanAndZoomCameraToViewport(cam, target.position, targetZoom, duration, viewportX, viewportY));
+
+        while (IsAnimating)
+            yield return null;
+
     }
 
     private IEnumerator PanAndZoomCameraToViewport(
@@ -227,6 +247,8 @@ public class InventoryController : MonoBehaviour
         foreach (var cg in groups)
         {
             if (cg == null) continue;
+
+
             if (cg.alpha <= 0.001f)
             {
                 cg.gameObject.SetActive(false);
@@ -245,6 +267,7 @@ public class InventoryController : MonoBehaviour
         bool activateArrows = true
     )
     {
+
         if (focusRoutine != null) StopCoroutine(focusRoutine);
         focusRoutine = StartCoroutine(ResetFromCenterWithCameraRoutine(
             cam, originalZoom, zoomDuration, moveDuration, arrowGroups, activateArrows
@@ -298,10 +321,20 @@ public class InventoryController : MonoBehaviour
                     cg.gameObject.SetActive(true);
                     cg.interactable = true;
                     cg.blocksRaycasts = true;
+                    //StartCoroutine(FadeCanvasGroup(cg, 1f, 0.25f));
+                }
+                
+            }
+            if (_lastOpaqueArrows != null)
+            {
+                foreach (var cg in _lastOpaqueArrows)
+                {
+                    if (cg == null) continue;;
                     StartCoroutine(FadeCanvasGroup(cg, 1f, 0.25f));
                 }
             }
         }
+
         invmanager.ChangeToInventory();
     }
 

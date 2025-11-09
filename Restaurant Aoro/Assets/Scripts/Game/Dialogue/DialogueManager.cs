@@ -19,6 +19,8 @@ public class DialogueManager : MonoBehaviour
     private readonly Dictionary<int, Buckets> store = new();
 
     [SerializeField] private DialogueUI dialogueUI;
+    [SerializeField] private DialogueInputMode greetingMode = DialogueInputMode.Global;
+    [SerializeField] private DialogueInputMode normalMode = DialogueInputMode.Blocker;
 
     private bool counterVisible = true;
 
@@ -107,10 +109,12 @@ public class DialogueManager : MonoBehaviour
             return;
         }
 
-        dialogueUI.ShowLines(pendingGreetingLines, pendingGreetingAnchor != null ? pendingGreetingAnchor : pendingGreetingOwner.transform);
+
+        var anchor = pendingGreetingAnchor != null ? pendingGreetingAnchor : pendingGreetingOwner.transform;
+        dialogueUI.ShowLines(pendingGreetingLines, anchor, 0f, greetingMode);
+        //dialogueUI.ShowLines(pendingGreetingLines, pendingGreetingAnchor != null ? pendingGreetingAnchor : pendingGreetingOwner.transform);
 
         pendingGreetingOwner.MarkGreeted();
-
         ClearPending();
     }
 
@@ -149,12 +153,12 @@ public class DialogueManager : MonoBehaviour
         return true;
     }
 
-    private void PresentOne(string line, CustomerManager cm, Transform anchor)
+    private void PresentOne(string line, CustomerManager cm, Transform anchor, DialogueInputMode? mode = null)
     {
         if (dialogueUI != null)
         {
             var a = anchor != null ? anchor : cm.transform;
-            dialogueUI.ShowOne(line, a);
+            dialogueUI.ShowOne(line, a, 1.6f, mode ?? normalMode);
         }
         else
         {
@@ -162,12 +166,12 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
-    private void PresentLines(IEnumerable<string> lines, CustomerManager cm, Transform anchor)
+    private void PresentLines(IEnumerable<string> lines, CustomerManager cm, Transform anchor, DialogueInputMode? mode = null)
     {
         if (dialogueUI != null)
         {
             var a = anchor != null ? anchor : cm.transform;
-            dialogueUI.ShowLines(lines, a);
+            dialogueUI.ShowLines(lines, a, 0f, mode ?? normalMode);
         }
         else
         {
@@ -228,4 +232,5 @@ public class DialogueManager : MonoBehaviour
         foreach (var s in lines)
             if (!string.IsNullOrWhiteSpace(s)) q.Enqueue(s.Trim());
     }
+
 }

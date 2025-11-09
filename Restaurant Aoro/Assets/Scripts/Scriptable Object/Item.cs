@@ -30,5 +30,6 @@ public class Item : ScriptableObject
     public ItemMainCategory ItemMainCategory;
     public ItemSubCategory ItemSubCategory;
     public ItemGrade ItemGrade;
+    public FoodTaste Foodtaste;
     public Sprite ItemSprite;
 }

@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+public enum DialogueInputMode { Global, Blocker }
+
 public class DialogueUI : MonoBehaviour, IPointerClickHandler
 {
     [Header("Refs")]
@@ -16,7 +18,7 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
     [Header("Options")]
     [SerializeField] private Vector2 screenOffset = new Vector2(0f, 80f);  // 말풍선을 앵커 위로 띄우는 픽셀 오프셋
     [SerializeField] private float fadeTime = 0.15f;                       // 페이드 시간
-    [SerializeField] private float charInterval = 0.02f;                   // 타자기 간격(초당 50자 0.02)
+    [SerializeField] private float charInterval = 0.2f;                   // 타자기 간격(초당 50자 0.02)
     [SerializeField] private bool clampToScreen = true;                    // 화면 밖으로 나가지 않기
     [SerializeField] private Vector2 padding = new Vector2(320f, 180f);      // 텍스트 밖 여백(px)
     [SerializeField] private float maxWidth = 650f;                        // 말풍선 최대 너비(px), 자동 줄바꿈 기반
@@ -27,6 +29,24 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
     [Header("Blocker")]
     [SerializeField] private GameObject clickBlocker;
     [SerializeField] private bool closeOnBlockerClick = true;
+    [SerializeField] private bool useInternalClick = false;
+
+    [Header("Tail")]
+    [SerializeField] private RectTransform tail;        // 꼬리 이미지
+    [SerializeField] private RectTransform tailAnchor;  // 새로 만든 앵커 (패널 자식)
+
+    [SerializeField, Range(0f, 1f)] private float tailAnchorX = 0.28f; // 0=왼쪽, 1=오른쪽
+    [SerializeField, Range(-0.5f, 1f)] private float tailAnchorY = -0.09f;
+    // 크기/스케일 옵션
+    [SerializeField] private Vector2 tailBaseSize = new Vector2(64, 48);          // 기준 꼬리 크기
+    [SerializeField] private Vector2 tailBasePanelSize = new Vector2(1000, 200);   // 기준 패널 크기
+    [SerializeField] private bool tailUniformScale = true;
+    [SerializeField] private float tailMinScale = 0.5f;
+    [SerializeField] private float tailMaxScale = 1.75f;
+
+    [SerializeField] private DialogueInputMode defaultInputMode = DialogueInputMode.Blocker;
+    private DialogueInputMode currentMode;
+    public DialogueInputMode CurrentMode => currentMode;
 
     // 내부 상태
     private Transform worldAnchor;
@@ -65,6 +85,26 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
             }
         }
     }
+
+    public void AdvanceOrComplete()
+    {
+        if (!isShowing) return;
+
+        if (isTyping)
+        {
+            ForceCompleteTyping();
+            return;
+        }
+
+        if (lineQueue.Count > 0)
+        {
+            ShowNextInternal(worldAnchor);
+            return;
+        }
+
+        StartCoroutine(FadeOutAndHide());
+    }
+
     private void EnableBlocker(bool on)
     {
         if (clickBlocker == null) return;
@@ -72,6 +112,27 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
 
         if (on)
             clickBlocker.transform.SetSiblingIndex(transform.GetSiblingIndex());
+    }
+
+    private void UpdateTailSize()
+    {
+        if (tail == null || panel == null) return;
+
+        var p = panel.sizeDelta;
+        float sx = p.x / Mathf.Max(1f, tailBasePanelSize.x);
+        float sy = p.y / Mathf.Max(1f, tailBasePanelSize.y);
+
+        if (tailUniformScale)
+        {
+            float s = Mathf.Clamp(Mathf.Min(sx, sy), tailMinScale, tailMaxScale);
+            tail.sizeDelta = tailBaseSize * s;
+        }
+        else
+        {
+            sx = Mathf.Clamp(sx, tailMinScale, tailMaxScale);
+            sy = Mathf.Clamp(sy, tailMinScale, tailMaxScale);
+            tail.sizeDelta = new Vector2(tailBaseSize.x * sx, tailBaseSize.y * sy);
+        }
     }
 
     private static void FixCenterAnchor(RectTransform rt)
@@ -98,7 +159,9 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
         }
     }
 
-    public void ShowLines(IEnumerable<string> lines, Transform anchor, float holdLastSeconds = 0f)
+
+
+    public void ShowLines(IEnumerable<string> lines, Transform anchor, float holdLastSeconds = 0f, DialogueInputMode? mode = null)
     {
         EnsureActive();
         ClearQueue();
@@ -107,10 +170,11 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
             foreach (var s in lines)
                 if (!string.IsNullOrWhiteSpace(s)) lineQueue.Enqueue(s.Trim());
 
+        currentMode = mode ?? defaultInputMode;
         ShowNextInternal(anchor, holdLastSeconds);
     }
 
-    public void ShowOne(string line, Transform anchor, float holdSeconds = 1.6f)
+    public void ShowOne(string line, Transform anchor, float holdSeconds = 1.6f, DialogueInputMode? mode = null)
     {
         EnsureActive();
         ClearQueue();
@@ -118,6 +182,7 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
         if (!string.IsNullOrWhiteSpace(line))
             lineQueue.Enqueue(line.Trim());
 
+        currentMode = mode ?? defaultInputMode;
         ShowNextInternal(anchor, holdSeconds);
     }
 
@@ -156,6 +221,9 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
         }
 
         StartCoroutine(FadeOutAndHide());
+
+        if (!useInternalClick) return;
+        AdvanceOrComplete();
     }
 
     private void ShowNextInternal(Transform anchor, float holdLastSeconds = 0f)
@@ -175,7 +243,8 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
         gameObject.SetActive(true);
         isShowing = true;
 
-        EnableBlocker(true);
+        if (currentMode == DialogueInputMode.Blocker)
+            EnableBlocker(true);  
 
         if (followRoutine != null) StopCoroutine(followRoutine);
         followRoutine = StartCoroutine(FollowAnchor()); 
@@ -184,6 +253,7 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
         fadeRoutine = StartCoroutine(FadeTo(1f, fadeTime));
 
         StartTyping(currentLine);
+
     }
 
     private void ShowNextInternal(Transform anchor)
@@ -198,7 +268,8 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
             gameObject.SetActive(true);
             isShowing = true;
         }
-        EnableBlocker(true);
+        if (currentMode == DialogueInputMode.Blocker)
+            EnableBlocker(true);
 
         if (fadeRoutine != null) StopCoroutine(fadeRoutine);
         fadeRoutine = StartCoroutine(FadeTo(1f, fadeTime));
@@ -278,6 +349,24 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
         float bubbleW = Mathf.Max(minBubbleWidth, textW + padding.x * 2f);
         float bubbleH = Mathf.Max(minBubbleHeight, textH + padding.y * 2f);
         panel.sizeDelta = new Vector2(bubbleW, bubbleH);
+
+        if (tail != null)
+        {
+            float tx = (bubbleW * tailAnchorX) - (bubbleW * 0.5f);
+            float ty = (bubbleH * tailAnchorY) - (bubbleH * 0.5f);
+            tail.anchoredPosition = new Vector2(tx, ty);
+
+            // 스케일 조정 (선택적)
+            float scaleFactor = bubbleW / tailBasePanelSize.x;
+            if (tailUniformScale)
+                tail.localScale = Vector3.one * Mathf.Clamp(scaleFactor, tailMinScale, tailMaxScale);
+            else
+                tail.localScale = new Vector3(
+                    Mathf.Clamp(scaleFactor, tailMinScale, tailMaxScale),
+                    Mathf.Clamp(bubbleH / tailBasePanelSize.y, tailMinScale, tailMaxScale),
+                    1f
+                );
+        }
     }
 
     private IEnumerator FollowAnchor()

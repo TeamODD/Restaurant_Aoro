@@ -7,6 +7,8 @@ public class TabletState : MonoBehaviour
     public bool canClicked;
     public bool canSeat;
 
+    public Sprite seatBlankSprite;
+
     void Start()
     {
         canClicked = false;

@@ -15,4 +15,8 @@ MonoBehaviour:
   ItemID: 2
   ItemName: applepie
   ItemType: 1
+  ItemMainCategory: 5
+  ItemSubCategory: 0
+  ItemGrade: 0
+  Foodtaste: 0
   ItemSprite: {fileID: 1208040086343421634, guid: 00fde7d1dacad4345adc9006645f7d45, type: 3}
