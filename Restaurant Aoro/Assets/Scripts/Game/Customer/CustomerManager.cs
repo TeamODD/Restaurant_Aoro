@@ -27,6 +27,7 @@ public class CustomerManager : MonoBehaviour
 
     private float speed = 5f;
     private bool isLeaving = false;
+    private bool isEatingLocked = false;
     private bool hasSeated = false;
     private bool greetedOnce = false;
 
@@ -89,6 +90,9 @@ public class CustomerManager : MonoBehaviour
     {
         if (prefabAsset == null) return;
 
+        if (isEatingLocked && prefabAsset != customerData.prefabEating)
+            return;
+
         if (!_spawned.TryGetValue(prefabAsset, out var go) || go == null)
         {
             Prewarm(prefabAsset);
@@ -111,6 +115,8 @@ public class CustomerManager : MonoBehaviour
     {
         if (_currentVisualAnimator == null) return;
         if (string.IsNullOrEmpty(stateName)) return;
+
+        if (isEatingLocked) return;
 
         _currentVisualAnimator.Play(stateName);
     }
@@ -254,6 +260,8 @@ public class CustomerManager : MonoBehaviour
 
     public void StartEatingAndFill()
     {
+        isEatingLocked = true;
+
         if (myPlateTile != null)
             myPlateTile.SetInteractable(false);
 
@@ -305,6 +313,7 @@ public class CustomerManager : MonoBehaviour
 
         resultTypeOnLastServe = EvaluateResult(lastServedItem, customerData);
 
+        isEatingLocked = false;
         SwitchVisual(customerData.prefabSeated);
         PlaySeatedByResult(resultTypeOnLastServe);
 
