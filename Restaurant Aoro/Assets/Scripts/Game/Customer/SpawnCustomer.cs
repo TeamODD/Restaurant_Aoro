@@ -74,7 +74,7 @@ public class SpawnCustomer : MonoBehaviour
 
     public void TrySpawnCustomer()
     {
-        if (currentCustomer != null || isSpawning)
+        if (currentCustomer != null || isSpawning || spawnDelayCo != null)
             return;
 
         StartCoroutine(SpawnAfterDelay(0.5f));
@@ -88,7 +88,7 @@ public class SpawnCustomer : MonoBehaviour
         float t = 0f;
         while (t < delay)
         {
-            if (!allowSpawning) 
+            if (!allowSpawning)
             {
                 isSpawning = false;
                 spawnDelayCo = null;
@@ -130,8 +130,9 @@ public class SpawnCustomer : MonoBehaviour
         );
 
         isSpawning = false;
-        spawnDelayCo = null;
         tabletState.canClicked = true;
+
+        spawnDelayCo = null;
     }
 
     public void ClearCurrentCustomer()

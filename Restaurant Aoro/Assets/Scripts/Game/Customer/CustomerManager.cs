@@ -3,13 +3,14 @@ using System.Collections;
 using UnityEditor;
 using System;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class CustomerManager : MonoBehaviour
 {
     [Header("손님 데이터")]
     public Customer customerData;
     public Transform speechAnchor;
-    public GameObject idle_up;
+    //public GameObject idle_up;
     public GameObject Plate;
     public GameObject gaugeBG;
     public GameObject gaugeFilled;
@@ -18,8 +19,7 @@ public class CustomerManager : MonoBehaviour
 
     public static event Action OnAnyCustomerAccepted;
 
-    private Animator animator;
-    private Animator animator_idle_up;
+    [SerializeField] private Transform visualRoot;
     private Vector3 stopPosition;
     private SpawnCustomer spawner;
     private TabletState tabletState;
@@ -38,12 +38,83 @@ public class CustomerManager : MonoBehaviour
     private Vector3 baseScale;
 
     [SerializeField] private PlateTile myPlateTile;
-    private Item lastServedItem;     
+    private Item lastServedItem;
     public ResultType resultTypeOnLastServe;   // 디버깅용
 
     private bool hasPaidOut = false;
     private Coroutine leaveRoutine;
     public bool IsLeaveScheduled => leaveRoutine != null || isLeaving;
+    //수정 중
+    private readonly Dictionary<GameObject, GameObject> _spawned = new();
+    private GameObject _currentVisual;
+    private Animator _currentVisualAnimator;
+
+    private void Prewarm(GameObject prefabAsset)
+    {
+        if (prefabAsset == null) { Debug.LogError("[CustomerManager] Prewarm: prefabAsset null"); return; }
+        if (_spawned.ContainsKey(prefabAsset)) return;
+
+        if (visualRoot == null)
+        {
+            Debug.LogError("[CustomerManager] Prewarm: visualRoot가 null (Inspector에 VisualRoot 연결 필요)");
+            return;
+        }
+
+        Transform found = null;
+        var all = visualRoot.GetComponentsInChildren<Transform>(true);
+
+        foreach (var t in all)
+        {
+            // 여기서 '정확히 일치'로 찾음
+            if (t.name == prefabAsset.name) { found = t; break; }
+        }
+
+        if (found == null)
+        {
+            // 하위 이름 목록 출력해서 원인 확정
+            var sb = new System.Text.StringBuilder();
+            sb.AppendLine($"[CustomerManager] VisualRoot 하위 오브젝트 목록 (총 {all.Length}개):");
+            foreach (var t in all)
+                sb.AppendLine($"- '{t.name}'");
+
+            Debug.LogError($"[CustomerManager] VisualRoot에서 '{prefabAsset.name}'를 못 찾음.\n{sb}");
+            return;
+        }
+
+        found.gameObject.SetActive(false);
+        _spawned[prefabAsset] = found.gameObject;
+    }
+
+    private void SwitchVisual(GameObject prefabAsset)
+    {
+        if (prefabAsset == null) return;
+
+        if (!_spawned.TryGetValue(prefabAsset, out var go) || go == null)
+        {
+            Prewarm(prefabAsset);
+
+            if (!_spawned.TryGetValue(prefabAsset, out go) || go == null)
+            {
+                Debug.LogError($"[CustomerManager] SwitchVisual 실패: {prefabAsset.name}");
+                return;
+            }
+        }
+
+        if (_currentVisual != null) _currentVisual.SetActive(false);
+
+        go.SetActive(true);
+        _currentVisual = go;
+        _currentVisualAnimator = go.GetComponentInChildren<Animator>(true);
+    }
+
+    private void PlayState(string stateName)
+    {
+        if (_currentVisualAnimator == null) return;
+        if (string.IsNullOrEmpty(stateName)) return;
+
+        _currentVisualAnimator.Play(stateName);
+    }
+
 
     public void Init(SpawnCustomer spawner, Vector3 stopPos, TabletState tabletState)
     {
@@ -51,11 +122,15 @@ public class CustomerManager : MonoBehaviour
         this.stopPosition = stopPos;
         this.tabletState = tabletState;
 
-        animator_idle_up = idle_up.GetComponent<Animator>();
-        idle_up.SetActive(false);
+        //if (idle_up != null) idle_up.SetActive(true);
 
-        animator = GetComponent<Animator>();
-        animator.Play(customerData.leftAnim.name);
+        // 필요한 프리팹 미리 생성(권장)
+        Prewarm(customerData.prefabStand);
+        Prewarm(customerData.prefabLeft);
+        Prewarm(customerData.prefabSeated);
+        Prewarm(customerData.prefabEating);
+
+        SwitchVisual(customerData.prefabLeft);
 
         var lp = Plate.transform.localPosition;
         lp.z -= 0.4f;
@@ -87,7 +162,7 @@ public class CustomerManager : MonoBehaviour
 
         transform.position = stopPosition;
 
-        animator.Play(customerData.frontAnim.name);
+        SwitchVisual(customerData.prefabStand);
 
         if (!greetedOnce && DialogueManager.Instance != null && customerData.greetingLines.Count > 0)
         {
@@ -108,7 +183,8 @@ public class CustomerManager : MonoBehaviour
 
         tabletState.canClicked = false;
 
-        animator.Play(customerData.rightAnim.name);
+        SwitchVisual(customerData.prefabLeft);
+        PlayState(customerData.rightStates.baseState);
 
         spawner.ClearCurrentCustomer();
         StartCoroutine(MoveAndDestroy());
@@ -117,7 +193,7 @@ public class CustomerManager : MonoBehaviour
     public void Accept(Transform seatLocation)
     {
         tabletState.canClicked = false;
-        animator.Play(customerData.leftAnim.name);
+        SwitchVisual(customerData.prefabLeft);
         hasSeated = true;
         customerSeat = seatLocation;
 
@@ -135,7 +211,8 @@ public class CustomerManager : MonoBehaviour
         FreeCurrentSeat();
 
         hasSeated = false;
-        animator.Play(customerData.rightAnim.name);
+        SwitchVisual(customerData.prefabLeft);
+        PlayState(customerData.rightStates.baseState);
 
         CustomerClick customerClick = GetComponent<CustomerClick>();
         customerClick.setCanClickFalse();
@@ -183,14 +260,13 @@ public class CustomerManager : MonoBehaviour
         var customerClick = GetComponent<CustomerClick>();
         if (customerClick != null) customerClick.SuppressForEating();
 
-        Eating();     
+        Eating();
         FillToFull();
     }
 
     public void Eating()
     {
-        idle_up.SetActive(false);
-        animator.Play(customerData.eatingAnim.name);
+        SwitchVisual(customerData.prefabEating);
 
         var customerClick = GetComponent<CustomerClick>();
         if (customerClick != null) customerClick.SuppressForEating();
@@ -223,15 +299,17 @@ public class CustomerManager : MonoBehaviour
         gaugeFilledTransform.localScale = baseScale;
         gaugeBG.SetActive(false);
         gaugeFilled.SetActive(false);
-        animator.Play(customerData.seatedAnim.name);
-
-        var customerClick = GetComponent<CustomerClick>();
-        if (customerClick != null) customerClick.setCanClickTrue();
 
         lastServedItem = myPlateTile != null ? myPlateTile.PeekItem() : null;
         if (myPlateTile != null) myPlateTile.ClearSpriteOnly();
 
         resultTypeOnLastServe = EvaluateResult(lastServedItem, customerData);
+
+        SwitchVisual(customerData.prefabSeated);
+        PlaySeatedByResult(resultTypeOnLastServe);
+
+        var customerClick = GetComponent<CustomerClick>();
+        if (customerClick != null) customerClick.setCanClickTrue();
 
         var click = GetComponent<CustomerClick>();
         if (click != null) click.ShowResultExclamation();
@@ -252,7 +330,7 @@ public class CustomerManager : MonoBehaviour
             randomPick
         );
     }
-    
+
 
     private ResultType EvaluateResult(Item served, Customer cust)
     {
@@ -315,15 +393,34 @@ public class CustomerManager : MonoBehaviour
         switch (r)
         {
             case ResultType.Perfect:
-            case ResultType.Excellent: return 2; 
-            case ResultType.Success: return 1; 
+            case ResultType.Excellent: return 2;
+            case ResultType.Success: return 1;
             case ResultType.Fail:
             case ResultType.Late:
             case ResultType.WrongOrder:
-            default: return 0; 
+            default: return 0;
         }
     }
+    private void PlaySeatedByResult(ResultType result)
+    {
+        if (customerData == null) return;
 
+        var states = customerData.seatedStates;
+        if (states == null) return;
+
+        int idx = result switch
+        {
+            ResultType.Perfect => 2,     // great
+            ResultType.Excellent => 1,   // good
+            ResultType.Success => 0,     // soso
+            _ => 3,                      // bad
+        };
+
+        if (states.variants == null || idx < 0 || idx >= states.variants.Count)
+            PlayState(states.baseState);
+        else
+            PlayState(states.variants[idx]);
+    }
     private void ResolvePayment()
     {
         if (customerData == null) return;
@@ -372,7 +469,7 @@ public class CustomerManager : MonoBehaviour
     {
         if (gaugeBG) gaugeBG.SetActive(false);
         if (gaugeFilled) gaugeFilled.SetActive(false);
-        if (idle_up) idle_up.SetActive(false);
+        //if (idle_up) idle_up.SetActive(false);
 
         transform.position = GetExitPos();
 
@@ -448,12 +545,12 @@ public class CustomerManager : MonoBehaviour
         }
 
         transform.position = seatLocation.position;
-        animator.Play(customerData.seatedAnim.name);
-        var lp = idle_up.transform.localPosition;
+        SwitchVisual(customerData.prefabSeated);
+        /*var lp = idle_up.transform.localPosition;
         lp.z -= 0.3f;
         idle_up.transform.localPosition = lp;
         idle_up.SetActive(true);
-        animator_idle_up.Play(customerData.upAnim.name);
+        animator_idle_up.Play(customerData.upAnim.name);*/
 
         CustomerClick customerClick = GetComponent<CustomerClick>();
         hasSeated = true;
@@ -478,14 +575,14 @@ public class CustomerManager : MonoBehaviour
             }
 
             transform.position = customerSeat.position;
-            animator.Play(customerData.seatedAnim.name);
-            var lp = idle_up.transform.localPosition;
+            SwitchVisual(customerData.prefabSeated);
+            /*var lp = idle_up.transform.localPosition;
             lp.z -= 0.3f;
             idle_up.transform.localPosition = lp;
             idle_up.SetActive(true);
-            animator_idle_up.Play(customerData.upAnim.name);
+            animator_idle_up.Play(customerData.upAnim.name);*/
             CustomerClick customerClick = GetComponent<CustomerClick>();
-            hasSeated = true;            
+            hasSeated = true;
             OnSeated?.Invoke(this);
             customerClick.setSeatedTrue();
         }
@@ -511,7 +608,7 @@ public class CustomerManager : MonoBehaviour
 
         if (gaugeBG) gaugeBG.SetActive(false);
         if (gaugeFilled) gaugeFilled.SetActive(false);
-        if (idle_up) idle_up.SetActive(false);
+        //if (idle_up) idle_up.SetActive(false);
         if (Plate) Plate.SetActive(false);
 
         if (myPlateTile != null)
@@ -528,7 +625,8 @@ public class CustomerManager : MonoBehaviour
 
         isLeaving = true;
         hasSeated = false;
-        animator.Play(customerData.rightAnim.name);
+        SwitchVisual(customerData.prefabLeft);
+        PlayState(customerData.rightStates.baseState);
 
         StartCoroutine(MoveAndDestroy());
 
