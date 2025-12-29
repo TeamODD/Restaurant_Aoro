@@ -27,8 +27,8 @@ namespace Game.Cook
         [SerializeField] private FadingController[] cookTypeBtns;
         [SerializeField] private FadingController background;
         [HideInInspector] public CookType cookType = CookType.None;
-        private GameObject itemOnHold;
         private CookMenuBtn menuBtnOnHold;
+        private CookTile cooktileOnHold;
         [SerializeField] private CookTile[] cookTiles;
         [SerializeField] private SlidingController cookBtn;
         [SerializeField] private GameObject tileOverlay;
@@ -44,7 +44,7 @@ namespace Game.Cook
 
         public bool PrepareBackground(CookMenuBtn obj)
         {
-            if (inventoryManager.isCentered || isWorking) return false;
+            if (isWorking) return false;
 
             isWorking = true;
             menuBtnOnHold = obj;
@@ -62,6 +62,8 @@ namespace Game.Cook
                     b.GetComponent<BoxCollider2D>().enabled = false;
                 }
             }
+            
+            if(!inventoryManager.isCentered) inventoryManager.OnClickToggleInventoryPosition();
 
             return true;
         }
@@ -83,27 +85,24 @@ namespace Game.Cook
                 
                 inventoryManager.EnableDrag();
             });
-
-            inventoryManager.OnClickToggleInventoryPosition();
+            
             arrowController.MoveArrowsOutOfScreen();
             backBtn.SlideIn(true);
         }
 
-        public void AddIngredientToCookTile(GameObject obj, bool activeOverlay = true)  
+        public void AddIngredientToCookTile(CookTile obj, bool activeOverlay = true)  
         {
-            if (obj.GetComponent<ItemSlotUI>().item_.ItemType != ItemType.Ingredient) return;
-
             tileOverlay.SetActive(activeOverlay);
-            itemOnHold = obj;
+            cooktileOnHold = obj;
         }
 
-        public void IngredientAddedToCookTile(CookTile cookTile)
+        public void IngredientAddedToCookTile(ItemSlotUI item)
         {
-            if (!itemOnHold) return;
-
-            var destroy = cookTile.AddItem(itemOnHold.GetComponent<ItemSlotUI>().item_);
-            if (destroy) Destroy(itemOnHold.transform.parent.gameObject);
-            itemOnHold = null;
+            if (!cooktileOnHold || item.item_.ItemType != ItemType.Ingredient) return;
+            
+            var destroy = cooktileOnHold.AddItem(item.item_);
+            if (destroy) Destroy(item.GameObject().transform.parent.gameObject);
+            cooktileOnHold = null;
             tileOverlay.SetActive(false);
         }
 
@@ -112,18 +111,7 @@ namespace Game.Cook
             if (cookType == CookType.None) return;
          
             Debug.Log("[CookManager] Cook Started!");
-            var ingredients = new List<Item>();
-
-            foreach (var cookTile in cookTiles)
-            {
-                if (cookTile.item == null)
-                {
-                    Debug.Log("Cook Tile is empty!");
-                    return;
-                }
-
-                ingredients.Add(cookTile.item);
-            }
+            var ingredients = (from cookTile in cookTiles where cookTile.item select cookTile.item).ToList();
 
             var cookFactory = new CookFactory();
             var ingredientsByMainCategory = ingredients.OrderBy(item => item.ItemMainCategory).ToArray();

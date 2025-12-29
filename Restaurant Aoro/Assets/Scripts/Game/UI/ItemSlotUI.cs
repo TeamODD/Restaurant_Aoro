@@ -2,6 +2,7 @@ using Game.Cook;
 using UnityEngine;
 using TMPro;
 using UnityEngine.EventSystems;
+using UnityEngine.UIElements;
 using Image = UnityEngine.UI.Image;
 
 public class ItemSlotUI : MonoBehaviour, IPointerClickHandler
@@ -22,6 +23,6 @@ public class ItemSlotUI : MonoBehaviour, IPointerClickHandler
     public void OnPointerClick(PointerEventData eventData)
     {
         if (!eventData.dragging)
-            CookManager.instance.AddIngredientToCookTile(gameObject);
+            if (item_.ItemType == ItemType.Ingredient) CookManager.instance.IngredientAddedToCookTile(this);
     }
 }

@@ -4,8 +4,8 @@ using UnityEngine.UI;
 
 public class InventoryManager : MonoBehaviour
 {
-    public static InventoryManager instance; 
-    
+    public static InventoryManager instance;
+
     public GameObject[] panelObjects; // Panel1, 2, 3 (GameObject)
     public ArrowController arrowController;
     public RectTransform rightArrow;
@@ -25,7 +25,7 @@ public class InventoryManager : MonoBehaviour
 
     private void Awake()
     {
-        if(!instance) instance = this;
+        if (!instance) instance = this;
     }
 
     void Start()
@@ -64,9 +64,9 @@ public class InventoryManager : MonoBehaviour
 
     public void OnClickToggleInventoryPosition()
     {
-        bool centered = controller.IsInventoryOpen;
+        var centered = controller.IsInventoryOpen;
 
-        if (centered) //isCentered
+        if (centered)
         {
             controller.MovePanelToCenter(offset, 0.2f);
             isCentered = false;
@@ -84,6 +84,7 @@ public class InventoryManager : MonoBehaviour
         panelObjects[1].SetActive(false);
         panelObjects[2].SetActive(false);
     }
+
     public void ChangeToFoodInventory()
     {
         panelObjects[0].SetActive(false);
@@ -109,14 +110,17 @@ public class InventoryManager : MonoBehaviour
         {
             panel.isDraggable = true;
         }
+
         foreach (var panel in igPanel.GetComponentsInChildren<DraggingController>())
         {
             panel.isDraggable = true;
         }
+
         foreach (var panel in foodInven.GetComponentsInChildren<DraggingController>())
         {
             panel.isDraggable = true;
         }
+
         foreach (var panel in igInven.GetComponentsInChildren<DraggingController>())
         {
             panel.isDraggable = true;
@@ -134,14 +138,17 @@ public class InventoryManager : MonoBehaviour
         {
             panel.isDraggable = false;
         }
+
         foreach (var panel in igPanel.GetComponentsInChildren<DraggingController>())
         {
             panel.isDraggable = false;
         }
+
         foreach (var panel in foodInven.GetComponentsInChildren<DraggingController>())
         {
             panel.isDraggable = false;
         }
+
         foreach (var panel in igInven.GetComponentsInChildren<DraggingController>())
         {
             panel.isDraggable = false;

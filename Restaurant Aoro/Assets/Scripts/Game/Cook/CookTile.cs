@@ -33,7 +33,7 @@ namespace Game.Cook
         private void OnMouseDown()
         {
             if(item) RemoveItem();
-            else CookManager.instance.IngredientAddedToCookTile(this);
+            else CookManager.instance.AddIngredientToCookTile(this);
         }
     }
 }
