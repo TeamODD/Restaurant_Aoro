@@ -482,6 +482,7 @@ public class CustomerManager : MonoBehaviour
 
         transform.position = GetExitPos();
 
+        spawner?.UnregisterCustomerType(this);
         Destroy(gameObject);
     }
     public void ConfirmResultAndLeave(float delay = 1.6f)
@@ -540,6 +541,7 @@ public class CustomerManager : MonoBehaviour
 
         yield return new WaitForSeconds(0.3f);
 
+        spawner?.UnregisterCustomerType(this);
         Destroy(gameObject);
     }
 
@@ -649,5 +651,10 @@ public class CustomerManager : MonoBehaviour
     public Transform GetSeatLocation()
     {
         return customerSeat;
+    }
+
+    private void OnDestroy()
+    {
+        spawner?.UnregisterCustomerType(this);
     }
 }

@@ -1,11 +1,13 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 
 public class SpawnCustomer : MonoBehaviour
 {
-    [Header("고객 프리팹 목록")]
+    [Header("고객")]
     public GameObject[] customerPrefabs;
+    private HashSet<string> activeTypes = new HashSet<string>();
 
     [Header("스폰 위치 및 정지 위치")]
     public Transform spawnPoint;
@@ -35,6 +37,8 @@ public class SpawnCustomer : MonoBehaviour
     public void StartCustomerFlow()
     {
         allowSpawning = true;
+
+
         if (spawnLoopCo == null)
             spawnLoopCo = StartCoroutine(SpawnLoop());
     }
@@ -98,12 +102,41 @@ public class SpawnCustomer : MonoBehaviour
             yield return null;
         }
 
-        int randomIndex = Random.Range(0, customerPrefabs.Length);
-        GameObject randomCustomer = customerPrefabs[randomIndex];
+        /*int randomIndex = Random.Range(0, customerPrefabs.Length);
+        GameObject randomCustomer = customerPrefabs[randomIndex];*/
+        List<GameObject> candidates = new List<GameObject>();
+
+        foreach (var prefab in customerPrefabs)
+        {
+            if (!prefab) continue;
+
+            var cm = prefab.GetComponent<CustomerManager>();
+            if (cm == null || cm.customerData == null) continue;
+
+            string typeKey = cm.customerData.name;
+
+            if (activeTypes.Contains(typeKey)) continue;
+
+            candidates.Add(prefab);
+        }
+        if (candidates.Count == 0)
+        {
+            isSpawning = false;
+            spawnDelayCo = null;
+            yield break;
+        }
+
+        GameObject randomCustomer = candidates[Random.Range(0, candidates.Count)];
 
         currentCustomer = Instantiate(randomCustomer, spawnPoint.position, Quaternion.identity);
         var manager = currentCustomer.GetComponent<CustomerManager>();
         manager.Init(this, stopPoint.position, tabletState);
+
+        if (manager != null && manager.customerData != null)
+        {
+            string typeKey = manager.customerData.name;
+            activeTypes.Add(typeKey);
+        }
 
         //tmp
         if (manager != null && manager.customerData != null)
@@ -133,6 +166,12 @@ public class SpawnCustomer : MonoBehaviour
         tabletState.canClicked = true;
 
         spawnDelayCo = null;
+    }
+    public void UnregisterCustomerType(CustomerManager manager)
+    {
+        if (manager == null || manager.customerData == null) return;
+        string typeKey = manager.customerData.name;
+        activeTypes.Remove(typeKey);
     }
 
     public void ClearCurrentCustomer()
