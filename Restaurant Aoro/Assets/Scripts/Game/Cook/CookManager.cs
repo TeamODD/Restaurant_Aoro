@@ -75,14 +75,15 @@ namespace Game.Cook
             cooks.SetActive(true);
             slide.SlideIn(true, () =>
             {
-                foreach (var cookTypeBtn in cookTypeBtns)
+                cookBtn.gameObject.SetActive(true);
+                cookBtn.SlideIn(true, () =>
                 {
-                    cookTypeBtn.gameObject.SetActive(true);
-                    cookTypeBtn.FadeIn(true, () => isWorking = false);
-                    cookBtn.gameObject.SetActive(true);
-                    cookBtn.SlideIn(true);
-                }
-                
+                    foreach (var cookTypeBtn in cookTypeBtns)
+                    {
+                        cookTypeBtn.gameObject.SetActive(true);
+                        cookTypeBtn.FadeIn(true, () => isWorking = false);
+                    }
+                });
                 inventoryManager.EnableDrag();
             });
             
@@ -104,6 +105,11 @@ namespace Game.Cook
             if (destroy) Destroy(item.GameObject().transform.parent.gameObject);
             cooktileOnHold = null;
             tileOverlay.SetActive(false);
+        }
+
+        public void ResetCookTileOnHold()
+        {
+            cooktileOnHold = null;
         }
 
         public void Cook()

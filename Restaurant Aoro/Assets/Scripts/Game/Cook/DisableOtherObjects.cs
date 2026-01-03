@@ -14,4 +14,9 @@ public class DisableOtherObjects : MonoBehaviour
             obj.SetActive(false);
         }
     }
+
+    public void OnMouseDown()
+    {
+        DisableOthers("");
+    }
 }
