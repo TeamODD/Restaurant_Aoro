@@ -15141,6 +15141,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   customerPrefabs:
   - {fileID: 3349499071719623148, guid: 8a5eed33f2ee42644a7bc88da5d28a91, type: 3}
+  - {fileID: 3349499071719623148, guid: 1b560f08e6d6a904b809f8a9e2321b58, type: 3}
+  - {fileID: 3349499071719623148, guid: dae058632276ed441a806eeb17895c3c, type: 3}
+  - {fileID: 3349499071719623148, guid: ab2bfab2b3a80164890dd796975adeff, type: 3}
   spawnPoint: {fileID: 423126371}
   stopPoint: {fileID: 1265061790}
   tabletState: {fileID: 1470087776}

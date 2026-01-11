@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04d68a976a9f9c44f9d6ba9deca2a180, type: 3}
+  m_Name: egg
+  m_EditorClassIdentifier: 
+  CustomerID: 3
+  CustomerName: egg
+  tribe: 1
+  NPCType: 0
+  appearStartHour: 17
+  appearEndHour: 20
+  codexDescription: 
+  favoriteTastes: 00000000
+  dislikedTastes: 
+  favoriteFoods: 05000000
+  dislikedFoods: 
+  payable: 
+  payItem:
+  - {fileID: 11400000, guid: f0ad64e262a230c439b12ccb9fa89302, type: 2}
+  - {fileID: 11400000, guid: f0ad64e262a230c439b12ccb9fa89302, type: 2}
+  - {fileID: 11400000, guid: f0ad64e262a230c439b12ccb9fa89302, type: 2}
+  prefabStand: {fileID: 8996567409460136301, guid: c2f28881f2f9a9849983adb30e1a859e, type: 3}
+  prefabSeated: {fileID: 4458811809326082427, guid: bcf3d55451f67664f93035a4f39d4835, type: 3}
+  prefabEating: {fileID: 3075280054291559063, guid: 99e7fb039e96e734fa5c33a2cb9fe919, type: 3}
+  prefabLeft: {fileID: 4963093595051548832, guid: db8f5bb27cb46bc499423c4f4dbc6f3b, type: 3}
+  standStates:
+    baseState: egg_stand
+    variants: []
+  seatedStates:
+    baseState: egg_sit
+    variants:
+    - egg_sit_soso
+    - egg_sit_good
+    - egg_sit_great
+    - egg_sit_bad
+  eatingStates:
+    baseState: egg_eat
+    variants: []
+  leftStates:
+    baseState: egg_left
+    variants: []
+  rightStates:
+    baseState: egg_right
+    variants: []
+  greetingLines:
+  - HI
+  orderLines:
+  - I like apple
+  resultBuckets:
+  - type: 0
+    lines:
+    - good
+  - type: 1
+    lines:
+    - Noooooo
+  - type: 2
+    lines:
+    - Perfect
+  - type: 3
+    lines:
+    - Excellent!!

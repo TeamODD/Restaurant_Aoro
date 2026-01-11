@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04d68a976a9f9c44f9d6ba9deca2a180, type: 3}
+  m_Name: dog
+  m_EditorClassIdentifier: 
+  CustomerID: 2
+  CustomerName: dog
+  tribe: 1
+  NPCType: 0
+  appearStartHour: 17
+  appearEndHour: 20
+  codexDescription: 
+  favoriteTastes: 00000000
+  dislikedTastes: 
+  favoriteFoods: 05000000
+  dislikedFoods: 
+  payable: 
+  payItem:
+  - {fileID: 11400000, guid: f0ad64e262a230c439b12ccb9fa89302, type: 2}
+  - {fileID: 11400000, guid: f0ad64e262a230c439b12ccb9fa89302, type: 2}
+  - {fileID: 11400000, guid: f0ad64e262a230c439b12ccb9fa89302, type: 2}
+  prefabStand: {fileID: 5341548186249306056, guid: 1a47bfd7801bbe24c8ef053edc19b0d7, type: 3}
+  prefabSeated: {fileID: 4834834200724379039, guid: f3a444e5038fc0f468878289a4e64d18, type: 3}
+  prefabEating: {fileID: 6552566266310755253, guid: df5e5a5a189bbbf4092d318be62668e1, type: 3}
+  prefabLeft: {fileID: 8975313118875365907, guid: 1040d378010be8d4bbae1be99588e018, type: 3}
+  standStates:
+    baseState: dog_stand
+    variants: []
+  seatedStates:
+    baseState: dog_sit
+    variants:
+    - dog_sit_soso
+    - dog_sit_good
+    - dog_sit_great
+    - dog_sit_bad
+  eatingStates:
+    baseState: dog_eat
+    variants: []
+  leftStates:
+    baseState: dog_left
+    variants: []
+  rightStates:
+    baseState: dog_right
+    variants: []
+  greetingLines:
+  - HI
+  orderLines:
+  - I like apple
+  resultBuckets:
+  - type: 0
+    lines:
+    - good
+  - type: 1
+    lines:
+    - Noooooo
+  - type: 2
+    lines:
+    - Perfect
+  - type: 3
+    lines:
+    - Excellent!!
