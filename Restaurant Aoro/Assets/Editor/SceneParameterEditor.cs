@@ -98,7 +98,7 @@ public class SceneParameterEditor : EditorWindow
         var gm = GameObject.FindObjectOfType<GameManager>();
         if (gm != null)
         {
-            if (currentTab == SceneTab.Game)
+            /*if (currentTab == SceneTab.Game)
             {
                 gm.SetMoney(money);
                 gm.SetDate(year, month, day);
@@ -106,7 +106,7 @@ public class SceneParameterEditor : EditorWindow
                 gm.SetItems(itemInventory);
             }
 
-            gm.SetSound(bgmVolume, seVolume);
+            gm.SetSound(bgmVolume, seVolume);*/
             Debug.Log("설정 적용 완료");
         }
         else

@@ -23,6 +23,7 @@ public class RestaurantManager : MonoBehaviour
     public Button ServeBtn;
 
     public ReputationState ReputationState;
+    public int CurrentMoney => currentMoney;
 
     private int acceptedCustomer;
     private int currentMoney = 0;
@@ -59,7 +60,11 @@ public class RestaurantManager : MonoBehaviour
         InventoryController.RemoveOffServeListener(OffServeBtn);
         CustomerManager.OnMoneyEarned -= HandleMoneyEarned;
     }
-
+    public void SetMoney(int value)
+    {
+        currentMoney = Mathf.Max(0, value);
+        UpdateCreditText();
+    }
     private void OpenRestaurant()
     {
         if (isOpen) return;
