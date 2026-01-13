@@ -201,6 +201,8 @@ public class CustomerClick : MonoBehaviour
 
             if (cm != null)
             {
+                cm.ApplyResultSeatedVisual();
+
                 cm.RequestResultDialogue();
                 cm.ConfirmResultAndLeave(1.6f);
                 //cm.StartCoroutine(LeaveAfterDelay(cm, 2f));

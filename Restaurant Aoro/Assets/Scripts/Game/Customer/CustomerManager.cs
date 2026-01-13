@@ -315,7 +315,9 @@ public class CustomerManager : MonoBehaviour
 
         isEatingLocked = false;
         SwitchVisual(customerData.prefabSeated);
-        PlaySeatedByResult(resultTypeOnLastServe);
+
+        PlayState(customerData.seatedStates.baseState);
+        //PlaySeatedByResult(resultTypeOnLastServe);
 
         var customerClick = GetComponent<CustomerClick>();
         if (customerClick != null) customerClick.setCanClickTrue();
@@ -409,6 +411,11 @@ public class CustomerManager : MonoBehaviour
             case ResultType.WrongOrder:
             default: return 0;
         }
+    }
+    public void ApplyResultSeatedVisual()
+    {
+        SwitchVisual(customerData.prefabSeated);
+        PlaySeatedByResult(resultTypeOnLastServe);
     }
     private void PlaySeatedByResult(ResultType result)
     {
