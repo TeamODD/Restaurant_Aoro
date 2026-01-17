@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.IO;
-using System.Xml;
 using UnityEngine;
 using Newtonsoft.Json;
 using UnityEngine.SceneManagement;
@@ -49,6 +48,8 @@ public class GameManager : MonoBehaviour
             triggers = new(triggers),
             itemInventory = new(itemInventory),
         };
+        data.customerCodex = CustomerCodexManager.Instance.GetAll();
+        data.itemCodex = ItemCodexManager.Instance.GetAll();
 
         string json = JsonConvert.SerializeObject(data, Newtonsoft.Json.Formatting.Indented);
         File.WriteAllText(path, json);
@@ -77,6 +78,11 @@ public class GameManager : MonoBehaviour
         bgmVolume = data.bgmVolume; seVolume = data.seVolume;
         triggers = data.triggers ?? new();
         itemInventory = data.itemInventory ?? new();
+
+        CustomerCodexManager.Instance.LoadFrom(data.customerCodex);
+        data.customerCodex ??= new Dictionary<string, CustomerCodexEntry>();
+        ItemCodexManager.Instance.LoadFrom(data.itemCodex);
+        data.itemCodex ??= new Dictionary<string, ItemCodexEntry>();
 
         ApplyToScene(data);
 
