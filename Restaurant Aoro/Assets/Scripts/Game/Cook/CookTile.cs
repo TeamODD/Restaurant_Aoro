@@ -6,6 +6,9 @@ namespace Game.Cook
     {
         [HideInInspector] public Item item;
         [SerializeField] private SpriteRenderer spriteRenderer;
+        [SerializeField] private Sprite defaultSprite;
+        [SerializeField] private Sprite itemHoldingSprite;
+        [SerializeField] private GameObject deleteButton;
         
         public bool AddItem(Item _item)
         {
@@ -29,11 +32,32 @@ namespace Game.Cook
             item = null;
             spriteRenderer.sprite = null;
         }
+
+        private void OnMouseEnter()
+        {
+            if (item == null) return;
+            
+            deleteButton.SetActive(true);
+        }
+
+        private void OnMouseExit()
+        { 
+            deleteButton.SetActive(false);
+        }
         
         private void OnMouseDown()
         {
-            if(item) RemoveItem();
-            else CookManager.instance.AddIngredientToCookTile(this);
+            if (item)
+            {
+                RemoveItem();
+                GetComponent<SpriteRenderer>().sprite = defaultSprite;
+                deleteButton.SetActive(false);
+            }
+            else
+            {
+                CookManager.instance.AddIngredientToCookTile(this);
+                GetComponent<SpriteRenderer>().sprite = itemHoldingSprite;
+            }
         }
     }
 }

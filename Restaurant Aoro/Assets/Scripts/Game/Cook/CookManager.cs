@@ -26,7 +26,7 @@ namespace Game.Cook
         [SerializeField] private SlidingController[] cookMenuBtns;
         [SerializeField] private FadingController[] cookTypeBtns;
         [SerializeField] private FadingController background;
-        [HideInInspector] public CookType cookType = CookType.None;
+        [HideInInspector] public CookType cookType = CookType.UseHeat;
         private CookMenuBtn menuBtnOnHold;
         private CookTile cooktileOnHold;
         [SerializeField] private CookTile[] cookTiles;
@@ -62,8 +62,12 @@ namespace Game.Cook
                     b.GetComponent<BoxCollider2D>().enabled = false;
                 }
             }
-            
-            if(!inventoryManager.isCentered) inventoryManager.OnClickToggleInventoryPosition();
+
+            if (!inventoryManager.isCentered)
+            {
+                inventoryManager.OnClickToggleInventoryPosition();
+                inventoryManager.ChangeToIngredientInventory();
+            }
 
             return true;
         }
@@ -78,11 +82,11 @@ namespace Game.Cook
                 cookBtn.gameObject.SetActive(true);
                 cookBtn.SlideIn(true, () =>
                 {
-                    foreach (var cookTypeBtn in cookTypeBtns)
-                    {
-                        cookTypeBtn.gameObject.SetActive(true);
-                        cookTypeBtn.FadeIn(true, () => isWorking = false);
-                    }
+                    // foreach (var cookTypeBtn in cookTypeBtns)
+                    // {
+                    //     cookTypeBtn.gameObject.SetActive(true);
+                    //     cookTypeBtn.FadeIn(true, () => isWorking = false);
+                    // }
                 });
                 inventoryManager.EnableDrag();
             });
@@ -211,6 +215,7 @@ namespace Game.Cook
                     backBtn.SlideOut(true, () => isWorking = false);
                 });
 
+                // cookType = CookType.None;
                 foreach (var cookTypeBtn in cookTypeBtns)
                 {
                     cookTypeBtn.FadeOut(false);
