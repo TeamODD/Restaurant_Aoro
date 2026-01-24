@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class ItemCodexManager : MonoBehaviour
 {
     public static ItemCodexManager Instance;
+    public static event Action OnCodexChanged;
 
     private Dictionary<string, ItemCodexEntry> entries = new();
 
@@ -24,6 +26,7 @@ public class ItemCodexManager : MonoBehaviour
     {
         var e = GetOrCreate(itemId);
         e.seen = true;
+        OnCodexChanged?.Invoke();
     }
 
     public void Unlock(string itemId)
@@ -31,6 +34,7 @@ public class ItemCodexManager : MonoBehaviour
         var e = GetOrCreate(itemId);
         e.seen = true;
         e.unlocked = true;
+        OnCodexChanged?.Invoke();
     }
 
     private ItemCodexEntry GetOrCreate(string id)
@@ -42,4 +46,5 @@ public class ItemCodexManager : MonoBehaviour
         }
         return e;
     }
+
 }

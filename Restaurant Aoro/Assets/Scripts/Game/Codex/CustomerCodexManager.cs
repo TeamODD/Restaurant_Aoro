@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class CustomerCodexManager : MonoBehaviour
 {
     public static CustomerCodexManager Instance;
+    public static event Action OnCodexChanged;
 
     private Dictionary<string, CustomerCodexEntry> entries = new();
 
@@ -24,6 +26,7 @@ public class CustomerCodexManager : MonoBehaviour
     {
         var e = GetOrCreate(customerId);
         e.seen = true;
+        OnCodexChanged?.Invoke();
     }
 
     public void Unlock(string customerId)
@@ -31,6 +34,7 @@ public class CustomerCodexManager : MonoBehaviour
         var e = GetOrCreate(customerId);
         e.seen = true;
         e.unlocked = true;
+        OnCodexChanged?.Invoke();
     }
 
     public void AddResult(string customerId, ResultType type)
@@ -41,6 +45,7 @@ public class CustomerCodexManager : MonoBehaviour
         string key = type.ToString();
         if (e.resultCounts.ContainsKey(key)) e.resultCounts[key]++;
         else e.resultCounts[key] = 1;
+        OnCodexChanged?.Invoke();
     }
 
     private CustomerCodexEntry GetOrCreate(string id)
