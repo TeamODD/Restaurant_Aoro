@@ -13,20 +13,24 @@ namespace Game.Cook
         {
             if (cookRulesSO == null) throw new NullReferenceException("[CookFactory] Cook Rule is Empty!");
 
-            foreach (var cookRule in cookRulesSO.cookRules)
+            var cookRules = cookRulesSO.cookRules;
+            cookRules = cookRules.OrderByDescending(rule => rule.ingredients.Count(i => i != null)).ToArray();
+
+            Item match = null;
+            
+            foreach (var cookRule in cookRules)
             {
-                if (cookRule.ingredients == null || cookRule.ingredients.Length != ingredients.Length)
-                    continue;
-
-                var matches = !ingredients.Where((t, i) => t == null || cookRule.ingredients[i] == null || t != cookRule.ingredients[i]).Any();
-
-                if (matches)
+                if (cookRule.ingredients.Length > ingredients.Length) break;
+                
+                foreach (var ing in ingredients)
                 {
-                    return cookRule.fine;
+                    if (!cookRule.ingredients.Contains(ing)) break;
                 }
+
+                match = cookRule.fine;
             }
 
-            throw new Exception("Invalid category set detected!");
+            return match ? match : throw new Exception("Invalid category set detected!");
         }
     }
 }
