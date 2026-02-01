@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Scriptable_Object;
 using UnityEngine;
 
@@ -8,15 +9,20 @@ namespace Game.Cook
     {
         private CookRulesSO cookRulesSO = Resources.Load<CookRulesSO>("Cook/CookRules");
 
-        public Item Make(ItemMainCategory mainCategory, ItemSubCategory subCategory)
+        public Item Make(Item[] ingredients)
         {
             if (cookRulesSO == null) throw new NullReferenceException("[CookFactory] Cook Rule is Empty!");
-            
+
             foreach (var cookRule in cookRulesSO.cookRules)
             {
-                if (cookRule.mainCategory == mainCategory && cookRule.subCategory == subCategory)
+                if (cookRule.ingredients == null || cookRule.ingredients.Length != ingredients.Length)
+                    continue;
+
+                var matches = !ingredients.Where((t, i) => t == null || cookRule.ingredients[i] == null || t != cookRule.ingredients[i]).Any();
+
+                if (matches)
                 {
-                    return cookRule.foodPrefab;
+                    return cookRule.fine;
                 }
             }
 

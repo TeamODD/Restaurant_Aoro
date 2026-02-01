@@ -90,12 +90,12 @@ namespace Game.Cook
                 });
                 inventoryManager.EnableDrag();
             });
-            
+
             arrowController.MoveArrowsOutOfScreen();
             backBtn.SlideIn(true);
         }
 
-        public void AddIngredientToCookTile(CookTile obj, bool activeOverlay = true)  
+        public void AddIngredientToCookTile(CookTile obj, bool activeOverlay = true)
         {
             tileOverlay.SetActive(activeOverlay);
             cooktileOnHold = obj;
@@ -104,7 +104,7 @@ namespace Game.Cook
         public void IngredientAddedToCookTile(ItemSlotUI item)
         {
             if (!cooktileOnHold || item.item_.ItemType != ItemType.Ingredient) return;
-            
+
             var destroy = cooktileOnHold.AddItem(item.item_);
             if (destroy) Destroy(item.GameObject().transform.parent.gameObject);
             cooktileOnHold = null;
@@ -119,28 +119,20 @@ namespace Game.Cook
         public void Cook()
         {
             if (cookType == CookType.None) return;
-         
+
             Debug.Log("[CookManager] Cook Started!");
             var ingredients = (from cookTile in cookTiles where cookTile.item select cookTile.item).ToList();
 
             var cookFactory = new CookFactory();
-            var ingredientsByMainCategory = ingredients.OrderBy(item => item.ItemMainCategory).ToArray();
-            var ingredientsBySubCategory = ingredients.OrderBy(item => item.ItemSubCategory).ToArray();
-            
-            for (var i = 0; i < ingredients.Count; i++)
+
+            var result = cookFactory.Make(ingredients.ToArray());
+            if (result)
             {
-                var mainCategory = ingredientsByMainCategory[i].ItemMainCategory;
-                for (var j = 0; j < ingredients.Count; j++)
-                {
-                    var subCategory = ingredientsBySubCategory[j].ItemSubCategory;
-                    var result = cookFactory.Make(mainCategory, subCategory);
-                    if (!result) continue;
-                    Debug.Log($"[CookManager] Will output {result.ItemName}");
-                    ExitCook(result);
-                    return;
-                }
+                Debug.Log($"[CookManager] Will output {result.ItemName}");
+                ExitCook(result);
+                return;
             }
-            
+
             Debug.Log("[CookManager] No available recipe for this set!");
         }
 
@@ -162,7 +154,7 @@ namespace Game.Cook
             if (isWorking) return;
 
             inventoryManager.DisableDrag();
-            
+
             isWorking = true;
 
             cookBtn.SlideOut(false, () =>
@@ -177,12 +169,12 @@ namespace Game.Cook
                     if (cookItem)
                     {
                         Debug.Log("[CookManager] Cleaning Cook Elements");
-                
+
                         menuBtnOnHold.StartCookingBar(cookingTime);
                         menuBtnOnHold = null;
-                
+
                         StartCoroutine(CookingCoroutine(cookItem));
-                        
+
                         foreach (var cookTile in cookTiles)
                         {
                             cookTile.RemoveItemWithoutAdding();
@@ -195,7 +187,7 @@ namespace Game.Cook
                             cookTile.RemoveItem();
                         }
                     }
-                    
+
                     foreach (var btn in cookMenuBtns)
                     {
                         btn.gameObject.SetActive(true);
