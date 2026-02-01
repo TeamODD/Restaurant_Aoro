@@ -10,7 +10,7 @@ public class RecipeEditor : EditorWindow
 {
     private CookRulesSO currentDatabase;
     private SerializedObject serializedDatabase;
-    
+
     private TwoPaneSplitView splitView;
     private ListView leftList;
     private ScrollView rightPane;
@@ -34,17 +34,17 @@ public class RecipeEditor : EditorWindow
             allowSceneObjects = false,
             value = currentDatabase
         };
-        
+
         databaseField.RegisterValueChangedCallback(evt =>
         {
             currentDatabase = evt.newValue as CookRulesSO;
             RefreshUI();
         });
         toolbar.Add(databaseField);
-        
+
         splitView = new TwoPaneSplitView(0, 250, TwoPaneSplitViewOrientation.Horizontal);
         rootVisualElement.Add(splitView);
-        
+
         var leftPaneContainer = new VisualElement();
         splitView.Add(leftPaneContainer);
 
@@ -56,7 +56,7 @@ public class RecipeEditor : EditorWindow
             }
         };
         leftPaneContainer.Add(leftList);
-        
+
         var buttonGroup = new VisualElement
         {
             style =
@@ -68,14 +68,14 @@ public class RecipeEditor : EditorWindow
 
         var addButton = new Button(CreateNewRule) { text = "+", style = { flexGrow = 1 } };
         var removeButton = new Button(RemoveSelectedRule) { text = "-", style = { flexGrow = 1 } };
-        
+
         buttonGroup.Add(addButton);
         buttonGroup.Add(removeButton);
         leftPaneContainer.Add(buttonGroup);
-        
+
         rightPane = new ScrollView(ScrollViewMode.VerticalAndHorizontal);
         splitView.Add(rightPane);
-        
+
         if (currentDatabase != null)
         {
             RefreshUI();
@@ -92,7 +92,7 @@ public class RecipeEditor : EditorWindow
 
         serializedDatabase = new SerializedObject(currentDatabase);
         var rulesProperty = serializedDatabase.FindProperty("cookRules");
-        
+
         leftList.makeItem = () => new Label();
         leftList.bindItem = (element, i) =>
         {
@@ -104,7 +104,7 @@ public class RecipeEditor : EditorWindow
         leftList.itemsSource = currentDatabase.cookRules;
         leftList.selectionType = SelectionType.Single;
         leftList.fixedItemHeight = 25;
-        
+
         leftList.selectionChanged += (items) =>
         {
             var enumerable = items as object[] ?? items.ToArray();
@@ -117,7 +117,7 @@ public class RecipeEditor : EditorWindow
                 rightPane.Clear();
             }
         };
-        
+
         leftList.Rebuild();
     }
 
@@ -125,7 +125,7 @@ public class RecipeEditor : EditorWindow
     {
         rightPane.Clear();
         if (rule == null) return;
-        
+
         var nameField = new TextField("Rule Name")
         {
             value = rule.name,
@@ -140,28 +140,34 @@ public class RecipeEditor : EditorWindow
         nameField.RegisterValueChangedCallback(evt =>
         {
             var newName = evt.newValue;
-            if (string.IsNullOrEmpty(newName)) return;
+            if (string.IsNullOrEmpty(newName) || newName == rule.name) return;
 
             var assetPath = AssetDatabase.GetAssetPath(rule);
-            var result = AssetDatabase.RenameAsset(assetPath, newName);
-            
-            if (string.IsNullOrEmpty(result))
+            var error = AssetDatabase.RenameAsset(assetPath, newName);
+
+            if (string.IsNullOrEmpty(error))
             {
+                var newPath = AssetDatabase.GetAssetPath(rule);
+                var finalName = System.IO.Path.GetFileNameWithoutExtension(newPath);
+
+                rule.name = finalName;
+                EditorUtility.SetDirty(rule);
                 AssetDatabase.SaveAssets();
+                nameField.value = finalName;
                 leftList.Rebuild();
             }
             else
             {
-                nameField.value = rule.name; 
+                nameField.value = rule.name;
             }
         });
 
         rightPane.Add(nameField);
-        
+
         var serializedRule = new SerializedObject(rule);
         var iterator = serializedRule.GetIterator();
         iterator.NextVisible(true);
-        
+
         while (iterator.NextVisible(false))
         {
             var propField = new PropertyField(iterator);
@@ -177,7 +183,7 @@ public class RecipeEditor : EditorWindow
             Debug.LogWarning("먼저 CookRulesSO 데이터베이스를 선택해주세요.");
             return;
         }
-        
+
         CookRule newRule = CreateInstance<CookRule>();
         newRule.name = "New CookRule";
 
@@ -187,13 +193,13 @@ public class RecipeEditor : EditorWindow
 
         AssetDatabase.CreateAsset(newRule, uniquePath);
         AssetDatabase.SaveAssets();
-        
+
         serializedDatabase.Update();
         var rulesProperty = serializedDatabase.FindProperty("cookRules");
         rulesProperty.arraySize++;
         rulesProperty.GetArrayElementAtIndex(rulesProperty.arraySize - 1).objectReferenceValue = newRule;
         serializedDatabase.ApplyModifiedProperties();
-        
+
         RefreshUI();
         leftList.SetSelection(rulesProperty.arraySize - 1);
     }
@@ -201,16 +207,16 @@ public class RecipeEditor : EditorWindow
     private void RemoveSelectedRule()
     {
         if (leftList.selectedIndex == -1 || currentDatabase == null) return;
-        
+
         int index = leftList.selectedIndex;
         serializedDatabase.Update();
         var rulesProperty = serializedDatabase.FindProperty("cookRules");
-        
+
         if (rulesProperty.GetArrayElementAtIndex(index).objectReferenceValue != null)
         {
-            rulesProperty.DeleteArrayElementAtIndex(index); 
+            rulesProperty.DeleteArrayElementAtIndex(index);
         }
-        
+
         rulesProperty.DeleteArrayElementAtIndex(index);
         serializedDatabase.ApplyModifiedProperties();
         RefreshUI();

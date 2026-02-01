@@ -10,10 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fececf49610e4645bc7d641674a1bc69, type: 3}
-  m_Name: NewCookRule 4
+  m_Name: Rice
   m_EditorClassIdentifier: Assembly-CSharp::Scriptable_Object.CookRule
-  ingredients: []
+  ingredients:
+  - {fileID: 11400000, guid: f0ad64e262a230c439b12ccb9fa89302, type: 2}
   common: {fileID: 0}
-  fine: {fileID: 0}
+  fine: {fileID: 11400000, guid: fbb083c2ddf75ec449a9a87735d1794e, type: 2}
   premium: {fileID: 0}
   exquisite: {fileID: 0}
