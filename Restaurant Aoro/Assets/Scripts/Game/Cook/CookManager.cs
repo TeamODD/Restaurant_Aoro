@@ -86,9 +86,10 @@ namespace Game.Cook
                     // foreach (var cookTypeBtn in cookTypeBtns)
                     // {
                     //     cookTypeBtn.gameObject.SetActive(true);
-                    //     cookTypeBtn.FadeIn(true, () => isWorking = false);
+                    //     cookTypeBtn.FadeIn(true, () => );
                     // }
                 });
+                isWorking = false;
                 inventoryManager.EnableDrag();
             });
 
@@ -119,7 +120,7 @@ namespace Game.Cook
 
         public void Cook()
         {
-            if (cookType == CookType.None) return;
+            // if (cookType == CookType.None) return;
 
             Debug.Log("[CookManager] Cook Started!");
             var ingredients = (from cookTile in cookTiles where cookTile.item select cookTile.item).ToList();

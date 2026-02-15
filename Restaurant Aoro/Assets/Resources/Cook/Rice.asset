@@ -14,7 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Scriptable_Object.CookRule
   ingredients:
   - {fileID: 11400000, guid: f0ad64e262a230c439b12ccb9fa89302, type: 2}
-  common: {fileID: 0}
+  - {fileID: 11400000, guid: f0ad64e262a230c439b12ccb9fa89302, type: 2}
+  - {fileID: 11400000, guid: f0ad64e262a230c439b12ccb9fa89302, type: 2}
+  - {fileID: 11400000, guid: f0ad64e262a230c439b12ccb9fa89302, type: 2}
+  - {fileID: 11400000, guid: f0ad64e262a230c439b12ccb9fa89302, type: 2}
+  common: {fileID: 11400000, guid: fbb083c2ddf75ec449a9a87735d1794e, type: 2}
   fine: {fileID: 11400000, guid: fbb083c2ddf75ec449a9a87735d1794e, type: 2}
-  premium: {fileID: 0}
-  exquisite: {fileID: 0}
+  premium: {fileID: 11400000, guid: fbb083c2ddf75ec449a9a87735d1794e, type: 2}
+  exquisite: {fileID: 11400000, guid: fbb083c2ddf75ec449a9a87735d1794e, type: 2}
