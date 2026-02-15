@@ -34,6 +34,7 @@ namespace Game.Cook
         [SerializeField] private GameObject tileOverlay;
         private bool isWorking;
         public float cookingTime = 60f;
+        [SerializeField] private GradePolicy gradePolicy;
 
         private void OnEnable()
         {
@@ -123,7 +124,7 @@ namespace Game.Cook
             Debug.Log("[CookManager] Cook Started!");
             var ingredients = (from cookTile in cookTiles where cookTile.item select cookTile.item).ToList();
 
-            var cookFactory = new CookFactory();
+            var cookFactory = new CookFactory(gradePolicy);
 
             var result = cookFactory.Make(ingredients.ToArray());
             if (result)
