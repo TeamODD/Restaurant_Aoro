@@ -78,7 +78,7 @@ public class InventoryManager : MonoBehaviour
         string key = item.ItemID;
         if (itemCounts.ContainsKey(key)) itemCounts[key]++;
         else itemCounts[key] = 1;
-        ItemCodexManager.Instance.MarkSeen(item.ItemID);
+        //ItemCodexManager.Instance.MarkSeen(item.ItemID);
 
         uiController.AddItemToInventory(item);
     }

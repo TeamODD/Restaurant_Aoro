@@ -7,6 +7,10 @@ public class InventoryUIController : MonoBehaviour
     [Header("Slot Prefabs")]
     public GameObject slot1Prefab;
     public GameObject slot2Prefab;
+    public GameObject Prefab_3s;
+    public GameObject Prefab_4s;
+    public GameObject Prefab_5s;
+    public GameObject Prefab_6s;
 
     [Header("Inventory Panels")]
     public Transform foodPanelContent;
