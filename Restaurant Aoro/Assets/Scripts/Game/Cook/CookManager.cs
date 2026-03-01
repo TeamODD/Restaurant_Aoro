@@ -148,10 +148,11 @@ namespace Game.Cook
 
         public void ExitCookBtn()
         {
+            if (isWorking) return;
             ExitCook(null);
         }
 
-        public void ExitCook(Item cookItem)
+        private void ExitCook(Item cookItem)
         {
             if (isWorking) return;
 
@@ -159,10 +160,13 @@ namespace Game.Cook
 
             isWorking = true;
 
+            Debug.Log("A");
             cookBtn.SlideOut(false, () =>
             {
+                Debug.Log("B");
                 cooks.GetComponent<ISlideOut>().SlideOut(false, () =>
                 {
+                    Debug.Log("C");
                     cooks.SetActive(false);
 
                     if (inventoryManager.isCentered)
@@ -188,6 +192,8 @@ namespace Game.Cook
                         {
                             cookTile.RemoveItem();
                         }
+
+                        menuBtnOnHold = null;
                     }
 
                     foreach (var btn in cookMenuBtns)
@@ -196,6 +202,7 @@ namespace Game.Cook
                         btn.GetComponent<BoxCollider2D>().enabled = true;
                         btn.SlideOut(true, () =>
                         {
+                            Debug.Log("D");
                             if (!Mathf.Approximately(btn.GetComponent<SpriteRenderer>().color.a, 1))
                             {
                                 btn.GetComponent<FadingController>().FadeIn();
@@ -206,14 +213,18 @@ namespace Game.Cook
                     background.FadeIn();
 
                     arrowController.MoveArrowsInToScreen();
-                    backBtn.SlideOut(true, () => isWorking = false);
+                    backBtn.SlideOut(true, () =>
+                    {
+                        Debug.Log("E");
+                        isWorking = false;
+                    });
                 });
 
                 // cookType = CookType.None;
-                foreach (var cookTypeBtn in cookTypeBtns)
-                {
-                    cookTypeBtn.FadeOut(false);
-                }
+                // foreach (var cookTypeBtn in cookTypeBtns)
+                // {
+                //     cookTypeBtn.FadeOut(false);
+                // }
             });
         }
     }
