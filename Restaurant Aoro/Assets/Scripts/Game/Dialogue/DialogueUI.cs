@@ -317,8 +317,8 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
     private IEnumerator FollowAnchor()
     {
         var canvas = GetComponentInParent<Canvas>();
-        RectTransform container = panel != null ? panel.parent as RectTransform : null;
-
+        //RectTransform container = panel != null ? panel.parent as RectTransform : null;
+        RectTransform container = canvas != null ? canvas.GetComponent<RectTransform>() : null;
         Camera camForRT = null;
         if (canvas != null)
         {

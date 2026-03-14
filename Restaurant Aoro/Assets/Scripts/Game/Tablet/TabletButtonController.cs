@@ -108,6 +108,8 @@ public class TabletButtonController : MonoBehaviour
         if (!tabletState.canClicked) return;
 
         GameObject currentCustomer = spawner.GetCurrentCustomer();
+        if (currentCustomer == null) return;
+
         foreach (GameObject seat in tabletState.Seats)
         {
             SeatState state = seat.GetComponent<SeatState>();

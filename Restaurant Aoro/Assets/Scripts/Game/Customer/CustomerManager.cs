@@ -36,6 +36,7 @@ public class CustomerManager : MonoBehaviour
 
     private Coroutine SeatCoroutine;
     private Coroutine fillRoutine;
+    private Coroutine moveToStopRoutine;
     private Vector3 baseScale;
 
     [SerializeField] private PlateTile myPlateTile;
@@ -151,7 +152,7 @@ public class CustomerManager : MonoBehaviour
         if (myPlateTile == null)
             myPlateTile = GetComponentInChildren<PlateTile>(includeInactive: true);
 
-        StartCoroutine(MoveToStopPosition());
+        moveToStopRoutine = StartCoroutine(MoveToStopPosition());
     }
     public Transform GetSpeechAnchor()
     {
@@ -167,6 +168,7 @@ public class CustomerManager : MonoBehaviour
         }
 
         transform.position = stopPosition;
+        moveToStopRoutine = null;
 
         SwitchVisual(customerData.prefabStand);
 
@@ -186,6 +188,12 @@ public class CustomerManager : MonoBehaviour
     {
         if (isLeaving) return;
         isLeaving = true;
+
+        if (moveToStopRoutine != null)
+        {
+            StopCoroutine(moveToStopRoutine);
+            moveToStopRoutine = null;
+        }
 
         tabletState.canClicked = false;
 
