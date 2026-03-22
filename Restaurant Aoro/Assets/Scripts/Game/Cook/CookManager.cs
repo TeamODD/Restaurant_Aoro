@@ -103,6 +103,13 @@ namespace Game.Cook
             cooktileOnHold = obj;
         }
 
+        public void ResetTileSortOrder()
+        {
+            foreach (var tile in cookTiles) {
+                tile.GetComponent<SpriteRenderer>().sortingOrder = 5;
+            }
+        }
+        
         public void IngredientAddedToCookTile(ItemSlotUI item)
         {
             if (!cooktileOnHold || item.item_.ItemType != ItemType.Ingredient) return;
@@ -111,6 +118,7 @@ namespace Game.Cook
             if (destroy) Destroy(item.GameObject().transform.parent.gameObject);
             cooktileOnHold = null;
             tileOverlay.SetActive(false);
+            ResetTileSortOrder();
         }
 
         public void ResetCookTileOnHold()

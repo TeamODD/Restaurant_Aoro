@@ -17,7 +17,6 @@ public class InventoryItemDrag : DraggingController, IPointerDownHandler, IPoint
     public void Init(Item _item)
     {
         item = _item;
-    
     }
     public void UseAutoTargetByItemType(bool useAuto) => autoSelectByItemType = useAuto;
     public void OnPointerDown(PointerEventData eventData)
@@ -27,8 +26,9 @@ public class InventoryItemDrag : DraggingController, IPointerDownHandler, IPoint
         DropTarget target = forcedTarget;
         if (autoSelectByItemType && item != null)
             target = (item.ItemType == ItemType.Ingredient) ? DropTarget.Cook : DropTarget.Plate;
-
-        GameObject prefab = (target == DropTarget.Cook) ? proxyPrefab : plateProxyPrefab;
+        
+        
+        var prefab = (target == DropTarget.Cook) ? proxyPrefab : plateProxyPrefab;
         if (prefab == null)
         {
             isDragging = false;

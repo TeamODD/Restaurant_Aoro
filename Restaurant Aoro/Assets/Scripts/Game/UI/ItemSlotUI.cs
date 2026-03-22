@@ -22,7 +22,8 @@ public class ItemSlotUI : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (!eventData.dragging)
-            if (item_.ItemType == ItemType.Ingredient) CookManager.instance.IngredientAddedToCookTile(this);
+        if (eventData.dragging) return;
+        
+        if (item_.ItemType == ItemType.Ingredient) CookManager.instance.IngredientAddedToCookTile(this);
     }
 }

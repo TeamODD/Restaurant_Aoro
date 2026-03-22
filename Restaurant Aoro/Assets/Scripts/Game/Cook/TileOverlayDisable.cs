@@ -8,6 +8,7 @@ namespace Game.Cook
         private void OnMouseDown()
         {
             base.OnMouseDown();
+            CookManager.instance.ResetTileSortOrder();
             StartCoroutine(Disable());
         }
 

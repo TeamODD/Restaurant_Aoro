@@ -55,6 +55,7 @@ namespace Game.Cook
             }
             else
             {
+                GetComponent<SpriteRenderer>().sortingOrder = 9999;
                 CookManager.instance.AddIngredientToCookTile(this);
                 GetComponent<SpriteRenderer>().sprite = itemHoldingSprite;
             }
