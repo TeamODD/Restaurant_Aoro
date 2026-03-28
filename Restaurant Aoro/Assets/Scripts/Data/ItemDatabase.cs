@@ -42,4 +42,9 @@ public class ItemDatabase : MonoBehaviour
         byId.TryGetValue(itemId, out var item);
         return item;
     }
+
+    public IEnumerable<Item> GetAllItems()
+    {
+        return byId.Values;
+    }
 }

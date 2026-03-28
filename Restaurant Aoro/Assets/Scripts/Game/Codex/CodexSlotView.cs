@@ -7,7 +7,7 @@ public class CodexSlotView : MonoBehaviour
     [Header("UI")]
     public Button button;
     public Image icon;
-    public TMP_Text nameText;
+    //public TMP_Text nameText;
 
     [Header("Locked Visual")]
     public Sprite lockedSprite;
@@ -23,7 +23,7 @@ public class CodexSlotView : MonoBehaviour
         if (unlocked)
         {
             icon.sprite = unlockedSprite;
-            if (nameText) nameText.text = unlockedName;
+            //if (nameText) nameText.text = unlockedName;
 
             button.interactable = true;
             button.onClick.RemoveAllListeners();
@@ -32,7 +32,7 @@ public class CodexSlotView : MonoBehaviour
         else
         {
             icon.sprite = lockedSprite;
-            if (nameText) nameText.text = "???";
+            //if (nameText) nameText.text = "???";
 
             button.onClick.RemoveAllListeners();
             button.interactable = false;
