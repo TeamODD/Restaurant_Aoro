@@ -1,4 +1,5 @@
 using System.Collections;
+using Game.Cook;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -58,7 +59,6 @@ public class InventoryItemDrag : DraggingController, IPointerDownHandler, IPoint
 
     private IEnumerator WaitAndDestroy(float time)
     { 
-        
         yield return new WaitForSeconds(time);
         if (proxyObj) Destroy(proxyObj);
     }
@@ -67,7 +67,7 @@ public class InventoryItemDrag : DraggingController, IPointerDownHandler, IPoint
     {
         if (!isDragging || !proxyObj) return;
         
-        var pos = Camera.main.ScreenToWorldPoint(transform.position);
+        var pos = transform.position;
         pos.z = 0;
 
         proxyObj.transform.position = pos;

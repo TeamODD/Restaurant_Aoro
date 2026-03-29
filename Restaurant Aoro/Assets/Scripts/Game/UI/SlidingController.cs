@@ -66,13 +66,12 @@ namespace Game.UI
 
                 var t = 0f;
                 var startPos = objectTransforms[i].position;
-                var endPos = targetTransforms[i].position;
 
                 while (t < duration)
                 {
                     t += Time.deltaTime;
                     var progress = Mathf.Clamp01(t / duration);
-                    objectTransforms[i].position = Vector3.Lerp(startPos, endPos, progress);
+                    objectTransforms[i].position = Vector3.Lerp(startPos, targetTransforms[i].position, progress);
                     yield return null;
                 }
             }
