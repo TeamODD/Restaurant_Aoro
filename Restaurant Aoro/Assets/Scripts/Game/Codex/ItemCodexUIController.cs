@@ -100,13 +100,17 @@ public class ItemCodexUIController : MonoBehaviour
         {
             int itemIndex = startIndex + i;
 
+            slots[i].gameObject.SetActive(true);
+
             if (itemIndex >= totalCount)
             {
-                slots[i].gameObject.SetActive(false);
+                slots[i].BindEmpty();
                 continue;
+                /*slots[i].gameObject.SetActive(false);
+                continue;*/
             }
 
-            slots[i].gameObject.SetActive(true);
+            //slots[i].gameObject.SetActive(true);
 
             Item item = filteredItems[itemIndex];
 

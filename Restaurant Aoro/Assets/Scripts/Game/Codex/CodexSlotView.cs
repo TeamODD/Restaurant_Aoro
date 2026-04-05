@@ -11,6 +11,7 @@ public class CodexSlotView : MonoBehaviour
 
     [Header("Locked Visual")]
     public Sprite lockedSprite;
+    public GameObject lockOverlay;
 
     private string _id;
     private bool _unlocked;
@@ -24,6 +25,7 @@ public class CodexSlotView : MonoBehaviour
         {
             icon.sprite = unlockedSprite;
             //if (nameText) nameText.text = unlockedName;
+            //if (lockOverlay) lockOverlay.SetActive(!unlocked);
 
             button.interactable = true;
             button.onClick.RemoveAllListeners();
@@ -37,5 +39,20 @@ public class CodexSlotView : MonoBehaviour
             button.onClick.RemoveAllListeners();
             button.interactable = false;
         }
+    }
+
+    public void BindEmpty(Sprite emptySprite = null)
+    {
+        if (icon != null)
+            icon.sprite = emptySprite != null ? emptySprite : lockedSprite;
+
+        /*if (nameText != null)
+            nameText.text = "";*/
+
+        if (lockOverlay != null)
+            lockOverlay.SetActive(false);
+
+        button.onClick.RemoveAllListeners();
+        button.interactable = false;
     }
 }
