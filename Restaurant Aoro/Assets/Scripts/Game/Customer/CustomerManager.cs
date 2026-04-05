@@ -36,6 +36,7 @@ public class CustomerManager : MonoBehaviour
 
     private Coroutine SeatCoroutine;
     private Coroutine fillRoutine;
+    private Coroutine moveToStopRoutine;
     private Vector3 baseScale;
 
     [SerializeField] private PlateTile myPlateTile;
@@ -151,7 +152,7 @@ public class CustomerManager : MonoBehaviour
         if (myPlateTile == null)
             myPlateTile = GetComponentInChildren<PlateTile>(includeInactive: true);
 
-        StartCoroutine(MoveToStopPosition());
+        moveToStopRoutine = StartCoroutine(MoveToStopPosition());
     }
     public Transform GetSpeechAnchor()
     {
@@ -167,6 +168,7 @@ public class CustomerManager : MonoBehaviour
         }
 
         transform.position = stopPosition;
+        moveToStopRoutine = null;
 
         SwitchVisual(customerData.prefabStand);
 
@@ -186,6 +188,12 @@ public class CustomerManager : MonoBehaviour
     {
         if (isLeaving) return;
         isLeaving = true;
+
+        if (moveToStopRoutine != null)
+        {
+            StopCoroutine(moveToStopRoutine);
+            moveToStopRoutine = null;
+        }
 
         tabletState.canClicked = false;
 
@@ -315,7 +323,9 @@ public class CustomerManager : MonoBehaviour
 
         isEatingLocked = false;
         SwitchVisual(customerData.prefabSeated);
-        PlaySeatedByResult(resultTypeOnLastServe);
+
+        PlayState(customerData.seatedStates.baseState);
+        //PlaySeatedByResult(resultTypeOnLastServe);
 
         var customerClick = GetComponent<CustomerClick>();
         if (customerClick != null) customerClick.setCanClickTrue();
@@ -410,6 +420,11 @@ public class CustomerManager : MonoBehaviour
             default: return 0;
         }
     }
+    public void ApplyResultSeatedVisual()
+    {
+        SwitchVisual(customerData.prefabSeated);
+        PlaySeatedByResult(resultTypeOnLastServe);
+    }
     private void PlaySeatedByResult(ResultType result)
     {
         if (customerData == null) return;
@@ -482,6 +497,7 @@ public class CustomerManager : MonoBehaviour
 
         transform.position = GetExitPos();
 
+        spawner?.UnregisterCustomerType(this);
         Destroy(gameObject);
     }
     public void ConfirmResultAndLeave(float delay = 1.6f)
@@ -540,6 +556,7 @@ public class CustomerManager : MonoBehaviour
 
         yield return new WaitForSeconds(0.3f);
 
+        spawner?.UnregisterCustomerType(this);
         Destroy(gameObject);
     }
 
@@ -649,5 +666,10 @@ public class CustomerManager : MonoBehaviour
     public Transform GetSeatLocation()
     {
         return customerSeat;
+    }
+
+    private void OnDestroy()
+    {
+        spawner?.UnregisterCustomerType(this);
     }
 }

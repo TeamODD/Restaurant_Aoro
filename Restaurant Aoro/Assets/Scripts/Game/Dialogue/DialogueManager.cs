@@ -109,10 +109,12 @@ public class DialogueManager : MonoBehaviour
             return;
         }
 
-
+        /*var anchor = pendingGreetingAnchor != null ? pendingGreetingAnchor : pendingGreetingOwner.transform;
+        var ui = anchor.GetComponentInChildren<DialogueUI>(true);
+        if (ui == null) return;
+        ui.ShowLines(pendingGreetingLines, anchor, 0f, greetingMode);*/ // 사용 예정
         var anchor = pendingGreetingAnchor != null ? pendingGreetingAnchor : pendingGreetingOwner.transform;
         dialogueUI.ShowLines(pendingGreetingLines, anchor, 0f, greetingMode);
-        //dialogueUI.ShowLines(pendingGreetingLines, pendingGreetingAnchor != null ? pendingGreetingAnchor : pendingGreetingOwner.transform);
 
         pendingGreetingOwner.MarkGreeted();
         ClearPending();
@@ -155,6 +157,16 @@ public class DialogueManager : MonoBehaviour
 
     private void PresentOne(string line, CustomerManager cm, Transform anchor, DialogueInputMode? mode = null)
     {
+        /*var a = anchor != null ? anchor : cm.transform;
+        var ui = a.GetComponentInChildren<DialogueUI>(true);
+        if (ui != null)
+        {
+            ui.ShowOne(line, a, 1.6f, mode ?? normalMode);
+        }
+        else
+        {
+            Debug.Log($"[Dialogue] {cm.name}: {line}");
+        }*/
         if (dialogueUI != null)
         {
             var a = anchor != null ? anchor : cm.transform;
@@ -168,6 +180,16 @@ public class DialogueManager : MonoBehaviour
 
     private void PresentLines(IEnumerable<string> lines, CustomerManager cm, Transform anchor, DialogueInputMode? mode = null)
     {
+        /*var a = anchor != null ? anchor : cm.transform;
+        var ui = a.GetComponentInChildren<DialogueUI>(true);
+        if (ui != null)
+        {
+            ui.ShowLines(lines, a, 0f, mode ?? normalMode);
+        }
+        else
+        {
+            foreach (var l in lines) Debug.Log($"[Dialogue] {cm.name}: {l}");
+        }*/
         if (dialogueUI != null)
         {
             var a = anchor != null ? anchor : cm.transform;

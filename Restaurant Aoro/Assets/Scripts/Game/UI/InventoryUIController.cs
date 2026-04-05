@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class InventoryUIController : MonoBehaviour
@@ -6,6 +7,10 @@ public class InventoryUIController : MonoBehaviour
     [Header("Slot Prefabs")]
     public GameObject slot1Prefab;
     public GameObject slot2Prefab;
+    public GameObject Prefab_3s;
+    public GameObject Prefab_4s;
+    public GameObject Prefab_5s;
+    public GameObject Prefab_6s;
 
     [Header("Inventory Panels")]
     public Transform foodPanelContent;
@@ -37,7 +42,43 @@ public class InventoryUIController : MonoBehaviour
                 throw new ArgumentOutOfRangeException();
         }
     }
+    public void RebuildFromSaved(Dictionary<string, int> itemCounts)
+    {
+        ClearAll();
 
+        if (itemCounts == null) return;
+
+        foreach (var kv in itemCounts)
+        {
+            string itemId = kv.Key;
+            int count = kv.Value;
+
+            Item item = ItemDatabase.Instance.GetItem(itemId);
+            if (item == null)
+            {
+                Debug.LogWarning($"[InventoryUI] ItemID를 찾을 수 없음: {itemId}");
+                continue;
+            }
+
+            for (int i = 0; i < count; i++)
+                AddItemToInventory(item);
+        }
+    }
+
+    private void ClearAll()
+    {
+        ClearChildren(foodPanelContent);
+        ClearChildren(ingredientPanelContent);
+        ClearChildren(foodInventoryContent);
+        ClearChildren(ingredientInventoryContent);
+    }
+
+    private void ClearChildren(Transform parent)
+    {
+        if (parent == null) return;
+        for (int i = parent.childCount - 1; i >= 0; i--)
+            Destroy(parent.GetChild(i).gameObject);
+    }
     private void InstantiateSlot(GameObject prefab, Transform parent, Item item)
     {
         GameObject slotGO = Instantiate(prefab, parent);
@@ -45,4 +86,5 @@ public class InventoryUIController : MonoBehaviour
 
         slotUI.Initialize(item);
     }
+
 }

@@ -54,7 +54,8 @@ MonoBehaviour:
   greetingLines:
   - HI
   orderLines:
-  - I like apple
+  - I like apple so much. so i want apple dish. it is my favorite food in my whole
+    life
   resultBuckets:
   - type: 0
     lines:

@@ -1,6 +1,7 @@
 using Game.UI;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class InventoryManager : MonoBehaviour
 {
@@ -22,6 +23,20 @@ public class InventoryManager : MonoBehaviour
     public Vector2 offsetCenter = new Vector2(545f, 0f); //5.45f, 0f
 
     public bool isCentered = false;
+    private Dictionary<string, int> itemCounts = new Dictionary<string, int>();
+
+    public Dictionary<string, int> GetAllItemsAsDict()
+    {
+        return new Dictionary<string, int>(itemCounts);
+    }
+    public void LoadFromDict(Dictionary<string, int> saved)
+    {
+        itemCounts = saved != null
+            ? new Dictionary<string, int>(saved)
+            : new Dictionary<string, int>();
+
+        uiController.RebuildFromSaved(itemCounts);
+    }
 
     private void Awake()
     {
@@ -59,6 +74,12 @@ public class InventoryManager : MonoBehaviour
 
     public void AddItem(Item item)
     {
+        if (item == null) return;
+        string key = item.ItemID;
+        if (itemCounts.ContainsKey(key)) itemCounts[key]++;
+        else itemCounts[key] = 1;
+        ItemCodexManager.Instance.Unlock(item.ItemID);
+
         uiController.AddItemToInventory(item);
     }
 

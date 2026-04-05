@@ -18,9 +18,9 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
     [Header("Options")]
     [SerializeField] private Vector2 screenOffset = new Vector2(0f, 80f);  // 말풍선을 앵커 위로 띄우는 픽셀 오프셋
     [SerializeField] private float fadeTime = 0.15f;                       // 페이드 시간
-    [SerializeField] private float charInterval = 0.2f;                   // 타자기 간격(초당 50자 0.02)
+    [SerializeField] private float charInterval = 0.2f;                    // 타자기 간격
     [SerializeField] private bool clampToScreen = true;                    // 화면 밖으로 나가지 않기
-    [SerializeField] private Vector2 padding = new Vector2(320f, 180f);      // 텍스트 밖 여백(px)
+    [SerializeField] private Vector2 padding = new Vector2(320f, 180f);    // 텍스트 밖 여백(px)
     [SerializeField] private float maxWidth = 650f;                        // 말풍선 최대 너비(px), 자동 줄바꿈 기반
 
     [SerializeField] private float minBubbleWidth = 140f;
@@ -30,19 +30,6 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
     [SerializeField] private GameObject clickBlocker;
     [SerializeField] private bool closeOnBlockerClick = true;
     [SerializeField] private bool useInternalClick = false;
-
-    [Header("Tail")]
-    [SerializeField] private RectTransform tail;        // 꼬리 이미지
-    [SerializeField] private RectTransform tailAnchor;  // 새로 만든 앵커 (패널 자식)
-
-    [SerializeField, Range(0f, 1f)] private float tailAnchorX = 0.28f; // 0=왼쪽, 1=오른쪽
-    [SerializeField, Range(-0.5f, 1f)] private float tailAnchorY = -0.09f;
-    // 크기/스케일 옵션
-    [SerializeField] private Vector2 tailBaseSize = new Vector2(64, 48);          // 기준 꼬리 크기
-    [SerializeField] private Vector2 tailBasePanelSize = new Vector2(1000, 200);   // 기준 패널 크기
-    [SerializeField] private bool tailUniformScale = true;
-    [SerializeField] private float tailMinScale = 0.5f;
-    [SerializeField] private float tailMaxScale = 1.75f;
 
     [SerializeField] private DialogueInputMode defaultInputMode = DialogueInputMode.Blocker;
     private DialogueInputMode currentMode;
@@ -114,27 +101,6 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
             clickBlocker.transform.SetSiblingIndex(transform.GetSiblingIndex());
     }
 
-    private void UpdateTailSize()
-    {
-        if (tail == null || panel == null) return;
-
-        var p = panel.sizeDelta;
-        float sx = p.x / Mathf.Max(1f, tailBasePanelSize.x);
-        float sy = p.y / Mathf.Max(1f, tailBasePanelSize.y);
-
-        if (tailUniformScale)
-        {
-            float s = Mathf.Clamp(Mathf.Min(sx, sy), tailMinScale, tailMaxScale);
-            tail.sizeDelta = tailBaseSize * s;
-        }
-        else
-        {
-            sx = Mathf.Clamp(sx, tailMinScale, tailMaxScale);
-            sy = Mathf.Clamp(sy, tailMinScale, tailMaxScale);
-            tail.sizeDelta = new Vector2(tailBaseSize.x * sx, tailBaseSize.y * sy);
-        }
-    }
-
     private static void FixCenterAnchor(RectTransform rt)
     {
         rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f);
@@ -158,8 +124,6 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
             }
         }
     }
-
-
 
     public void ShowLines(IEnumerable<string> lines, Transform anchor, float holdLastSeconds = 0f, DialogueInputMode? mode = null)
     {
@@ -197,7 +161,7 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
         currentLine = "";
         lineQueue.Clear();
 
-        group.alpha = 0f;
+        if (group != null) group.alpha = 0f;
         EnableBlocker(false);
         gameObject.SetActive(false);
     }
@@ -229,7 +193,7 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
     private void ShowNextInternal(Transform anchor, float holdLastSeconds = 0f)
     {
         EnsureActive();
-        worldAnchor = anchor;  
+        worldAnchor = anchor;
 
         if (lineQueue.Count == 0)
         {
@@ -244,16 +208,15 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
         isShowing = true;
 
         if (currentMode == DialogueInputMode.Blocker)
-            EnableBlocker(true);  
+            EnableBlocker(true);
 
         if (followRoutine != null) StopCoroutine(followRoutine);
-        followRoutine = StartCoroutine(FollowAnchor()); 
+        followRoutine = StartCoroutine(FollowAnchor());
 
         if (fadeRoutine != null) StopCoroutine(fadeRoutine);
         fadeRoutine = StartCoroutine(FadeTo(1f, fadeTime));
 
         StartTyping(currentLine);
-
     }
 
     private void ShowNextInternal(Transform anchor)
@@ -349,41 +312,22 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
         float bubbleW = Mathf.Max(minBubbleWidth, textW + padding.x * 2f);
         float bubbleH = Mathf.Max(minBubbleHeight, textH + padding.y * 2f);
         panel.sizeDelta = new Vector2(bubbleW, bubbleH);
-
-        if (tail != null)
-        {
-            float tx = (bubbleW * tailAnchorX) - (bubbleW * 0.5f);
-            float ty = (bubbleH * tailAnchorY) - (bubbleH * 0.5f);
-            tail.anchoredPosition = new Vector2(tx, ty);
-
-            // 스케일 조정 (선택적)
-            float scaleFactor = bubbleW / tailBasePanelSize.x;
-            if (tailUniformScale)
-                tail.localScale = Vector3.one * Mathf.Clamp(scaleFactor, tailMinScale, tailMaxScale);
-            else
-                tail.localScale = new Vector3(
-                    Mathf.Clamp(scaleFactor, tailMinScale, tailMaxScale),
-                    Mathf.Clamp(bubbleH / tailBasePanelSize.y, tailMinScale, tailMaxScale),
-                    1f
-                );
-        }
     }
 
     private IEnumerator FollowAnchor()
     {
-
         var canvas = GetComponentInParent<Canvas>();
-        RectTransform container = panel != null ? panel.parent as RectTransform : null;
-
+        //RectTransform container = panel != null ? panel.parent as RectTransform : null;
+        RectTransform container = canvas != null ? canvas.GetComponent<RectTransform>() : null;
         Camera camForRT = null;
         if (canvas != null)
         {
             if (canvas.renderMode == RenderMode.ScreenSpaceCamera)
-                camForRT = canvas.worldCamera;      
+                camForRT = canvas.worldCamera;
             else if (canvas.renderMode == RenderMode.ScreenSpaceOverlay)
-                camForRT = null;                
+                camForRT = null;
             else
-                camForRT = cam != null ? cam : Camera.main; 
+                camForRT = cam != null ? cam : Camera.main;
         }
         else
         {
@@ -431,14 +375,13 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
         if (fadeRoutine != null) StopCoroutine(fadeRoutine);
         yield return FadeTo(0f, fadeTime);
 
-        // 마무리
         if (followRoutine != null) StopCoroutine(followRoutine);
         isTyping = false;
         isShowing = false;
 
         if (group != null) group.blocksRaycasts = false;
         EnableBlocker(false);
-        gameObject.SetActive(false);     
+        gameObject.SetActive(false);
     }
 
     public void OnBlockerClicked()
@@ -462,15 +405,15 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
 
     private IEnumerator FadeTo(float target, float duration)
     {
-        float start = group.alpha;
+        float start = group != null ? group.alpha : 0f;
         float t = 0f;
         while (t < 1f)
         {
             t += Time.deltaTime / Mathf.Max(duration, 0.0001f);
-            group.alpha = Mathf.Lerp(start, target, t);
+            if (group != null) group.alpha = Mathf.Lerp(start, target, t);
             yield return null;
         }
-        group.alpha = target;
+        if (group != null) group.alpha = target;
     }
 
     private void ClearQueue()

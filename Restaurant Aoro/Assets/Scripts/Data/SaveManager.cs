@@ -50,15 +50,16 @@ public class SaveManager : MonoBehaviour
             bgmVolume = 0.7f,
             seVolume = 0.7f,
             triggers = new Dictionary<string, bool>
-        {
-            { "hasKey", false },
-            { "isBossDefeated", false }
-        },
+            {
+                { "hasKey", false },
+                { "isBossDefeated", false }
+            },
             itemInventory = new Dictionary<string, int>
-        {
-            { "Potion", 2 },
-            { "Sword", 0 }
-        }
+            {
+                { "Potion", 2 },
+                { "Sword", 0 }
+            },
+            customerCodex = new Dictionary<string, CustomerCodexEntry>()
         };
 
         string fileName = SaveManager.Instance.currentSaveFileName;
