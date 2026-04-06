@@ -7,6 +7,9 @@ public class GameTime : MonoBehaviour
     public TextMeshProUGUI timeText;
     public float secondsPerGameMinute = 1f;
 
+    public int Hour => hour;
+    public int Minute => minute;
+
     private int hour = 9;
     private int minute = 0;
 
@@ -17,6 +20,14 @@ public class GameTime : MonoBehaviour
     [SerializeField] private Gradient dayLightGradient;
     [SerializeField] private Light2D nightLight;
     [SerializeField] private Gradient nightLightGradient;
+
+    public void SetTime(int h, int m)
+    {
+        hour = Mathf.Clamp(h, 0, 23);
+        minute = Mathf.Clamp(m, 0, 59);
+        timer = 0f;       // 시간 누적 초기화
+        UpdateClockUI();
+    }
 
     void Update()
     {

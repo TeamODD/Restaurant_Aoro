@@ -315,14 +315,20 @@ public class CustomerClick : MonoBehaviour
                 true
             );
             UnlockAll();
-            backBtn.SlideOut(true);
+            StartCoroutine(SlideOutAfterZoomOut());
+            //backBtn.SlideOut(true);
             zoomed = false;  
         }
     }
 
     private void OnBackButtonClick()
     {
-        if (pendingRoutine != null) { StopCoroutine(pendingRoutine); pendingRoutine = null; pendingZoomIn = false; }
+        if (pendingRoutine != null)
+        {
+            StopCoroutine(pendingRoutine);
+            pendingRoutine = null;
+            pendingZoomIn = false;
+        }
 
         if (PlateManager.instance != null)
             PlateManager.instance.RemoveAllFromPlate();
@@ -339,11 +345,18 @@ public class CustomerClick : MonoBehaviour
                 arrowGroups,
                 true
             );
+
             UnlockAll();
-            backBtn.SlideOut(true);
+            StartCoroutine(SlideOutAfterZoomOut());
+            //backBtn.SlideOut(true);
             zoomed = false;
         }
-
+    }
+    private IEnumerator SlideOutAfterZoomOut()
+    {
+        yield return new WaitForSeconds(Mathf.Max(moveDuration, zoomDuration));
+        if (backBtn != null)
+            backBtn.SlideOut(true);
     }
 
     private void LockToThis()
