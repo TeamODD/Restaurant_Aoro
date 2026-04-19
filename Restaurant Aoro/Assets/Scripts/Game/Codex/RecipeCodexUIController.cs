@@ -4,17 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class ItemCodexUIController : MonoBehaviour
+public class RecipeCodexUIController : MonoBehaviour
 {
-    public enum CodexFilterType
-    {
-        Ingredient,
-        Food
-    }
-
-    [Header("Filter")]
-    public CodexFilterType filterType = CodexFilterType.Ingredient;
-
     [Header("Slots (8)")]
     public CodexSlotView[] slots;
 
@@ -22,13 +13,10 @@ public class ItemCodexUIController : MonoBehaviour
     public Button prevButton;
     public Button nextButton;
 
-    [Header("Locked Visual")]
-    public Sprite lockedSprite;
-
     [Header("Detail Scene")]
-    public string detailSceneName = "ItemCodexDetail";
+    public string detailSceneName = "RecipeCodexDetail";
 
-    private List<Item> filteredItems = new();
+    private List<RecipeCodexEntry> recipeEntries = new();
     private int currentPage = 0;
     private const int pageSize = 8;
 
@@ -46,9 +34,9 @@ public class ItemCodexUIController : MonoBehaviour
             nextButton.onClick.AddListener(OnClickNext);
         }
 
-        ItemCodexManager.OnCodexChanged += RefreshPage;
+        RecipeCodexManager.OnCodexChanged += RefreshPage;
 
-        BuildFilteredList();
+        BuildRecipeList();
         RefreshPage();
     }
 
@@ -60,32 +48,32 @@ public class ItemCodexUIController : MonoBehaviour
         if (nextButton != null)
             nextButton.onClick.RemoveListener(OnClickNext);
 
-        ItemCodexManager.OnCodexChanged -= RefreshPage;
+        RecipeCodexManager.OnCodexChanged -= RefreshPage;
     }
 
-    private void BuildFilteredList()
+    private void BuildRecipeList()
     {
-        IEnumerable<Item> allItems = ItemDatabase.Instance.GetAllItems();
+        if (RecipeCodexManager.Instance == null)
+        {
+            recipeEntries = new List<RecipeCodexEntry>();
+            return;
+        }
 
-        if (filterType == CodexFilterType.Ingredient)
-            filteredItems = allItems.Where(x => x.ItemType == ItemType.Ingredient).ToList();
-        else
-            filteredItems = allItems.Where(x => x.ItemType == ItemType.Food).ToList();
+        var all = RecipeCodexManager.Instance.GetAll();
 
-        // 필요하면 이름순 정렬
-        filteredItems = filteredItems.OrderBy(x => x.ItemName).ToList();
+        recipeEntries = all.Values
+            .OrderBy(x => x.result != null ? x.result.itemName : string.Empty)
+            .ToList();
     }
 
     public void RefreshPage()
     {
-        BuildFilteredList(); // 항상 최신 리스트 갱신
+        if (RecipeCodexManager.Instance == null)
+            return;
 
-        if (filteredItems == null)
-            filteredItems = new List<Item>();
+        BuildRecipeList();
 
-        var codexData = ItemCodexManager.Instance.GetAll();
-
-        int totalCount = filteredItems.Count;
+        int totalCount = recipeEntries.Count;
         int maxPage = totalCount == 0 ? 0 : (totalCount - 1) / pageSize;
 
         currentPage = Mathf.Clamp(currentPage, 0, maxPage);
@@ -100,33 +88,36 @@ public class ItemCodexUIController : MonoBehaviour
 
         for (int i = 0; i < slots.Length; i++)
         {
-            int itemIndex = startIndex + i;
+            int recipeIndex = startIndex + i;
 
             slots[i].gameObject.SetActive(true);
 
-            if (itemIndex >= totalCount)
+            if (recipeIndex >= totalCount)
             {
                 slots[i].BindEmpty();
                 continue;
-                /*slots[i].gameObject.SetActive(false);
-                continue;*/
             }
 
-            //slots[i].gameObject.SetActive(true);
+            RecipeCodexEntry entry = recipeEntries[recipeIndex];
 
-            Item item = filteredItems[itemIndex];
+            bool unlocked = entry != null && entry.unlocked;
 
-            bool unlocked = false;
-            if (codexData.TryGetValue(item.ItemID, out var entry))
+            Sprite displaySprite = null;
+            string displayName = "";
+
+            if (unlocked && entry.result != null)
             {
-                unlocked = entry != null && entry.unlocked;
-            }
+                Item resultItem = ItemDatabase.Instance.GetItem(entry.result.itemId);
 
-            Sprite displaySprite = unlocked ? item.ItemSprite : lockedSprite;
-            string displayName = unlocked ? item.ItemName : "???";
+                if (resultItem != null)
+                {
+                    displaySprite = resultItem.ItemSprite;
+                    displayName = resultItem.ItemName;
+                }
+            }
 
             slots[i].Bind(
-                item.ItemID,
+                entry.entryId,
                 displaySprite,
                 displayName,
                 unlocked,
@@ -144,7 +135,7 @@ public class ItemCodexUIController : MonoBehaviour
 
     private void OnClickNext()
     {
-        int totalCount = filteredItems.Count;
+        int totalCount = recipeEntries.Count;
         int maxPage = totalCount == 0 ? 0 : (totalCount - 1) / pageSize;
 
         if (currentPage >= maxPage) return;
@@ -152,9 +143,9 @@ public class ItemCodexUIController : MonoBehaviour
         RefreshPage();
     }
 
-    private void OnClickUnlockedSlot(string itemId)
+    private void OnClickUnlockedSlot(string entryId)
     {
-        /*CodexSelection.SelectedItemId = itemId;
+        /*RecipeCodexSelection.SelectedEntryId = entryId;
         SceneManager.LoadScene(detailSceneName);*/
     }
 }

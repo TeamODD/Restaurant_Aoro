@@ -102,7 +102,7 @@ public class CustomerCodexUIController : MonoBehaviour
 
     private void OnClickUnlockedSlot(string customerId)
     {
-        CodexSelection.SelectedCustomerId = customerId;
-        SceneManager.LoadScene(detailSceneName);
+        /*CodexSelection.SelectedCustomerId = customerId;
+        SceneManager.LoadScene(detailSceneName);*/
     }
 }

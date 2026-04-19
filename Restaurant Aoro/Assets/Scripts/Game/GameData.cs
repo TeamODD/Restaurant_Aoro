@@ -37,4 +37,5 @@ public class GameData
 
     public Dictionary<string, CustomerCodexEntry> customerCodex = new();
     public Dictionary<string, ItemCodexEntry> itemCodex = new();
+    public Dictionary<string, RecipeCodexEntry> recipeCodex = new();
 }

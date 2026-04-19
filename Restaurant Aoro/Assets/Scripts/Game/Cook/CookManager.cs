@@ -140,6 +140,8 @@ namespace Game.Cook
             if (result)
             {
                 Debug.Log($"[CookManager] Will output {result.ItemName}");
+                //add codex
+                RecipeCodexManager.Instance.RegisterRecipe(ingredients, result);
                 ExitCook(result);
                 return;
             }
