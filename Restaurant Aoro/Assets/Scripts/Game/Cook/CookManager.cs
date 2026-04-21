@@ -65,6 +65,7 @@ namespace Game.Cook
                 }
             }
 
+            arrowController.MoveArrowsOutOfScreen();
             if (!inventoryManager.isCentered)
             {
                 inventoryManager.OnClickToggleInventoryPosition();
@@ -94,7 +95,7 @@ namespace Game.Cook
                 inventoryManager.EnableDrag();
             });
 
-            arrowController.MoveArrowsOutOfScreen();
+            //arrowController.MoveArrowsOutOfScreen();
             backBtn.SlideIn(true);
         }
 
@@ -182,6 +183,7 @@ namespace Game.Cook
 
                     if (inventoryManager.isCentered)
                         inventoryManager.OnClickToggleInventoryPosition();
+                    inventoryManager.ChangeToInventory();
 
                     if (cookItem)
                     {

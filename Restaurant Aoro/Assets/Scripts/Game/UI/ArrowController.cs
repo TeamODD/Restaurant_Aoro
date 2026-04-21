@@ -48,6 +48,8 @@ public class ArrowController : MonoBehaviour
     public float verStepDistance = 10.5f;
     public float arrowRemovalDuration = 0.3f;
 
+    private Vector3 leftPos, rightPos, upPos, downPos;
+
     private Axis hor = new(CameraStep.Center, CameraStep.Center, CameraStep.Two);
     private Axis ver = new(CameraStep.Center, CameraStep.Center, CameraStep.One);
 
@@ -281,6 +283,10 @@ public class ArrowController : MonoBehaviour
 
     public void MoveArrowsOutOfScreen()
     {
+        leftPos = Arrow[(int)ArrowDirection.Left].transform.position;
+        rightPos = Arrow[(int)ArrowDirection.Right].transform.position;
+        downPos = Arrow[(int)ArrowDirection.Down].transform.position;
+        upPos = Arrow[(int)ArrowDirection.Up].transform.position;
         FadeOutSelector(new [] { ArrowDirection.Left , ArrowDirection.Right, ArrowDirection.Down, ArrowDirection.Up});
         StartCoroutine(MoveArrows());
     }
@@ -290,10 +296,30 @@ public class ArrowController : MonoBehaviour
         float t = 0f;
         int direction = toIn ? 1 : -1;
 
-        Vector3 leftPos = Arrow[(int)ArrowDirection.Left].transform.position;
-        Vector3 rightPos = Arrow[(int)ArrowDirection.Right].transform.position;
-        Vector3 downPos = Arrow[(int)ArrowDirection.Down].transform.position;
-        Vector3 upPos = Arrow[(int)ArrowDirection.Up].transform.position;
+        Vector3 leftStart = Arrow[(int)ArrowDirection.Left].transform.position;
+        Vector3 rightStart = Arrow[(int)ArrowDirection.Right].transform.position;
+        Vector3 downStart = Arrow[(int)ArrowDirection.Down].transform.position;
+        Vector3 upStart = Arrow[(int)ArrowDirection.Up].transform.position;
+
+        Vector3 leftTarget;
+        Vector3 rightTarget;
+        Vector3 downTarget;
+        Vector3 upTarget;
+
+        if (toIn)
+        {
+            leftTarget = leftPos;
+            rightTarget = rightPos;
+            downTarget = downPos;
+            upTarget = upPos;
+        }
+        else
+        {
+            leftTarget = new Vector3(leftPos.x - 200, leftPos.y, leftPos.z);
+            rightTarget = new Vector3(rightPos.x + 200, rightPos.y, rightPos.z);
+            downTarget = new Vector3(downPos.x, downPos.y - 100, downPos.z);
+            upTarget = new Vector3(upPos.x, upPos.y + 100, upPos.z);
+        }
 
         while (t < 1f)
         {
@@ -307,8 +333,12 @@ public class ArrowController : MonoBehaviour
                 new Vector3(downPos.x, downPos.y + 100 * direction, downPos.z), t);
             Arrow[(int)ArrowDirection.Up].transform.position = Vector3.Lerp(upPos,
                 new Vector3(upPos.x, upPos.y - 100 * direction, upPos.z), t);
-            
+
             yield return null;
         }
+        Arrow[(int)ArrowDirection.Left].transform.position = leftTarget;
+        Arrow[(int)ArrowDirection.Right].transform.position = rightTarget;
+        Arrow[(int)ArrowDirection.Down].transform.position = downTarget;
+        Arrow[(int)ArrowDirection.Up].transform.position = upTarget;
     }
 }
