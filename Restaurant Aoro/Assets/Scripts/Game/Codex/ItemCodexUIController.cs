@@ -34,6 +34,7 @@ public class ItemCodexUIController : MonoBehaviour
 
     private void OnEnable()
     {
+        Debug.Log("[ItemCodexUIController] OnEnable");
         if (prevButton != null)
         {
             prevButton.onClick.RemoveListener(OnClickPrev);
@@ -72,13 +73,13 @@ public class ItemCodexUIController : MonoBehaviour
         else
             filteredItems = allItems.Where(x => x.ItemType == ItemType.Food).ToList();
 
-        // ÇÊ¿äÇÏ¸é ÀÌ¸§¼ø Á¤·Ä
+        // ï¿½Ê¿ï¿½ï¿½Ï¸ï¿½ ï¿½Ì¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         filteredItems = filteredItems.OrderBy(x => x.ItemName).ToList();
     }
 
     public void RefreshPage()
     {
-        BuildFilteredList(); // Ç×»ó ÃÖ½Å ¸®½ºÆ® °»½Å
+        BuildFilteredList(); // ï¿½×»ï¿½ ï¿½Ö½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
 
         if (filteredItems == null)
             filteredItems = new List<Item>();

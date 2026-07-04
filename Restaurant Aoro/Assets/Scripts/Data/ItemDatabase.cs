@@ -19,7 +19,7 @@ public class ItemDatabase : MonoBehaviour
     {
         byId.Clear();
 
-        // Resources/Items Æú´õ¿¡¼­ Item ScriptableObject ÀüºÎ ·Îµå
+        // Resources/Items ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Item ScriptableObject ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½
         Item[] items = Resources.LoadAll<Item>("Items");
 
         foreach (var item in items)
@@ -30,7 +30,7 @@ public class ItemDatabase : MonoBehaviour
             if (!byId.ContainsKey(item.ItemID))
                 byId.Add(item.ItemID, item);
             else
-                Debug.LogWarning($"[ItemDatabase] Áßº¹ ItemID ¹ß°ß: {item.ItemID} ({item.name})");
+                Debug.LogWarning($"[ItemDatabase] ï¿½ßºï¿½ ItemID ï¿½ß°ï¿½: {item.ItemID} ({item.name})");
         }
 
         Debug.Log($"[ItemDatabase] Loaded Items: {byId.Count}");
