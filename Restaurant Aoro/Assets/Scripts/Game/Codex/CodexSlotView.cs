@@ -7,53 +7,82 @@ public class CodexSlotView : MonoBehaviour
     [Header("UI")]
     public Button button;
     public Image icon;
+    public Image background;
+    public Image background_locked;
     public TMP_Text nameText;
 
     [Header("Locked Visual")]
-    public Sprite lockedSprite;
     public GameObject lockOverlay;
 
     private string _id;
     private bool _unlocked;
 
-    public void Bind(string id, Sprite unlockedSprite, string unlockedName, bool unlocked, System.Action<string> onClick)
+    public void Bind(string id, Sprite itemSprite, string itemName, bool unlocked, System.Action<string> onClick)
     {
         _id = id;
         _unlocked = unlocked;
 
+        if (background != null)
+            background.gameObject.SetActive(unlocked);
+
+        if (background_locked != null)
+            background_locked.gameObject.SetActive(!unlocked);
+
+        if (icon != null)
+            icon.gameObject.SetActive(unlocked);
+
+        if (nameText != null)
+            nameText.gameObject.SetActive(unlocked);
+
+        if (lockOverlay != null)
+            lockOverlay.SetActive(!unlocked);
+
+        if (button != null)
+        {
+            button.onClick.RemoveAllListeners();
+            button.interactable = unlocked;
+        }
+
         if (unlocked)
         {
-            icon.sprite = unlockedSprite;
+            if (icon != null)
+                icon.sprite = itemSprite;
 
-            if (nameText) nameText.text = unlockedName;
-            //if (lockOverlay) lockOverlay.SetActive(!unlocked);
+            if (nameText != null)
+                nameText.text = itemName;
 
-            button.interactable = true;
-            button.onClick.RemoveAllListeners();
-            button.onClick.AddListener(() => onClick?.Invoke(_id));
-        }
-        else
-        {
-            icon.sprite = lockedSprite;
-            if (nameText) nameText.text = "???";
-
-            button.onClick.RemoveAllListeners();
-            button.interactable = false;
+            if (button != null)
+                button.onClick.AddListener(() => onClick?.Invoke(_id));
         }
     }
 
-    public void BindEmpty(Sprite emptySprite = null)
+    public void BindEmpty()
     {
+        _id = null;
+        _unlocked = false;
+
+        if (background != null)
+            background.gameObject.SetActive(false);
+
+        if (background_locked != null)
+            background_locked.gameObject.SetActive(true);
+
         if (icon != null)
-            icon.sprite = emptySprite != null ? emptySprite : lockedSprite;
+            icon.gameObject.SetActive(false);
 
         if (nameText != null)
+        {
             nameText.text = "";
+            nameText.gameObject.SetActive(false);
+        }
 
         if (lockOverlay != null)
             lockOverlay.SetActive(false);
 
-        button.onClick.RemoveAllListeners();
-        button.interactable = false;
+        if (button != null)
+        {
+            button.onClick.RemoveAllListeners();
+            button.interactable = false;
+        }
     }
 }

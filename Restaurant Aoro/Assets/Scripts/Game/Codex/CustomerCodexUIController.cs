@@ -7,36 +7,41 @@ using UnityEngine.SceneManagement;
 public class CustomerCodexUIController : MonoBehaviour
 {
     [Header("Slots (8)")]
-    public CodexSlotView[] slots; // Inspector¿¡ 8°³ ÇÒ´ç
+    public CodexSlotView[] slots; // Inspectorï¿½ï¿½ 8ï¿½ï¿½ ï¿½Ò´ï¿½
 
     [Header("Paging")]
     public Button prevButton;
     public Button nextButton;
 
-    [Header("Locked Sprite")]
-    public Sprite lockedSprite;
-
-    [Header("Detail Scene")]
-    public string detailSceneName = "CustomerCodexDetail";
-
-    private List<Customer> allCustomers;
+    private List<Customer> allCustomers = new();
     private int pageIndex = 0;
     private const int PageSize = 8;
 
-    void OnEnable()
+    private void OnEnable()
     {
-        // ÀüÃ¼ ¸ñ·Ï Ä³½Ã
-        allCustomers = CustomerDatabase.Instance.GetAll().ToList();
+        if (CustomerDatabase.Instance != null)
+            allCustomers = CustomerDatabase.Instance.GetAll().ToList();
+        else
+            allCustomers = new List<Customer>();
 
-        if (prevButton) prevButton.onClick.AddListener(PrevPage);
-        if (nextButton) nextButton.onClick.AddListener(NextPage);
+        if (prevButton)
+        {
+            prevButton.onClick.RemoveListener(PrevPage);
+            prevButton.onClick.AddListener(PrevPage);
+        }
+
+        if (nextButton)
+        {
+            nextButton.onClick.RemoveListener(NextPage);
+            nextButton.onClick.AddListener(NextPage);
+        }
 
         CustomerCodexManager.OnCodexChanged += Refresh;
 
         Refresh();
     }
 
-    void OnDisable()
+    private void OnDisable()
     {
         if (prevButton) prevButton.onClick.RemoveListener(PrevPage);
         if (nextButton) nextButton.onClick.RemoveListener(NextPage);
@@ -46,13 +51,15 @@ public class CustomerCodexUIController : MonoBehaviour
 
     public void Refresh()
     {
-        var codex = CustomerCodexManager.Instance.GetAll(); // CustomerID -> Entry
+        if (CustomerCodexManager.Instance == null)
+            return;
+
+        var codex = CustomerCodexManager.Instance.GetAll();
 
         int total = allCustomers.Count;
-        int maxPage = Mathf.Max(0, (total - 1) / PageSize);
+        int maxPage = total == 0 ? 0 : (total - 1) / PageSize;
         pageIndex = Mathf.Clamp(pageIndex, 0, maxPage);
 
-        // ¹öÆ° È°¼º/ºñÈ°¼º
         if (prevButton) prevButton.interactable = pageIndex > 0;
         if (nextButton) nextButton.interactable = pageIndex < maxPage;
 
@@ -62,47 +69,51 @@ public class CustomerCodexUIController : MonoBehaviour
         {
             int idx = start + i;
 
+            slots[i].gameObject.SetActive(true);
+
             if (idx >= total)
             {
-                slots[i].gameObject.SetActive(false);
+                slots[i].BindEmpty();
                 continue;
             }
 
-            slots[i].gameObject.SetActive(true);
-
             var customer = allCustomers[idx];
-            codex.TryGetValue(customer.CustomerID, out var entry);
 
+            codex.TryGetValue(customer.CustomerID, out var entry);
             bool unlocked = entry != null && entry.unlocked;
 
-            // ¿©±â¼­ "ÇØ±İµÈ ¼Õ´Ô ÀÌ¹ÌÁö"´Â ³× Customer SO¿¡ ´ëÇ¥ ¾ÆÀÌÄÜÀÌ ¾øÀ¸´Ï,
-            // 1) Customer¿¡ ¾ÆÀÌÄÜ Sprite¸¦ Ãß°¡ÇÏ°Å³ª
-            // 2) tribe/NPCType ±â¹İÀ¸·Î ¾ÆÀÌÄÜ ¸ÅÇÎÇÏ´Â ¹æ½ÄÀÌ ÇÊ¿äÇØ.
-            // ¿ì¼±Àº ¿¹½Ã·Î null Ã³¸®(ÇØ±İ ½Ã iconÀ» µû·Î °¡Á®¿Àµµ·Ï ¼öÁ¤ ÇÊ¿ä).
-            Sprite unlockedIcon = null; // TODO: customer.icon °°Àº ÇÊµå ÃßÃµ
+            Sprite unlockedIcon = null; // ë‚˜ì¤‘ì— customer icon ìˆìœ¼ë©´ ë„£ê¸°
             string unlockedName = customer.CustomerName;
 
-            slots[i].lockedSprite = lockedSprite;
-            slots[i].Bind(customer.CustomerID, unlockedIcon, unlockedName, unlocked, OnClickUnlockedSlot);
+            slots[i].Bind(
+                customer.CustomerID,
+                unlockedIcon,
+                unlockedName,
+                unlocked,
+                OnClickUnlockedSlot
+            );
         }
     }
 
     private void PrevPage()
     {
+        if (pageIndex <= 0) return;
         pageIndex--;
         Refresh();
-        // ½½¶óÀÌµå ¾Ö´Ï¸ŞÀÌ¼ÇÀº ¿©±â¼­ Ã³¸®ÇÏ¸é µÊ(¾Æ·¡ 4) Âü°í)
     }
 
     private void NextPage()
     {
+        int total = allCustomers.Count;
+        int maxPage = total == 0 ? 0 : (total - 1) / PageSize;
+
+        if (pageIndex >= maxPage) return;
         pageIndex++;
         Refresh();
     }
 
     private void OnClickUnlockedSlot(string customerId)
     {
-        /*CodexSelection.SelectedCustomerId = customerId;
-        SceneManager.LoadScene(detailSceneName);*/
+        Debug.Log($"Clicked Customer Codex: {customerId}");
     }
 }
