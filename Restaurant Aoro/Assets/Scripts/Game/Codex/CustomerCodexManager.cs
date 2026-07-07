@@ -29,15 +29,15 @@ public class CustomerCodexManager : MonoBehaviour
         OnCodexChanged?.Invoke();
     }
 
-    public void Unlock(string customerId)
+    /*public void Unlock(string customerId)
     {
         var e = GetOrCreate(customerId);
         e.seen = true;
         e.unlocked = true;
         OnCodexChanged?.Invoke();
-    }
+    }*/
 
-    public void AddResult(string customerId, ResultType type)
+    /*public void AddResult(string customerId, ResultType type)
     {
         var e = GetOrCreate(customerId);
         e.visitCount++;
@@ -46,7 +46,7 @@ public class CustomerCodexManager : MonoBehaviour
         if (e.resultCounts.ContainsKey(key)) e.resultCounts[key]++;
         else e.resultCounts[key] = 1;
         OnCodexChanged?.Invoke();
-    }
+    }*/
 
     private CustomerCodexEntry GetOrCreate(string id)
     {
@@ -56,5 +56,45 @@ public class CustomerCodexManager : MonoBehaviour
             entries[id] = e;
         }
         return e;
+    }
+    public void UnlockEntranceInfo(string customerId)
+    {
+        var e = GetOrCreate(customerId);
+
+        e.seen = true;
+        e.mainIllustrationUnlocked = true;
+        e.entranceIllustrationUnlocked = true;
+        e.basicDescriptionUnlocked = true;
+
+        OnCodexChanged?.Invoke();
+    }
+
+    public void UnlockSeatedInfo(string customerId)
+    {
+        var e = GetOrCreate(customerId);
+
+        e.seatedIllustrationUnlocked = true;
+
+        OnCodexChanged?.Invoke();
+    }
+
+    public void AddResult(string customerId, ResultType type)
+    {
+        var e = GetOrCreate(customerId);
+
+        e.visitCount++;
+        e.resultCount++;
+
+        string key = type.ToString();
+
+        if (e.resultCounts.ContainsKey(key))
+            e.resultCounts[key]++;
+        else
+            e.resultCounts[key] = 1;
+
+        if (e.resultCount >= 3)
+            e.detailDescriptionUnlocked = true;
+
+        OnCodexChanged?.Invoke();
     }
 }

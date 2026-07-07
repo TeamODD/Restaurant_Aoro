@@ -9,8 +9,8 @@ public class CustomerEditor : Editor
         serializedObject.Update();
         Customer customer = (Customer)target;
 
-        // ¼Õ´Ô Á¤º¸
-        EditorGUILayout.LabelField("¼Õ´Ô Á¤º¸", EditorStyles.boldLabel);
+        // ï¿½Õ´ï¿½ ï¿½ï¿½ï¿½ï¿½
+        EditorGUILayout.LabelField("ï¿½Õ´ï¿½ ï¿½ï¿½ï¿½ï¿½", EditorStyles.boldLabel);
         Draw("CustomerID");
         Draw("CustomerName");
         Draw("tribe");
@@ -18,24 +18,25 @@ public class CustomerEditor : Editor
         Draw("appearStartHour");
         Draw("appearEndHour");
         Draw("codexDescription");
+        Draw("codexDetailDescription");
 
-        // À½½Ä ÃëÇâ
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         EditorGUILayout.Space(6);
-        EditorGUILayout.LabelField("À½½Ä ÃëÇâ", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½", EditorStyles.boldLabel);
         Draw("favoriteTastes", true);
         Draw("dislikedTastes", true);
         Draw("favoriteFoods", true);
         Draw("dislikedFoods", true);
 
-        // °áÁ¦ Á¤º¸
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         EditorGUILayout.Space(6);
-        EditorGUILayout.LabelField("°áÁ¦ Á¤º¸", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½", EditorStyles.boldLabel);
         if (customer.tribe == TribeType.Human)
             Draw("payable", true);
         else
             Draw("payItem", true);
 
-        // IK ÇÁ¸®ÆÕ
+        // IK ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         EditorGUILayout.Space(8);
         EditorGUILayout.LabelField("IK Motion Prefabs", EditorStyles.boldLabel);
         Draw("prefabStand");
@@ -53,9 +54,9 @@ public class CustomerEditor : Editor
         Draw("seatedStates", true);
         Draw("eatingStates", true);
 
-        // ´ë»ç
+        // ï¿½ï¿½ï¿½
         EditorGUILayout.Space(8);
-        EditorGUILayout.LabelField("´ë»ç ¼³Á¤", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField("ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½", EditorStyles.boldLabel);
         Draw("greetingLines", true);
         Draw("orderLines", true);
         Draw("resultBuckets", true);

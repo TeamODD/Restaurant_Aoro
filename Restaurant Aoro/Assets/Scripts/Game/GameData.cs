@@ -5,9 +5,15 @@ using UnityEngine;
 public class CustomerCodexEntry
 {
     public bool seen;
-    public bool unlocked;
-    
-    public int affinity;
+
+    public bool mainIllustrationUnlocked;
+    public bool entranceIllustrationUnlocked;
+    public bool seatedIllustrationUnlocked;
+
+    public bool basicDescriptionUnlocked;
+    public bool detailDescriptionUnlocked;
+
+    public int resultCount;
     public int visitCount;
 
     public Dictionary<string, int> resultCounts = new();
@@ -15,8 +21,8 @@ public class CustomerCodexEntry
 [System.Serializable]
 public class ItemCodexEntry
 {
-    public bool seen;      
-    public bool unlocked;  
+    public bool seen;
+    public bool unlocked;
 }
 
 [System.Serializable]

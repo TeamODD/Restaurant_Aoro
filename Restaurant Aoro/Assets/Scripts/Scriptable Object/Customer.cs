@@ -34,17 +34,17 @@ public class ResultBucket
 [System.Serializable]
 public class VariantStates
 {
-    [Tooltip("±âº» »óÅÂ(State name). ºñ¿öµÎ¸é º¯Çü Àç»ı ¾È ÇÔ")]
+    [Tooltip("ï¿½âº» ï¿½ï¿½ï¿½ï¿½(State name). ï¿½ï¿½ï¿½ï¿½Î¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½")]
     public string baseState;
 
-    [Tooltip("Ãß°¡ º¯Çü »óÅÂµé. (¿¹: sit_good, sit_bad / left_0, left_1)")]
+    [Tooltip("ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Âµï¿½. (ï¿½ï¿½: sit_good, sit_bad / left_0, left_1)")]
     public List<string> variants = new();
 }
 
 [CreateAssetMenu(menuName = "Customer")]
 public class Customer : ScriptableObject
 {
-    [Header("¼Õ´Ô Á¤º¸")]
+    [Header("ì†ë‹˜ ì •ë³´")]
     public string CustomerID;
     public string CustomerName;
     public TribeType tribe;
@@ -52,6 +52,7 @@ public class Customer : ScriptableObject
     [Range(0f, 24f)] public float appearStartHour = 17f;
     [Range(0f, 24f)] public float appearEndHour = 20f;
     [TextArea(3, 8)] public string codexDescription;
+    [TextArea(3, 8)] public string codexDetailDescription;
     public List<FoodTaste> favoriteTastes = new();
     public List<FoodTaste> dislikedTastes = new();
     public List<ItemMainCategory> favoriteFoods = new();
@@ -59,19 +60,19 @@ public class Customer : ScriptableObject
     public List<int> payable;
     public List<Item> payItem;
 
-    [Header("IK Motion Prefabs (Å« »óÅÂ)")]
-    public GameObject prefabStand;     // ±âº»
-    public GameObject prefabSeated;    // ¾É±â
-    public GameObject prefabEating;    // ¸Ô±â
-    public GameObject prefabLeft;      // ÁÂ
-    //public GameObject prefabRight;     // ¿ì
+    [Header("IK Motion Prefabs (í° ìƒíƒœ)")]
+    public GameObject prefabStand;     // ï¿½âº»
+    public GameObject prefabSeated;    // ï¿½É±ï¿½
+    public GameObject prefabEating;    // ï¿½Ô±ï¿½
+    public GameObject prefabLeft;      // ï¿½ï¿½
+    //public GameObject prefabRight;     // ï¿½ï¿½
 
     [Header("Animator State Names (Variants)")]
     public VariantStates standStates;
-    public VariantStates seatedStates; // ¿¹: bear_sit, bear_sit_good/bad...
-    public VariantStates eatingStates; // ¿¹: bear_eat º¯ÇüÀÌ ÀÖÀ¸¸é
-    public VariantStates leftStates;   // ¿¹: bear_left, bear_left 0/1...
-    public VariantStates rightStates;  // ¿¹: bear_right... (¾øÀ¸¸é leftStates·Î fallback °¡´É)
+    public VariantStates seatedStates; // ï¿½ï¿½: bear_sit, bear_sit_good/bad...
+    public VariantStates eatingStates; // ï¿½ï¿½: bear_eat ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    public VariantStates leftStates;   // ï¿½ï¿½: bear_left, bear_left 0/1...
+    public VariantStates rightStates;  // ï¿½ï¿½: bear_right... (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ leftStatesï¿½ï¿½ fallback ï¿½ï¿½ï¿½ï¿½)
     /*[Header("Animations")]
     public AnimationClip frontAnim;
     public AnimationClip leftAnim;
@@ -80,11 +81,11 @@ public class Customer : ScriptableObject
     public AnimationClip eatingAnim;
     public AnimationClip upAnim;*/
 
-    [Header("ÀÔÀå ´ë»ç")]
+    [Header("ì…ì¥ ëŒ€ì‚¬")]
     [TextArea(2, 5)] public List<string> greetingLines = new();
-    [Header("ÁÖ¹® ´ë»ç")]
+    [Header("ì£¼ë¬¸ ëŒ€ì‚¬")]
     [TextArea(2, 5)] public List<string> orderLines = new();
 
-    [Header("°á°ú ´ë»ç (Å¸ÀÔº°)")]
+    [Header("ê²°ê³¼ ëŒ€ì‚¬ (íƒ€ì…ë³„)")]
     public List<ResultBucket> resultBuckets = new();
 }

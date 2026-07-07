@@ -5,18 +5,18 @@ using System.Collections.Generic;
 
 public class SpawnCustomer : MonoBehaviour
 {
-    [Header("°í°´")]
+    [Header("ê³ ê°")]
     public GameObject[] customerPrefabs;
     private HashSet<string> activeTypes = new HashSet<string>();
 
-    [Header("½ºÆù À§Ä¡ ¹× Á¤Áö À§Ä¡")]
+    [Header("ìœ„ì¹˜")]
     public Transform spawnPoint;
     public Transform stopPoint;
 
-    [Header("»óÈ£ÀÛ¿ë »óÅÂ Á¦¾î")]
+    [Header("ìƒíƒœ ì œì–´")]
     public TabletState tabletState;
 
-    [Header("Å¬¸¯ ÀÌº¥Æ®¿ë")]
+    [Header("ì´ë²¤íŠ¸ìš©")]
     public InventoryManager inventoryManager;
     public InventoryController inventoryController;
     public Camera mainCamera;
@@ -151,14 +151,14 @@ public class SpawnCustomer : MonoBehaviour
             manager,
             inventoryManager,
             tabletState,
-            inventoryController,    // InventoryController ÂüÁ¶
-            mainCamera,             // Orthographic Ä«¸Ş¶ó
-            centerOffset,           // Áß¾Ó anchoredPosition
-            arrowGroups,            // CanvasGroup[] (ÁÂ/¿ì È­»ìÇ¥)
-            zoomInSize,             // ¿¹: 3.5f
-            zoomOutSize,            // ¿¹: 5f
-            zoomDuration,           // ¿¹: 0.35f
-            moveDuration,            // ¿¹: 0.35f
+            inventoryController,    // InventoryController ï¿½ï¿½ï¿½ï¿½
+            mainCamera,             // Orthographic Ä«ï¿½Ş¶ï¿½
+            centerOffset,           // ï¿½ß¾ï¿½ anchoredPosition
+            arrowGroups,            // CanvasGroup[] (ï¿½ï¿½/ï¿½ï¿½ È­ï¿½ï¿½Ç¥)
+            zoomInSize,             // ï¿½ï¿½: 3.5f
+            zoomOutSize,            // ï¿½ï¿½: 5f
+            zoomDuration,           // ï¿½ï¿½: 0.35f
+            moveDuration,            // ï¿½ï¿½: 0.35f
             inventoryManager.backBtn
         );
 

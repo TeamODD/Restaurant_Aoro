@@ -80,7 +80,7 @@ public class CustomerCodexUIController : MonoBehaviour
             var customer = allCustomers[idx];
 
             codex.TryGetValue(customer.CustomerID, out var entry);
-            bool unlocked = entry != null && entry.unlocked;
+            bool seen = entry != null && entry.seen;
 
             Sprite unlockedIcon = null; // 나중에 customer icon 있으면 넣기
             string unlockedName = customer.CustomerName;
@@ -89,7 +89,7 @@ public class CustomerCodexUIController : MonoBehaviour
                 customer.CustomerID,
                 unlockedIcon,
                 unlockedName,
-                unlocked,
+                seen,
                 OnClickUnlockedSlot
             );
         }
