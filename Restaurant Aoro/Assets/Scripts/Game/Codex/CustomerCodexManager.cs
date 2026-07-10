@@ -65,6 +65,7 @@ public class CustomerCodexManager : MonoBehaviour
         e.mainIllustrationUnlocked = true;
         e.entranceIllustrationUnlocked = true;
         e.basicDescriptionUnlocked = true;
+        Debug.Log($"[CustomerCodex] Entrance unlocked: {customerId}");
 
         OnCodexChanged?.Invoke();
     }

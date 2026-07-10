@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 public class CustomerManager : MonoBehaviour
 {
-    [Header("¼Õ´Ô µ¥ÀÌÅÍ")]
+    [Header("ï¿½Õ´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")]
     public Customer customerData;
     public Transform speechAnchor;
     //public GameObject idle_up;
@@ -41,12 +41,12 @@ public class CustomerManager : MonoBehaviour
 
     [SerializeField] private PlateTile myPlateTile;
     private Item lastServedItem;
-    public ResultType resultTypeOnLastServe;   // µð¹ö±ë¿ë
+    public ResultType resultTypeOnLastServe;   // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
     private bool hasPaidOut = false;
     private Coroutine leaveRoutine;
     public bool IsLeaveScheduled => leaveRoutine != null || isLeaving;
-    //¼öÁ¤ Áß
+    //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
     private readonly Dictionary<GameObject, GameObject> _spawned = new();
     private GameObject _currentVisual;
     private Animator _currentVisualAnimator;
@@ -58,7 +58,7 @@ public class CustomerManager : MonoBehaviour
 
         if (visualRoot == null)
         {
-            Debug.LogError("[CustomerManager] Prewarm: visualRoot°¡ null (Inspector¿¡ VisualRoot ¿¬°á ÇÊ¿ä)");
+            Debug.LogError("[CustomerManager] Prewarm: visualRootï¿½ï¿½ null (Inspectorï¿½ï¿½ VisualRoot ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½)");
             return;
         }
 
@@ -67,19 +67,19 @@ public class CustomerManager : MonoBehaviour
 
         foreach (var t in all)
         {
-            // ¿©±â¼­ 'Á¤È®È÷ ÀÏÄ¡'·Î Ã£À½
+            // ï¿½ï¿½ï¿½â¼­ 'ï¿½ï¿½È®ï¿½ï¿½ ï¿½ï¿½Ä¡'ï¿½ï¿½ Ã£ï¿½ï¿½
             if (t.name == prefabAsset.name) { found = t; break; }
         }
 
         if (found == null)
         {
-            // ÇÏÀ§ ÀÌ¸§ ¸ñ·Ï Ãâ·ÂÇØ¼­ ¿øÀÎ È®Á¤
+            // ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½
             var sb = new System.Text.StringBuilder();
-            sb.AppendLine($"[CustomerManager] VisualRoot ÇÏÀ§ ¿ÀºêÁ§Æ® ¸ñ·Ï (ÃÑ {all.Length}°³):");
+            sb.AppendLine($"[CustomerManager] VisualRoot ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ (ï¿½ï¿½ {all.Length}ï¿½ï¿½):");
             foreach (var t in all)
                 sb.AppendLine($"- '{t.name}'");
 
-            Debug.LogError($"[CustomerManager] VisualRoot¿¡¼­ '{prefabAsset.name}'¸¦ ¸ø Ã£À½.\n{sb}");
+            Debug.LogError($"[CustomerManager] VisualRootï¿½ï¿½ï¿½ï¿½ '{prefabAsset.name}'ï¿½ï¿½ ï¿½ï¿½ Ã£ï¿½ï¿½.\n{sb}");
             return;
         }
 
@@ -100,7 +100,7 @@ public class CustomerManager : MonoBehaviour
 
             if (!_spawned.TryGetValue(prefabAsset, out go) || go == null)
             {
-                Debug.LogError($"[CustomerManager] SwitchVisual ½ÇÆÐ: {prefabAsset.name}");
+                Debug.LogError($"[CustomerManager] SwitchVisual ï¿½ï¿½ï¿½ï¿½: {prefabAsset.name}");
                 return;
             }
         }
@@ -129,9 +129,14 @@ public class CustomerManager : MonoBehaviour
         this.stopPosition = stopPos;
         this.tabletState = tabletState;
 
+        if (CustomerCodexManager.Instance != null && customerData != null) //add codex entrance
+            CustomerCodexManager.Instance.UnlockEntranceInfo(customerData.CustomerID);
+        else
+            Debug.LogWarning("[CustomerManager] CustomerCodexManager or customerData is null");
+
         //if (idle_up != null) idle_up.SetActive(true);
 
-        // ÇÊ¿äÇÑ ÇÁ¸®ÆÕ ¹Ì¸® »ý¼º(±ÇÀå)
+        // ï¿½Ê¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½)
         Prewarm(customerData.prefabStand);
         Prewarm(customerData.prefabLeft);
         Prewarm(customerData.prefabSeated);
@@ -321,6 +326,9 @@ public class CustomerManager : MonoBehaviour
 
         resultTypeOnLastServe = EvaluateResult(lastServedItem, customerData);
 
+        if (CustomerCodexManager.Instance != null && customerData != null) //add codex result
+            CustomerCodexManager.Instance.AddResult(customerData.CustomerID, resultTypeOnLastServe);
+
         isEatingLocked = false;
         SwitchVisual(customerData.prefabSeated);
 
@@ -366,43 +374,43 @@ public class CustomerManager : MonoBehaviour
         if (cust.favoriteTastes != null && cust.favoriteTastes.Contains(served.Foodtaste))
         {
             score += FAVOR_TASTE;
-            Debug.Log($"[{cust.CustomerID}] ÁÁ¾ÆÇÏ´Â ¸À({served.Foodtaste}) ¡æ +{FAVOR_TASTE}");
+            Debug.Log($"[{cust.CustomerID}] ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½({served.Foodtaste}) ï¿½ï¿½ +{FAVOR_TASTE}");
         }
         else if (cust.dislikedTastes != null && cust.dislikedTastes.Contains(served.Foodtaste))
         {
             score += DISLIKE_TASTE;
-            Debug.Log($"[{cust.CustomerID}] ½È¾îÇÏ´Â ¸À({served.Foodtaste}) ¡æ {DISLIKE_TASTE}");
+            Debug.Log($"[{cust.CustomerID}] ï¿½È¾ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½({served.Foodtaste}) ï¿½ï¿½ {DISLIKE_TASTE}");
         }
 
         if (cust.favoriteFoods != null && cust.favoriteFoods.Contains(served.ItemMainCategory))
         {
             score += FAVOR_CATEGORY;
-            Debug.Log($"[{cust.CustomerID}] ÁÁ¾ÆÇÏ´Â Á¾·ù({served.ItemMainCategory}) ¡æ +{FAVOR_CATEGORY}");
+            Debug.Log($"[{cust.CustomerID}] ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½({served.ItemMainCategory}) ï¿½ï¿½ +{FAVOR_CATEGORY}");
         }
         else if (cust.dislikedFoods != null && cust.dislikedFoods.Contains(served.ItemMainCategory))
         {
             score += DISLIKE_CATEGORY;
-            Debug.Log($"[{cust.CustomerID}] ½È¾îÇÏ´Â Á¾·ù({served.ItemMainCategory}) ¡æ {DISLIKE_CATEGORY}");
+            Debug.Log($"[{cust.CustomerID}] ï¿½È¾ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½({served.ItemMainCategory}) ï¿½ï¿½ {DISLIKE_CATEGORY}");
         }
 
         if (score >= 4)
         {
-            Debug.Log($"[{cust.CustomerID}] °á°ú: Perfect ({score})");
+            Debug.Log($"[{cust.CustomerID}] ï¿½ï¿½ï¿½: Perfect ({score})");
             return ResultType.Perfect;
         }
         else if (score >= 2)
         {
-            Debug.Log($"[{cust.CustomerID}] °á°ú: Excellent ({score})");
+            Debug.Log($"[{cust.CustomerID}] ï¿½ï¿½ï¿½: Excellent ({score})");
             return ResultType.Excellent;
         }
         else if (score >= 0)
         {
-            Debug.Log($"[{cust.CustomerID}] °á°ú: Success ({score})");
+            Debug.Log($"[{cust.CustomerID}] ï¿½ï¿½ï¿½: Success ({score})");
             return ResultType.Success;
         }
         else
         {
-            Debug.Log($"[{cust.CustomerID}] °á°ú: Fail ({score})");
+            Debug.Log($"[{cust.CustomerID}] ï¿½ï¿½ï¿½: Fail ({score})");
             return ResultType.Fail;
         }
     }
@@ -577,6 +585,8 @@ public class CustomerManager : MonoBehaviour
         idle_up.transform.localPosition = lp;
         idle_up.SetActive(true);
         animator_idle_up.Play(customerData.upAnim.name);*/
+        if (CustomerCodexManager.Instance != null && customerData != null) //add codex seat
+            CustomerCodexManager.Instance.UnlockSeatedInfo(customerData.CustomerID);
 
         CustomerClick customerClick = GetComponent<CustomerClick>();
         hasSeated = true;
@@ -597,7 +607,7 @@ public class CustomerManager : MonoBehaviour
         {
             if (SeatCoroutine != null)
             {
-                StopCoroutine(SeatCoroutine); // ÀÌµ¿ ÁßÁö
+                StopCoroutine(SeatCoroutine); // ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½
             }
 
             transform.position = customerSeat.position;

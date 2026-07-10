@@ -10,7 +10,7 @@ public class CustomerEditor : Editor
         Customer customer = (Customer)target;
 
         // �մ� ����
-        EditorGUILayout.LabelField("�մ� ����", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField("손님 정보", EditorStyles.boldLabel);
         Draw("CustomerID");
         Draw("CustomerName");
         Draw("tribe");
@@ -22,7 +22,7 @@ public class CustomerEditor : Editor
 
         // ���� ����
         EditorGUILayout.Space(6);
-        EditorGUILayout.LabelField("���� ����", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField("음식 취향", EditorStyles.boldLabel);
         Draw("favoriteTastes", true);
         Draw("dislikedTastes", true);
         Draw("favoriteFoods", true);
@@ -30,7 +30,7 @@ public class CustomerEditor : Editor
 
         // ���� ����
         EditorGUILayout.Space(6);
-        EditorGUILayout.LabelField("���� ����", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField("보상", EditorStyles.boldLabel);
         if (customer.tribe == TribeType.Human)
             Draw("payable", true);
         else
@@ -56,7 +56,7 @@ public class CustomerEditor : Editor
 
         // ���
         EditorGUILayout.Space(8);
-        EditorGUILayout.LabelField("��� ����", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField("입장 대사", EditorStyles.boldLabel);
         Draw("greetingLines", true);
         Draw("orderLines", true);
         Draw("resultBuckets", true);
