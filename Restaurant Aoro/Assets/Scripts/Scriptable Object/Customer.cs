@@ -61,18 +61,18 @@ public class Customer : ScriptableObject
     public List<Item> payItem;
 
     [Header("IK Motion Prefabs (큰 상태)")]
-    public GameObject prefabStand;     // �⺻
-    public GameObject prefabSeated;    // �ɱ�
-    public GameObject prefabEating;    // �Ա�
-    public GameObject prefabLeft;      // ��
-    //public GameObject prefabRight;     // ��
+    public GameObject prefabStand;
+    public GameObject prefabSeated;
+    public GameObject prefabEating;
+    public GameObject prefabLeft;
+    //public GameObject prefabRight;    
 
     [Header("Animator State Names (Variants)")]
     public VariantStates standStates;
     public VariantStates seatedStates; // ��: bear_sit, bear_sit_good/bad...
-    public VariantStates eatingStates; // ��: bear_eat ������ ������
+    public VariantStates eatingStates; // ��: bear_eat 
     public VariantStates leftStates;   // ��: bear_left, bear_left 0/1...
-    public VariantStates rightStates;  // ��: bear_right... (������ leftStates�� fallback ����)
+    public VariantStates rightStates;  // ��: bear_right... 
     /*[Header("Animations")]
     public AnimationClip frontAnim;
     public AnimationClip leftAnim;

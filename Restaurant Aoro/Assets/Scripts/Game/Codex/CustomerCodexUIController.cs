@@ -12,6 +12,8 @@ public class CustomerCodexUIController : MonoBehaviour
     [Header("Paging")]
     public Button prevButton;
     public Button nextButton;
+    [Header("Detail UI")]
+    [SerializeField] private CustomerCodexDetailUI detailUI;
 
     private List<Customer> allCustomers = new();
     private int pageIndex = 0;
@@ -114,6 +116,30 @@ public class CustomerCodexUIController : MonoBehaviour
 
     private void OnClickUnlockedSlot(string customerId)
     {
-        Debug.Log($"Clicked Customer Codex: {customerId}");
+        if (detailUI == null)
+        {
+            Debug.LogWarning("[CustomerCodexUIController] detailUI가 연결되지 않았습니다.");
+            return;
+        }
+
+        Customer customer = CustomerDatabase.Instance
+            .GetAll()
+            .FirstOrDefault(x => x.CustomerID == customerId);
+
+        var codex = CustomerCodexManager.Instance.GetAll();
+
+        if (customer == null)
+        {
+            Debug.LogWarning($"[CustomerCodexUIController] 손님을 찾지 못했습니다: {customerId}");
+            return;
+        }
+
+        if (!codex.TryGetValue(customerId, out var entry) || entry == null)
+        {
+            Debug.LogWarning($"[CustomerCodexUIController] 도감 정보를 찾지 못했습니다: {customerId}");
+            return;
+        }
+
+        detailUI.Open(customer, entry);
     }
 }
