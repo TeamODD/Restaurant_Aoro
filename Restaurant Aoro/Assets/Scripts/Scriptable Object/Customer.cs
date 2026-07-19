@@ -47,6 +47,7 @@ public class Customer : ScriptableObject
     [Header("손님 정보")]
     public string CustomerID;
     public string CustomerName;
+    public Sprite codexIcon;
     public TribeType tribe;
     public NPCType NPCType;
     [Range(0f, 24f)] public float appearStartHour = 17f;

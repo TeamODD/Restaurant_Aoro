@@ -935,7 +935,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 4281479730
   m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -948,7 +948,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -4870,7 +4870,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &299276445
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4909,12 +4909,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f02ca134b3f45d44971c00d7f6904d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CustomerCodexDetailUI
+  root: {fileID: 299276444}
   mainPreviewRoot: {fileID: 312974172}
   entrancePreviewRoot: {fileID: 1883416628}
   seatedPreviewRoot: {fileID: 79048914}
   eatingPreviewRoot: {fileID: 1760392161}
   basicDescriptionText: {fileID: 1775332060}
   detailDescriptionText: {fileID: 1866692718}
+  previewScale: 70
 --- !u!114 &299276447
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23623,7 +23625,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -25827,7 +25829,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2

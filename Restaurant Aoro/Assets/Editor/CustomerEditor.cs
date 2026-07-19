@@ -13,6 +13,7 @@ public class CustomerEditor : Editor
         EditorGUILayout.LabelField("손님 정보", EditorStyles.boldLabel);
         Draw("CustomerID");
         Draw("CustomerName");
+        Draw("codexIcon");
         Draw("tribe");
         Draw("NPCType");
         Draw("appearStartHour");

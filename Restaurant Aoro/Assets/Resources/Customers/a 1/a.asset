@@ -12,13 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04d68a976a9f9c44f9d6ba9deca2a180, type: 3}
   m_Name: a
   m_EditorClassIdentifier: 
-  CustomerID: 1
+  CustomerID: 111111
   CustomerName: jiyong
   tribe: 1
   NPCType: 0
   appearStartHour: 17
   appearEndHour: 20
   codexDescription: 
+  codexDetailDescription: 
   favoriteTastes: 00000000
   dislikedTastes: 
   favoriteFoods: 05000000
@@ -28,12 +29,25 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f0ad64e262a230c439b12ccb9fa89302, type: 2}
   - {fileID: 11400000, guid: f0ad64e262a230c439b12ccb9fa89302, type: 2}
   - {fileID: 11400000, guid: f0ad64e262a230c439b12ccb9fa89302, type: 2}
-  frontAnim: {fileID: 7400000, guid: f0750c496b0118644bac4b11e545c7bf, type: 2}
-  leftAnim: {fileID: 7400000, guid: ccae1b03b6b4de14f8b194ebb834d17f, type: 2}
-  rightAnim: {fileID: 7400000, guid: 5a31a9ceb97ddbd4fae06645e0be7429, type: 2}
-  seatedAnim: {fileID: 7400000, guid: b78eae62aad0cd54fb4c9dbdaccb64c5, type: 2}
-  eatingAnim: {fileID: 7400000, guid: 5f8c18754dbfc16439d791bdc2c10e3f, type: 2}
-  upAnim: {fileID: 7400000, guid: 05e8bf13a4ac8614bbf2d4ee54a5cfea, type: 2}
+  prefabStand: {fileID: 0}
+  prefabSeated: {fileID: 0}
+  prefabEating: {fileID: 0}
+  prefabLeft: {fileID: 0}
+  standStates:
+    baseState: 
+    variants: []
+  seatedStates:
+    baseState: 
+    variants: []
+  eatingStates:
+    baseState: 
+    variants: []
+  leftStates:
+    baseState: 
+    variants: []
+  rightStates:
+    baseState: 
+    variants: []
   greetingLines:
   - HI
   orderLines:
