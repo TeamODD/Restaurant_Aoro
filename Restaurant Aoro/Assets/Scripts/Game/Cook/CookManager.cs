@@ -89,8 +89,8 @@ namespace Game.Cook
                     //     cookTypeBtn.gameObject.SetActive(true);
                     //     cookTypeBtn.FadeIn(true, () => );
                     // }
+                    isWorking = false;
                 });
-                isWorking = false;
                 inventoryManager.EnableDrag();
             });
 
