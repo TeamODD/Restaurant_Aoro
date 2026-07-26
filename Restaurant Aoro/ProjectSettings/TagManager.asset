@@ -17,7 +17,7 @@ TagManager:
   - Cook
   - UI3D
   - Inventory
-  - 
+  - CustomerPreview
   - 
   - 
   - 
@@ -52,6 +52,9 @@ TagManager:
     locked: 0
   - name: CookTile
     uniqueID: 1307628917
+    locked: 0
+  - name: CustomerPreview
+    uniqueID: 3773190979
     locked: 0
   m_RenderingLayers:
   - Default

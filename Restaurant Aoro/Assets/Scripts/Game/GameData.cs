@@ -9,6 +9,7 @@ public class CustomerCodexEntry
     public bool mainIllustrationUnlocked;
     public bool entranceIllustrationUnlocked;
     public bool seatedIllustrationUnlocked;
+    public bool eatingIllustrationUnlocked;
 
     public bool basicDescriptionUnlocked;
     public bool detailDescriptionUnlocked;
