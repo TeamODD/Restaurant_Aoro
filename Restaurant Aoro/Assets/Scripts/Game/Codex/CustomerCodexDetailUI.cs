@@ -17,6 +17,8 @@ public class CustomerCodexDetailUI : MonoBehaviour
     [SerializeField] private Button entrancePreviewButton;
     [SerializeField] private Button seatedPreviewButton;
     [SerializeField] private Button eatingPreviewButton;
+    [Header("Preview Control")]
+    [SerializeField] private Button playButton;
     [Header("Description")]
     [SerializeField] private TMP_Text basicDescriptionText;
     [SerializeField] private TMP_Text detailDescriptionText;
@@ -24,6 +26,8 @@ public class CustomerCodexDetailUI : MonoBehaviour
     private Customer currentCustomer;
     private CustomerCodexEntry currentEntry;
     private GameObject currentPreview;
+    private Animator currentAnimator;
+    private bool isPlaying;
 
     //[SerializeField] private float previewScale = 70f; //임시 확인용
     private void Awake()
@@ -39,6 +43,8 @@ public class CustomerCodexDetailUI : MonoBehaviour
 
         if (eatingPreviewButton != null)
             eatingPreviewButton.onClick.AddListener(ShowEatingPreview);
+        if (playButton != null)
+            playButton.onClick.AddListener(TogglePreviewPlayback);
     }
     private void OnDestroy()
     {
@@ -53,6 +59,9 @@ public class CustomerCodexDetailUI : MonoBehaviour
 
         if (eatingPreviewButton != null)
             eatingPreviewButton.onClick.RemoveListener(ShowEatingPreview);
+
+        if (playButton != null)
+            playButton.onClick.RemoveListener(TogglePreviewPlayback);
     }
 
     public void Open(Customer customer, CustomerCodexEntry entry)
@@ -181,24 +190,30 @@ public class CustomerCodexDetailUI : MonoBehaviour
             SetLayerRecursively(currentPreview, previewLayer);
         }
 
-        Animator animator =
+        currentAnimator =
             currentPreview.GetComponentInChildren<Animator>(true);
 
-        if (animator != null)
+        if (currentAnimator != null)
         {
             SetParentsActive(
-                animator.gameObject,
+                currentAnimator.gameObject,
                 currentPreview.transform
             );
 
-            animator.enabled = true;
+            currentAnimator.enabled = true;
 
             if (!string.IsNullOrEmpty(stateName))
             {
-                animator.Play(stateName, 0, 0f);
-                animator.Update(0f);
+                currentAnimator.Play(stateName, 0, 0f);
+                currentAnimator.Update(0f);
             }
+
+            // 기본 상태는 정지
+            currentAnimator.speed = 0f;
+            isPlaying = false;
         }
+
+        UpdatePlayButton();
 
         PreviewRootPositionLock positionLock =
             currentPreview.GetComponent<PreviewRootPositionLock>();
@@ -300,6 +315,10 @@ public class CustomerCodexDetailUI : MonoBehaviour
             Destroy(currentPreview);
 
         currentPreview = null;
+        currentAnimator = null;
+        isPlaying = false;
+
+        UpdatePlayButton();
     }
 
     public void Close()
@@ -323,5 +342,20 @@ public class CustomerCodexDetailUI : MonoBehaviour
         {
             renderer.sortingLayerName = sortingLayerName;
         }
+    }
+    public void TogglePreviewPlayback()
+    {
+        if (currentAnimator == null)
+            return;
+
+        isPlaying = !isPlaying;
+        currentAnimator.speed = isPlaying ? 1f : 0f;
+
+        UpdatePlayButton();
+    }
+    private void UpdatePlayButton()
+    {
+        if (playButton != null)
+            playButton.interactable = currentAnimator != null;
     }
 }

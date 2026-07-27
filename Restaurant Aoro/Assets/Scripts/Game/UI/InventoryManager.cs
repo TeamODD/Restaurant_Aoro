@@ -75,12 +75,13 @@ public class InventoryManager : MonoBehaviour
     public void AddItem(Item item)
     {
         if (item == null) return;
+
         string key = item.ItemID;
         if (itemCounts.ContainsKey(key)) itemCounts[key]++;
         else itemCounts[key] = 1;
         ItemCodexManager.Instance.Unlock(item.ItemID);
 
-        uiController.AddItemToInventory(item);
+        uiController.AddItemToInventory(item, itemCounts[key]);
     }
 
     public void OnClickToggleInventoryPosition()

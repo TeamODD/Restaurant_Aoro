@@ -20,48 +20,135 @@ public class InventoryUIController : MonoBehaviour
     public Transform foodInventoryContent;
     public Transform ingredientInventoryContent;
 
-    public void AddItemToInventory(Item item)
+    public void AddItemToInventory(Item item, int count)
     {
+        if (item == null)
+            return;
+
         switch (item.ItemType)
         {
             case ItemType.Food:
-                // FoodPanel (slot1Prefab)
-                InstantiateSlot(slot1Prefab, foodPanelContent, item);
+                UpdateOrCreateSlot(
+                    slot1Prefab,
+                    foodPanelContent,
+                    item,
+                    count
+                );
 
-                // FoodInventory (slot2Prefab)
-                InstantiateSlot(slot2Prefab, foodInventoryContent, item);
+                UpdateOrCreateSlot(
+                    slot2Prefab,
+                    foodInventoryContent,
+                    item,
+                    count
+                );
                 break;
+
             case ItemType.Ingredient:
-                // IngredientPanel (slot1Prefab)
-                InstantiateSlot(slot1Prefab, ingredientPanelContent, item);
+                UpdateOrCreateSlot(
+                    slot1Prefab,
+                    ingredientPanelContent,
+                    item,
+                    count
+                );
 
-                // IngredientInventory (slot2Prefab)
-                InstantiateSlot(slot2Prefab, ingredientInventoryContent, item);
+                UpdateOrCreateSlot(
+                    slot2Prefab,
+                    ingredientInventoryContent,
+                    item,
+                    count
+                );
                 break;
+
             default:
                 throw new ArgumentOutOfRangeException();
         }
     }
+
+    private void UpdateOrCreateSlot(
+        GameObject prefab,
+        Transform parent,
+        Item item,
+        int count)
+    {
+        if (prefab == null || parent == null || item == null)
+            return;
+
+        ItemSlotUI existingSlot = FindSlot(parent, item.ItemID);
+
+        if (existingSlot != null)
+        {
+            existingSlot.SetQuantity(count);
+            return;
+        }
+
+        InstantiateSlot(prefab, parent, item, count);
+    }
+
+    private ItemSlotUI FindSlot(Transform parent, string itemId)
+    {
+        ItemSlotUI[] slots = parent.GetComponentsInChildren<ItemSlotUI>(true);
+
+        foreach (ItemSlotUI slot in slots)
+        {
+            if (slot.item_ == null)
+                continue;
+
+            if (slot.item_.ItemID == itemId)
+                return slot;
+        }
+
+        return null;
+    }
+
+    private void InstantiateSlot(
+        GameObject prefab,
+        Transform parent,
+        Item item,
+        int count)
+    {
+        GameObject slotGO = Instantiate(prefab, parent);
+
+        ItemSlotUI slotUI =
+            slotGO.GetComponentInChildren<ItemSlotUI>();
+
+        if (slotUI == null)
+        {
+            Debug.LogError(
+                $"[InventoryUI] ItemSlotUI를 찾을 수 없습니다: {slotGO.name}"
+            );
+
+            Destroy(slotGO);
+            return;
+        }
+
+        slotUI.Initialize(item, count);
+    }
+
     public void RebuildFromSaved(Dictionary<string, int> itemCounts)
     {
         ClearAll();
 
-        if (itemCounts == null) return;
+        if (itemCounts == null)
+            return;
 
-        foreach (var kv in itemCounts)
+        foreach (KeyValuePair<string, int> itemData in itemCounts)
         {
-            string itemId = kv.Key;
-            int count = kv.Value;
+            string itemId = itemData.Key;
+            int count = itemData.Value;
 
             Item item = ItemDatabase.Instance.GetItem(itemId);
+
             if (item == null)
             {
-                Debug.LogWarning($"[InventoryUI] ItemID�� ã�� �� ����: {itemId}");
+                Debug.LogWarning(
+                    $"[InventoryUI] ItemID를 찾을 수 없습니다: {itemId}"
+                );
+
                 continue;
             }
 
-            for (int i = 0; i < count; i++)
-                AddItemToInventory(item);
+            // 개수만큼 반복 생성하지 않고 슬롯 하나만 생성
+            AddItemToInventory(item, count);
         }
     }
 
@@ -75,16 +162,10 @@ public class InventoryUIController : MonoBehaviour
 
     private void ClearChildren(Transform parent)
     {
-        if (parent == null) return;
+        if (parent == null)
+            return;
+
         for (int i = parent.childCount - 1; i >= 0; i--)
             Destroy(parent.GetChild(i).gameObject);
     }
-    private void InstantiateSlot(GameObject prefab, Transform parent, Item item)
-    {
-        GameObject slotGO = Instantiate(prefab, parent);
-        var slotUI = slotGO.transform.GetChild(0).GetComponent<ItemSlotUI>();
-
-        slotUI.Initialize(item);
-    }
-
 }
