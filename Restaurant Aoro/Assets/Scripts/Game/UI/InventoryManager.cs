@@ -176,4 +176,28 @@ public class InventoryManager : MonoBehaviour
             panel.isDraggable = false;
         }
     }
+    public bool ConsumeItem(Item item)
+    {
+        if (item == null)
+            return false;
+
+        string itemId = item.ItemID;
+
+        if (!itemCounts.TryGetValue(itemId, out int currentCount))
+            return false;
+
+        if (currentCount <= 0)
+            return false;
+
+        currentCount--;
+
+        if (currentCount <= 0)
+            itemCounts.Remove(itemId);
+        else
+            itemCounts[itemId] = currentCount;
+
+        uiController.UpdateItemQuantity(item, currentCount);
+
+        return true;
+    }
 }

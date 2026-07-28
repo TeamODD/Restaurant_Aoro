@@ -21,7 +21,8 @@ public class FoodHitPlateTile : MonoBehaviour
                 var added = plate.AddItem(item);
                 if (added)
                 {
-                    Destroy(obj.transform.parent.gameObject);
+                    //Destroy(obj.transform.parent.gameObject);
+                    InventoryManager.instance.ConsumeItem(item); //기존 방식에서 수량 삭제로 변경
                     Destroy(gameObject);
                 }
             }

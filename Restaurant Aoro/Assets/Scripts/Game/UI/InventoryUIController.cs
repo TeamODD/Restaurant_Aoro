@@ -168,4 +168,44 @@ public class InventoryUIController : MonoBehaviour
         for (int i = parent.childCount - 1; i >= 0; i--)
             Destroy(parent.GetChild(i).gameObject);
     }
+    public void UpdateItemQuantity(Item item, int count)
+    {
+        if (item == null)
+            return;
+
+        switch (item.ItemType)
+        {
+            case ItemType.Food:
+                UpdateSlotQuantity(foodPanelContent, item.ItemID, count);
+                UpdateSlotQuantity(foodInventoryContent, item.ItemID, count);
+                break;
+
+            case ItemType.Ingredient:
+                UpdateSlotQuantity(ingredientPanelContent, item.ItemID, count);
+                UpdateSlotQuantity(ingredientInventoryContent, item.ItemID, count);
+                break;
+
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    private void UpdateSlotQuantity(
+        Transform parent,
+        string itemId,
+        int count)
+    {
+        ItemSlotUI slot = FindSlot(parent, itemId);
+
+        if (slot == null)
+            return;
+
+        if (count <= 0)
+        {
+            Destroy(slot.transform.parent.gameObject);
+            return;
+        }
+
+        slot.SetQuantity(count);
+    }
 }
