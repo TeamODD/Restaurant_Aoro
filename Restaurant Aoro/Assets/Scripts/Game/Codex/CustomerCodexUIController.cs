@@ -12,8 +12,10 @@ public class CustomerCodexUIController : MonoBehaviour
     [Header("Paging")]
     public Button prevButton;
     public Button nextButton;
-    [Header("Detail UI")]
+    [Header("UI")]
     [SerializeField] private CustomerCodexDetailUI detailUI;
+    [SerializeField] private CustomerCodexInfoUI infoUI;
+    [SerializeField] private GameObject codexPanel;
 
     private List<Customer> allCustomers = new();
     private int pageIndex = 0;
@@ -116,6 +118,37 @@ public class CustomerCodexUIController : MonoBehaviour
 
     private void OnClickUnlockedSlot(string customerId)
     {
+        if (infoUI == null ||
+            CustomerDatabase.Instance == null ||
+            CustomerCodexManager.Instance == null)
+            return;
+
+        Customer customer = allCustomers
+            .FirstOrDefault(x => x.CustomerID == customerId);
+
+        var codex = CustomerCodexManager.Instance.GetAll();
+
+        if (customer == null)
+        {
+            Debug.LogWarning(
+                $"[CustomerCodexUIController] 손님을 찾지 못했습니다: {customerId}"
+            );
+            return;
+        }
+
+        if (!codex.TryGetValue(customerId, out var entry) || entry == null)
+        {
+            Debug.LogWarning(
+                $"[CustomerCodexUIController] 도감 정보를 찾지 못했습니다: {customerId}"
+            );
+            return;
+        }
+
+        if (codexPanel != null)
+            codexPanel.SetActive(false);
+
+        infoUI.Open(customer, entry);
+        /*
         if (detailUI == null)
         {
             Debug.LogWarning("[CustomerCodexUIController] detailUI가 연결되지 않았습니다.");
@@ -141,5 +174,6 @@ public class CustomerCodexUIController : MonoBehaviour
         }
 
         detailUI.Open(customer, entry);
+        */
     }
 }

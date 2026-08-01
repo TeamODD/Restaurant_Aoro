@@ -23,6 +23,9 @@ public class CustomerCodexDetailUI : MonoBehaviour
     [SerializeField] private TMP_Text basicDescriptionText;
     [SerializeField] private TMP_Text detailDescriptionText;
 
+    [Header("Info Panel")]
+    [SerializeField] private CustomerCodexInfoUI infoUI;
+
     private Customer currentCustomer;
     private CustomerCodexEntry currentEntry;
     private GameObject currentPreview;
@@ -330,6 +333,22 @@ public class CustomerCodexDetailUI : MonoBehaviour
 
         if (root != null)
             root.SetActive(false);
+    }
+    public void BackToInfo()
+    {
+        ClearPreview();
+
+        Customer customer = currentCustomer;
+        CustomerCodexEntry entry = currentEntry;
+
+        currentCustomer = null;
+        currentEntry = null;
+
+        if (root != null)
+            root.SetActive(false);
+
+        if (infoUI != null)
+            infoUI.Open(customer, entry);
     }
     private void SetSortingLayerRecursively(
         GameObject target,

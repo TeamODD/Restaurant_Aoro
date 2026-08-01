@@ -14,7 +14,10 @@ public class CustomerCodexEntry
     public bool basicDescriptionUnlocked;
     public bool detailDescriptionUnlocked;
 
-    public int resultCount;
+    public int perfectCount;    // 대만족
+    public int excellentCount;  // 만족
+    public int successCount;    // 보통
+    public int failCount;       // 불만족
     public int visitCount;
 
     public Dictionary<string, int> resultCounts = new();

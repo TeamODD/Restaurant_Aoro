@@ -84,16 +84,35 @@ public class CustomerCodexManager : MonoBehaviour
         var e = GetOrCreate(customerId);
 
         e.visitCount++;
-        e.resultCount++;
 
-        string key = type.ToString();
+        switch (type)
+        {
+            case ResultType.Perfect:
+                e.perfectCount++;
+                break;
 
-        if (e.resultCounts.ContainsKey(key))
-            e.resultCounts[key]++;
-        else
-            e.resultCounts[key] = 1;
+            case ResultType.Excellent:
+                e.excellentCount++;
+                break;
 
-        if (e.resultCount >= 3)
+            case ResultType.Success:
+                e.successCount++;
+                break;
+
+            case ResultType.Fail:
+            case ResultType.Late:
+            case ResultType.WrongOrder:
+                e.failCount++;
+                break;
+        }
+
+        int totalResultCount =
+            e.perfectCount +
+            e.excellentCount +
+            e.successCount +
+            e.failCount;
+
+        if (totalResultCount >= 3)
             e.detailDescriptionUnlocked = true;
 
         OnCodexChanged?.Invoke();
