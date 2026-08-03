@@ -20,8 +20,8 @@ public class CustomerCodexDetailUI : MonoBehaviour
     [Header("Preview Control")]
     [SerializeField] private Button playButton;
     [Header("Description")]
-    [SerializeField] private TMP_Text basicDescriptionText;
-    [SerializeField] private TMP_Text detailDescriptionText;
+    //[SerializeField] private TMP_Text basicDescriptionText;
+    //[SerializeField] private TMP_Text detailDescriptionText;
 
     [Header("Info Panel")]
     [SerializeField] private CustomerCodexInfoUI infoUI;
@@ -83,7 +83,7 @@ public class CustomerCodexDetailUI : MonoBehaviour
         if (root != null)
             root.SetActive(true);
 
-        UpdateDescriptions();
+        //UpdateDescriptions();
         UpdateButtons();
 
         ClearPreview();
@@ -259,7 +259,7 @@ public class CustomerCodexDetailUI : MonoBehaviour
                 currentEntry.eatingIllustrationUnlocked;
         }
     }
-
+    /*
     private void UpdateDescriptions()
     {
         if (currentCustomer == null || currentEntry == null)
@@ -281,7 +281,7 @@ public class CustomerCodexDetailUI : MonoBehaviour
                     : "???";
         }
     }
-
+    */
     private void SetLayerRecursively(GameObject target, int layer)
     {
         if (target == null)

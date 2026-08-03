@@ -14,13 +14,12 @@ public class CustomerCodexInfoUI : MonoBehaviour
     [SerializeField] private TMP_Text appearanceTimeText;
 
     [Header("Preference")]
-    [SerializeField] private TMP_Text favoriteTasteText;
-    //[SerializeField] private TMP_Text dislikedTasteText;
-    [SerializeField] private TMP_Text favoriteFoodText;
-    //[SerializeField] private TMP_Text dislikedFoodText;
+    [SerializeField] private PreferenceItemView preferenceItemPrefab;
+
+    [SerializeField] private Transform favoritePreferenceContent;
 
     [Header("Description")]
-    [SerializeField] private TMP_Text basicDescriptionText;
+    //[SerializeField] private TMP_Text basicDescriptionText;
     [SerializeField] private TMP_Text detailDescriptionText;
 
     [Header("Record")]
@@ -100,12 +99,14 @@ public class CustomerCodexInfoUI : MonoBehaviour
         bool detailUnlocked =
             currentEntry.detailDescriptionUnlocked;
 
+        /*
         if (basicDescriptionText != null)
         {
             basicDescriptionText.text = basicUnlocked
                 ? currentCustomer.codexDescription
                 : "???";
         }
+        */
 
         if (detailDescriptionText != null)
         {
@@ -114,35 +115,6 @@ public class CustomerCodexInfoUI : MonoBehaviour
                 : "???";
         }
 
-        if (favoriteTasteText != null)
-        {
-            favoriteTasteText.text = detailUnlocked
-                ? JoinValues(currentCustomer.favoriteTastes)
-                : "???";
-        }
-        /*
-        if (dislikedTasteText != null)
-        {
-            dislikedTasteText.text = detailUnlocked
-                ? JoinValues(currentCustomer.dislikedTastes)
-                : "???";
-        }
-        */
-
-        if (favoriteFoodText != null)
-        {
-            favoriteFoodText.text = detailUnlocked
-                ? JoinValues(currentCustomer.favoriteFoods)
-                : "???";
-        }
-        /*
-        if (dislikedFoodText != null)
-        {
-            dislikedFoodText.text = detailUnlocked
-                ? JoinValues(currentCustomer.dislikedFoods)
-                : "???";
-        }
-        */
 
         if (visitCountText != null)
             visitCountText.text = currentEntry.visitCount.ToString();
@@ -223,5 +195,87 @@ public class CustomerCodexInfoUI : MonoBehaviour
         return string.IsNullOrWhiteSpace(result)
             ? "없음"
             : result;
+    }
+
+    private void BuildPreferences()
+    {
+        ClearPreferenceContent(favoritePreferenceContent);
+
+        if (currentCustomer == null || currentEntry == null)
+            return;
+
+        if (!currentEntry.detailDescriptionUnlocked)
+        {
+            CreatePreferenceItem(favoritePreferenceContent, "???");
+            return;
+        }
+
+        CreatePreferenceItems(
+            favoritePreferenceContent,
+            currentCustomer.favoriteTastes
+        );
+
+        CreatePreferenceItems(
+            favoritePreferenceContent,
+            currentCustomer.favoriteFoods
+        );
+    }
+    private void CreatePreferenceItems<T>(
+    Transform content,
+    IEnumerable<T> values)
+    {
+        if (content == null)
+            return;
+
+        bool hasItem = false;
+
+        if (values != null)
+        {
+            foreach (T value in values)
+            {
+                CreatePreferenceItem(
+                    content,
+                    GetDisplayName(value));
+
+                hasItem = true;
+            }
+        }
+
+        if (!hasItem)
+            CreatePreferenceItem(content, "없음");
+    }
+    private void CreatePreferenceItem(
+    Transform content,
+    string text)
+    {
+        if (preferenceItemPrefab == null)
+            return;
+
+        PreferenceItemView item =
+            Instantiate(preferenceItemPrefab, content);
+
+        item.Bind(text);
+    }
+    private void ClearPreferenceContent(
+    Transform content)
+    {
+        if (content == null)
+            return;
+
+        foreach (Transform child in content)
+            Destroy(child.gameObject);
+    }
+    private string GetDisplayName<T>(T value)
+    {
+        return value switch
+        {
+            FoodTaste.Sweet => "Sweet", //단맛
+            FoodTaste.Salty => "Salty", //짠맛
+            FoodTaste.Spicy => "Spicy", //매운맛
+            FoodTaste.Sour => "Sour", //신맛
+            FoodTaste.Bitter => "Bitter", //쓴맛
+
+            _ => value?.ToString() ?? ""
+        };
     }
 }
