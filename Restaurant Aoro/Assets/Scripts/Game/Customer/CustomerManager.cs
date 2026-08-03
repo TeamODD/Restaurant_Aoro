@@ -204,6 +204,7 @@ public class CustomerManager : MonoBehaviour
 
         SwitchVisual(customerData.prefabLeft);
         PlayState(customerData.rightStates.baseState);
+        UnlockRightIllustration();
 
         spawner.ClearCurrentCustomer();
         StartCoroutine(MoveAndDestroy());
@@ -232,11 +233,21 @@ public class CustomerManager : MonoBehaviour
         hasSeated = false;
         SwitchVisual(customerData.prefabLeft);
         PlayState(customerData.rightStates.baseState);
+        UnlockRightIllustration();
 
         CustomerClick customerClick = GetComponent<CustomerClick>();
         customerClick.setCanClickFalse();
 
         StartCoroutine(MoveAndDestroy());
+    }
+    private void UnlockRightIllustration()
+    {
+        if (CustomerCodexManager.Instance == null || customerData == null)
+            return;
+
+        CustomerCodexManager.Instance.UnlockRightInfo(
+            customerData.CustomerID
+        );
     }
 
     private void FreeCurrentSeat()
@@ -663,6 +674,7 @@ public class CustomerManager : MonoBehaviour
         hasSeated = false;
         SwitchVisual(customerData.prefabLeft);
         PlayState(customerData.rightStates.baseState);
+        UnlockRightIllustration();
 
         StartCoroutine(MoveAndDestroy());
 

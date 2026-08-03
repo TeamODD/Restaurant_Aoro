@@ -13,6 +13,12 @@ public class CustomerCodexEntry
 
     public bool basicDescriptionUnlocked;
     public bool detailDescriptionUnlocked;
+    public bool rightIllustrationUnlocked;
+
+    public bool perfectIllustrationUnlocked;
+    public bool excellentIllustrationUnlocked;
+    public bool successIllustrationUnlocked;
+    public bool failIllustrationUnlocked;
 
     public int perfectCount;    // 대만족
     public int excellentCount;  // 만족

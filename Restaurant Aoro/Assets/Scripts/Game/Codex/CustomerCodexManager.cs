@@ -69,6 +69,14 @@ public class CustomerCodexManager : MonoBehaviour
 
         OnCodexChanged?.Invoke();
     }
+    public void UnlockRightInfo(string customerId)
+    {
+        var entry = GetOrCreate(customerId);
+
+        entry.rightIllustrationUnlocked = true;
+
+        OnCodexChanged?.Invoke();
+    }
 
     public void UnlockSeatedInfo(string customerId)
     {
@@ -89,20 +97,24 @@ public class CustomerCodexManager : MonoBehaviour
         {
             case ResultType.Perfect:
                 e.perfectCount++;
+                e.perfectIllustrationUnlocked = true;
                 break;
 
             case ResultType.Excellent:
                 e.excellentCount++;
+                e.excellentIllustrationUnlocked = true;
                 break;
 
             case ResultType.Success:
                 e.successCount++;
+                e.successIllustrationUnlocked = true;
                 break;
 
             case ResultType.Fail:
             case ResultType.Late:
             case ResultType.WrongOrder:
                 e.failCount++;
+                e.failIllustrationUnlocked = true;
                 break;
         }
 

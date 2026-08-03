@@ -17,6 +17,11 @@ public class CustomerCodexDetailUI : MonoBehaviour
     [SerializeField] private Button entrancePreviewButton;
     [SerializeField] private Button seatedPreviewButton;
     [SerializeField] private Button eatingPreviewButton;
+    [SerializeField] private Button rightPreviewButton;
+    [SerializeField] private Button perfectPreviewButton;
+    [SerializeField] private Button excellentPreviewButton;
+    [SerializeField] private Button successPreviewButton;
+    [SerializeField] private Button failPreviewButton;
     [Header("Preview Control")]
     [SerializeField] private Button playButton;
     [Header("Description")]
@@ -46,6 +51,22 @@ public class CustomerCodexDetailUI : MonoBehaviour
 
         if (eatingPreviewButton != null)
             eatingPreviewButton.onClick.AddListener(ShowEatingPreview);
+
+        if (rightPreviewButton != null)
+            rightPreviewButton.onClick.AddListener(ShowRightPreview);
+
+        if (perfectPreviewButton != null)
+            perfectPreviewButton.onClick.AddListener(ShowPerfectPreview);
+
+        if (excellentPreviewButton != null)
+            excellentPreviewButton.onClick.AddListener(ShowExcellentPreview);
+
+        if (successPreviewButton != null)
+            successPreviewButton.onClick.AddListener(ShowSuccessPreview);
+
+        if (failPreviewButton != null)
+            failPreviewButton.onClick.AddListener(ShowFailPreview);
+
         if (playButton != null)
             playButton.onClick.AddListener(TogglePreviewPlayback);
     }
@@ -62,6 +83,21 @@ public class CustomerCodexDetailUI : MonoBehaviour
 
         if (eatingPreviewButton != null)
             eatingPreviewButton.onClick.RemoveListener(ShowEatingPreview);
+
+        if (rightPreviewButton != null)
+            rightPreviewButton.onClick.RemoveListener(ShowRightPreview);
+
+        if (perfectPreviewButton != null)
+            perfectPreviewButton.onClick.RemoveListener(ShowPerfectPreview);
+
+        if (excellentPreviewButton != null)
+            excellentPreviewButton.onClick.RemoveListener(ShowExcellentPreview);
+
+        if (successPreviewButton != null)
+            successPreviewButton.onClick.RemoveListener(ShowSuccessPreview);
+
+        if (failPreviewButton != null)
+            failPreviewButton.onClick.RemoveListener(ShowFailPreview);
 
         if (playButton != null)
             playButton.onClick.RemoveListener(TogglePreviewPlayback);
@@ -136,6 +172,77 @@ public class CustomerCodexDetailUI : MonoBehaviour
             currentCustomer.eatingStates?.baseState
         );
     }
+    public void ShowRightPreview()
+    {
+        if (!CanShowPreview(currentEntry?.rightIllustrationUnlocked))
+            return;
+
+        ShowPreview(
+            currentCustomer.prefabLeft,
+            currentCustomer.rightStates?.baseState
+        );
+    }
+
+    public void ShowPerfectPreview()
+    {
+        if (!CanShowPreview(currentEntry?.perfectIllustrationUnlocked))
+            return;
+
+        ShowSeatedVariant(2);
+    }
+
+    public void ShowExcellentPreview()
+    {
+        if (!CanShowPreview(currentEntry?.excellentIllustrationUnlocked))
+            return;
+
+        ShowSeatedVariant(1);
+    }
+
+    public void ShowSuccessPreview()
+    {
+        if (!CanShowPreview(currentEntry?.successIllustrationUnlocked))
+            return;
+
+        ShowSeatedVariant(0);
+    }
+
+    public void ShowFailPreview()
+    {
+        if (!CanShowPreview(currentEntry?.failIllustrationUnlocked))
+            return;
+
+        ShowSeatedVariant(3);
+    }
+
+    private void ShowSeatedVariant(int variantIndex)
+    {
+        if (currentCustomer == null || currentEntry == null)
+            return;
+
+        if (!currentEntry.seatedIllustrationUnlocked)
+            return;
+
+        VariantStates states = currentCustomer.seatedStates;
+
+        if (states == null)
+            return;
+
+        string stateName = states.baseState;
+
+        if (states.variants != null &&
+            variantIndex >= 0 &&
+            variantIndex < states.variants.Count &&
+            !string.IsNullOrEmpty(states.variants[variantIndex]))
+        {
+            stateName = states.variants[variantIndex];
+        }
+
+        ShowPreview(
+            currentCustomer.prefabSeated,
+            stateName
+        );
+    }
 
     private bool CanShowPreview(bool? unlocked)
     {
@@ -172,26 +279,23 @@ public class CustomerCodexDetailUI : MonoBehaviour
         currentPreview.transform.localScale =
             Vector3.one * previewScale;
 
-        int previewLayer =
-            LayerMask.NameToLayer(previewLayerName);
-
-        SetLayerRecursively(currentPreview, previewLayer);
-        SetSortingLayerRecursively(
-            currentPreview,
-            previewSortingLayerName
-        );
+        int previewLayer = LayerMask.NameToLayer(previewLayerName);
 
         if (previewLayer < 0)
         {
             Debug.LogWarning(
-                $"[CustomerCodexDetailUI] Layer를 찾을 수 없습니다: " +
-                $"{previewLayerName}"
+                $"[CustomerCodexDetailUI] Layer를 찾을 수 없습니다: {previewLayerName}"
             );
         }
         else
         {
             SetLayerRecursively(currentPreview, previewLayer);
         }
+
+        SetSortingLayerRecursively(
+            currentPreview,
+            previewSortingLayerName
+        );
 
         currentAnimator =
             currentPreview.GetComponentInChildren<Animator>(true);
@@ -258,30 +362,37 @@ public class CustomerCodexDetailUI : MonoBehaviour
             eatingPreviewButton.interactable =
                 currentEntry.eatingIllustrationUnlocked;
         }
-    }
-    /*
-    private void UpdateDescriptions()
-    {
-        if (currentCustomer == null || currentEntry == null)
-            return;
-
-        if (basicDescriptionText != null)
+        if (rightPreviewButton != null)
         {
-            basicDescriptionText.text =
-                currentEntry.basicDescriptionUnlocked
-                    ? currentCustomer.codexDescription
-                    : "???";
+            rightPreviewButton.interactable =
+                currentEntry.rightIllustrationUnlocked;
         }
 
-        if (detailDescriptionText != null)
+        if (perfectPreviewButton != null)
         {
-            detailDescriptionText.text =
-                currentEntry.detailDescriptionUnlocked
-                    ? currentCustomer.codexDetailDescription
-                    : "???";
+            perfectPreviewButton.interactable =
+                currentEntry.perfectIllustrationUnlocked;
+        }
+
+        if (excellentPreviewButton != null)
+        {
+            excellentPreviewButton.interactable =
+                currentEntry.excellentIllustrationUnlocked;
+        }
+
+        if (successPreviewButton != null)
+        {
+            successPreviewButton.interactable =
+                currentEntry.successIllustrationUnlocked;
+        }
+
+        if (failPreviewButton != null)
+        {
+            failPreviewButton.interactable =
+                currentEntry.failIllustrationUnlocked;
         }
     }
-    */
+
     private void SetLayerRecursively(GameObject target, int layer)
     {
         if (target == null)
@@ -354,6 +465,17 @@ public class CustomerCodexDetailUI : MonoBehaviour
         GameObject target,
         string sortingLayerName)
     {
+        if (target == null)
+            return;
+
+        if (!SortingLayer.IsValid(SortingLayer.NameToID(sortingLayerName)))
+        {
+            Debug.LogWarning(
+                $"[CustomerCodexDetailUI] Sorting Layer를 찾을 수 없습니다: {sortingLayerName}"
+            );
+            return;
+        }
+
         SpriteRenderer[] renderers =
             target.GetComponentsInChildren<SpriteRenderer>(true);
 
