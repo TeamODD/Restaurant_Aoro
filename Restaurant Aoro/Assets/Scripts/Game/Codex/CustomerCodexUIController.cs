@@ -16,6 +16,8 @@ public class CustomerCodexUIController : MonoBehaviour
     [SerializeField] private CustomerCodexDetailUI detailUI;
     [SerializeField] private CustomerCodexInfoUI infoUI;
     [SerializeField] private GameObject codexPanel;
+    [Header("Animation")]
+    [SerializeField] private CodexAnimationController animationController;
 
     private List<Customer> allCustomers = new();
     private int pageIndex = 0;
@@ -146,6 +148,9 @@ public class CustomerCodexUIController : MonoBehaviour
 
         if (codexPanel != null)
             codexPanel.SetActive(false);
+
+        if (animationController != null)
+            animationController.ResetToInfo();
 
         infoUI.Open(customer, entry);
         /*

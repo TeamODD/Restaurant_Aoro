@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class CustomerCodexDetailUI : MonoBehaviour
 {
     [Header("Root")]
-    [SerializeField] private GameObject root;
+    [SerializeField] private GameObject detailPanel;
     [Header("Preview")]
     [SerializeField] private Transform previewRoot;
     [SerializeField] private string previewLayerName = "CustomerPreview";
@@ -30,6 +30,9 @@ public class CustomerCodexDetailUI : MonoBehaviour
 
     [Header("Info Panel")]
     [SerializeField] private CustomerCodexInfoUI infoUI;
+
+    [Header("Animation")]
+    [SerializeField] private CodexAnimationController animationController;
 
     private Customer currentCustomer;
     private CustomerCodexEntry currentEntry;
@@ -116,8 +119,8 @@ public class CustomerCodexDetailUI : MonoBehaviour
         currentCustomer = customer;
         currentEntry = entry;
 
-        if (root != null)
-            root.SetActive(true);
+        if (detailPanel != null)
+            detailPanel.SetActive(true);
 
         //UpdateDescriptions();
         UpdateButtons();
@@ -442,11 +445,15 @@ public class CustomerCodexDetailUI : MonoBehaviour
         currentCustomer = null;
         currentEntry = null;
 
-        if (root != null)
-            root.SetActive(false);
+        if (detailPanel != null)
+            detailPanel.SetActive(false);
     }
     public void BackToInfo()
     {
+        if (animationController == null ||
+            animationController.IsTransitioning)
+            return;
+
         ClearPreview();
 
         Customer customer = currentCustomer;
@@ -455,11 +462,14 @@ public class CustomerCodexDetailUI : MonoBehaviour
         currentCustomer = null;
         currentEntry = null;
 
+        /*
         if (root != null)
             root.SetActive(false);
-
+        */
         if (infoUI != null)
             infoUI.Open(customer, entry);
+
+        animationController.PlayDetailToInfo();
     }
     private void SetSortingLayerRecursively(
         GameObject target,
@@ -499,4 +509,30 @@ public class CustomerCodexDetailUI : MonoBehaviour
         if (playButton != null)
             playButton.interactable = currentAnimator != null;
     }
+    public void Prepare(
+        Customer customer,
+        CustomerCodexEntry entry)
+    {
+        if (customer == null || entry == null)
+        {
+            Debug.LogWarning(
+                "[CustomerCodexDetailUI] Customer 또는 Entry가 null입니다."
+            );
+            return;
+        }
+
+        currentCustomer = customer;
+        currentEntry = entry;
+
+        UpdateButtons();
+        ClearPreview();
+
+        if (entry.mainIllustrationUnlocked)
+            ShowMainPreview();
+    }
+    public void ClearPreviewForTransition()
+    {
+        ClearPreview();
+    }
+
 }

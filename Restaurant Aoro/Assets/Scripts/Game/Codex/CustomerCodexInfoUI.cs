@@ -6,7 +6,9 @@ using UnityEngine.UI;
 public class CustomerCodexInfoUI : MonoBehaviour
 {
     [Header("Root")]
-    [SerializeField] private GameObject root;
+    [SerializeField] private GameObject infoPanel;
+    [SerializeField] private GameObject customerPanel;
+    [SerializeField] private GameObject detailPanel;
 
     [Header("Basic Information")]
     [SerializeField] private TMP_Text nameText;
@@ -31,12 +33,17 @@ public class CustomerCodexInfoUI : MonoBehaviour
 
     [Header("Navigation")]
     [SerializeField] private Button openDetailButton;
+    [SerializeField] private Button playButton;
     [SerializeField] private Button closeButton;
     [SerializeField] private CustomerCodexDetailUI detailUI;
     [SerializeField] private GameObject codexPanel;
 
+    [Header("Animation")]
+    [SerializeField] private CodexAnimationController animationController;
+
     private Customer currentCustomer;
     private CustomerCodexEntry currentEntry;
+    private CustomerCodexViewState currentViewState;
 
     private void Awake()
     {
@@ -44,7 +51,7 @@ public class CustomerCodexInfoUI : MonoBehaviour
             openDetailButton.onClick.AddListener(OpenDetail);
 
         if (closeButton != null)
-            closeButton.onClick.AddListener(Close);
+            closeButton.onClick.AddListener(OnCloseButtonClicked);
     }
 
     private void OnDestroy()
@@ -53,10 +60,12 @@ public class CustomerCodexInfoUI : MonoBehaviour
             openDetailButton.onClick.RemoveListener(OpenDetail);
 
         if (closeButton != null)
-            closeButton.onClick.RemoveListener(Close);
+            closeButton.onClick.RemoveListener(OnCloseButtonClicked);
     }
 
-    public void Open(Customer customer, CustomerCodexEntry entry)
+    public void Open(
+        Customer customer,
+        CustomerCodexEntry entry)
     {
         if (customer == null || entry == null)
         {
@@ -69,10 +78,58 @@ public class CustomerCodexInfoUI : MonoBehaviour
         currentCustomer = customer;
         currentEntry = entry;
 
-        if (root != null)
-            root.SetActive(true);
+        if (customerPanel != null)
+            customerPanel.SetActive(true);
 
+        if (animationController != null)
+            animationController.ResetToInfo();
+        else
+        {
+            if (infoPanel != null)
+                infoPanel.SetActive(true);
+
+            if (detailPanel != null)
+                detailPanel.SetActive(false);
+        }
+
+        ShowInfoState();
         Refresh();
+    }
+
+    public void ShowInfoState()
+    {
+        currentViewState =
+            CustomerCodexViewState.Info;
+
+        if (openDetailButton != null)
+        {
+            openDetailButton.gameObject.SetActive(true);
+
+            openDetailButton.interactable =
+                currentEntry != null &&
+                currentEntry.mainIllustrationUnlocked;
+        }
+
+        if (playButton != null)
+            playButton.gameObject.SetActive(false);
+
+        if (closeButton != null)
+            closeButton.gameObject.SetActive(true);
+    }
+
+    public void ShowDetailState()
+    {
+        currentViewState =
+            CustomerCodexViewState.Detail;
+
+        if (openDetailButton != null)
+            openDetailButton.gameObject.SetActive(false);
+
+        if (playButton != null)
+            playButton.gameObject.SetActive(true);
+
+        if (closeButton != null)
+            closeButton.gameObject.SetActive(true);
     }
 
     private void Refresh()
@@ -98,15 +155,6 @@ public class CustomerCodexInfoUI : MonoBehaviour
 
         bool detailUnlocked =
             currentEntry.detailDescriptionUnlocked;
-
-        /*
-        if (basicDescriptionText != null)
-        {
-            basicDescriptionText.text = basicUnlocked
-                ? currentCustomer.codexDescription
-                : "???";
-        }
-        */
 
         if (detailDescriptionText != null)
         {
@@ -136,19 +184,25 @@ public class CustomerCodexInfoUI : MonoBehaviour
             openDetailButton.interactable =
                 currentEntry.mainIllustrationUnlocked;
         }
+
+        BuildPreferences();
     }
 
     private void OpenDetail()
     {
         if (currentCustomer == null ||
             currentEntry == null ||
-            detailUI == null)
+            detailUI == null ||
+            animationController == null)
+        {
+            return;
+        }
+
+        if (animationController.IsTransitioning)
             return;
 
-        if (root != null)
-            root.SetActive(false);
-
-        detailUI.Open(currentCustomer, currentEntry);
+        detailUI.Prepare(currentCustomer, currentEntry);
+        animationController.PlayInfoToDetail(ShowDetailState);
     }
 
     public void Close()
@@ -156,20 +210,63 @@ public class CustomerCodexInfoUI : MonoBehaviour
         currentCustomer = null;
         currentEntry = null;
 
-        if (root != null)
-            root.SetActive(false);
+        if (infoPanel != null)
+            infoPanel.SetActive(false);
+
+        if (detailUI != null)
+            detailUI.Close();
+
+        if (customerPanel != null)
+            customerPanel.SetActive(false);
 
         if (codexPanel != null)
             codexPanel.SetActive(true);
+    }
+    private void OnCloseButtonClicked()
+    {
+        if (animationController != null &&
+            animationController.IsTransitioning)
+        {
+            return;
+        }
+
+        switch (currentViewState)
+        {
+            case CustomerCodexViewState.Info:
+                Close();
+                break;
+
+            case CustomerCodexViewState.Detail:
+                BackToInfo();
+                break;
+        }
+    }
+    private void BackToInfo()
+    {
+        if (animationController == null)
+        {
+            ShowInfoState();
+            return;
+        }
+
+        if (animationController.IsTransitioning)
+            return;
+
+        if (detailUI != null)
+            detailUI.ClearPreviewForTransition();
+
+        animationController.PlayDetailToInfo(
+            ShowInfoState
+        );
     }
 
     private string GetTribeText(TribeType tribe)
     {
         return tribe switch
         {
-            TribeType.Human => "인간",
-            TribeType.Youkai => "요괴",
-            _ => "알 수 없음"
+            TribeType.Human => "Human",
+            TribeType.Youkai => "Youkai",
+            _ => "Unknown"
         };
     }
 
@@ -277,5 +374,18 @@ public class CustomerCodexInfoUI : MonoBehaviour
 
             _ => value?.ToString() ?? ""
         };
+    }
+
+    public void Prepare(
+        Customer customer,
+        CustomerCodexEntry entry)
+    {
+        if (customer == null || entry == null)
+            return;
+
+        currentCustomer = customer;
+        currentEntry = entry;
+
+        Refresh();
     }
 }

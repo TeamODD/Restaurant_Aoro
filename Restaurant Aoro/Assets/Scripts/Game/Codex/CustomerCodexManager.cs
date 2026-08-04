@@ -2,6 +2,12 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum CustomerCodexViewState
+{
+    Info,
+    Detail
+}
+
 public class CustomerCodexManager : MonoBehaviour
 {
     public static CustomerCodexManager Instance;
