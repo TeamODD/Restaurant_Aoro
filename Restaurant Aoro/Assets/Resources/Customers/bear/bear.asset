@@ -14,11 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CustomerID: 1
   CustomerName: bear
+  codexIcon: {fileID: 0}
   tribe: 1
   NPCType: 0
   appearStartHour: 17
   appearEndHour: 20
-  codexDescription: 
+  codexDescription: bear
+  codexDetailDescription: bear
   favoriteTastes: 00000000
   dislikedTastes: 
   favoriteFoods: 05000000

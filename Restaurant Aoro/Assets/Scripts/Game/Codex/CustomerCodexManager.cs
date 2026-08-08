@@ -124,6 +124,8 @@ public class CustomerCodexManager : MonoBehaviour
                 break;
         }
 
+        e.eatingIllustrationUnlocked = true;
+
         int totalResultCount =
             e.perfectCount +
             e.excellentCount +

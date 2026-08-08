@@ -38,7 +38,7 @@ public class ArrowController : MonoBehaviour
     public GameObject[] Arrow;
     public Transform cameraTransform;
     public InventoryController inventoryController;
-    public InventoryManager inventoryManager; //ÈÄ¿¡ º¯°æ ¿¹Á¤
+    public InventoryManager inventoryManager; //ï¿½Ä¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     public Transform cookSceneTransform;
     public Transform connectionSceneTransform;
     public Transform customerScene2Transform;
@@ -84,7 +84,7 @@ public class ArrowController : MonoBehaviour
 
         foreach (var cm in customers)
         {
-             cm.ForceSeatImmediately();
+            cm.ForceSeatImmediately();
             Debug.Log("[CM] ForceSeatImmediately called: " + name);
         }
     }
@@ -147,7 +147,7 @@ public class ArrowController : MonoBehaviour
                 connectionSceneTransform.position.y, cameraTransform.position.z);
         }
 
-        // ½ÃÀÛ À§Ä¡ ¼³Á¤
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½
         Vector3 startCamPos = cameraTransform.position;
         Vector3 endCamPos = new Vector3(hor.currentStep != hor.lastStep ? targetX : cameraTransform.position.x,
             ver.currentStep != ver.lastStep ? targetY : cameraTransform.position.y, startCamPos.z);
@@ -164,7 +164,7 @@ public class ArrowController : MonoBehaviour
             yield return null;
         }
 
-        // ÃÖÁ¾ À§Ä¡ º¸Á¤
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½
         cameraTransform.position = endCamPos;
 
         if (hor.currentStep == hor.maxStep)
@@ -226,7 +226,7 @@ public class ArrowController : MonoBehaviour
         }
     }
 
-    
+
     private void FadeInSelector(ArrowDirection[] dirs)
     {
         foreach (ArrowDirection dir in dirs)
@@ -243,6 +243,9 @@ public class ArrowController : MonoBehaviour
     {
         CanvasGroup cg = arrowObj.GetComponent<CanvasGroup>();
         if (cg == null) yield break;
+
+        cg.interactable = false;
+        cg.blocksRaycasts = false;
 
         float startAlpha = cg.alpha;
         float time = 0f;
@@ -262,6 +265,9 @@ public class ArrowController : MonoBehaviour
         CanvasGroup cg = arrowObj.GetComponent<CanvasGroup>();
         if (cg == null) yield break;
 
+        cg.interactable = true;
+        cg.blocksRaycasts = true;
+
         float startAlpha = cg.alpha;
         float t = 0f;
 
@@ -273,11 +279,12 @@ public class ArrowController : MonoBehaviour
         }
 
         cg.alpha = 1f;
+
     }
 
     public void MoveArrowsInToScreen()
     {
-        FadeInSelector(new [] { ArrowDirection.Up});
+        FadeInSelector(new[] { ArrowDirection.Up });
         StartCoroutine(MoveArrows(true));
     }
 
@@ -287,7 +294,7 @@ public class ArrowController : MonoBehaviour
         rightPos = Arrow[(int)ArrowDirection.Right].transform.position;
         downPos = Arrow[(int)ArrowDirection.Down].transform.position;
         upPos = Arrow[(int)ArrowDirection.Up].transform.position;
-        FadeOutSelector(new [] { ArrowDirection.Left , ArrowDirection.Right, ArrowDirection.Down, ArrowDirection.Up});
+        FadeOutSelector(new[] { ArrowDirection.Left, ArrowDirection.Right, ArrowDirection.Down, ArrowDirection.Up });
         StartCoroutine(MoveArrows());
     }
 
