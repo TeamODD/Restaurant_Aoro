@@ -19959,7 +19959,6 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 486040668}
   - {fileID: 861225924}
   - {fileID: 1122493242}
   - {fileID: 1114555737}
@@ -19967,6 +19966,7 @@ RectTransform:
   - {fileID: 1177274813}
   - {fileID: 1009773822}
   - {fileID: 2071844127}
+  - {fileID: 486040668}
   m_Father: {fileID: 1643881175}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -29294,12 +29294,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17af1d2c51352f3498451c61abe3893a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slot1Prefab: {fileID: 2105772223809456789, guid: 33ce43629e2a9064e869cb515e306801, type: 3}
-  slot2Prefab: {fileID: 2105772223809456789, guid: 33ce43629e2a9064e869cb515e306801, type: 3}
-  Prefab_3s: {fileID: 0}
-  Prefab_4s: {fileID: 0}
-  Prefab_5s: {fileID: 0}
-  Prefab_6s: {fileID: 0}
+  Prefab_3s: {fileID: 2105772223809456789, guid: 33ce43629e2a9064e869cb515e306801, type: 3}
+  Prefab_4s: {fileID: 2105772223809456789, guid: 9a13b2f339e8e2844a3a607cdaae51f1, type: 3}
+  Prefab_5s: {fileID: 2105772223809456789, guid: 5f4e272fc858520459b3e30900128cfc, type: 3}
+  Prefab_6s: {fileID: 2105772223809456789, guid: 231405fee74dd2241a67dfe76c9d3f36, type: 3}
   foodPanelContent: {fileID: 63025032}
   ingredientPanelContent: {fileID: 622962903}
   foodInventoryContent: {fileID: 2117133558}

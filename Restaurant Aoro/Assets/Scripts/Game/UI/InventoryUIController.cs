@@ -5,8 +5,6 @@ using UnityEngine;
 public class InventoryUIController : MonoBehaviour
 {
     [Header("Slot Prefabs")]
-    public GameObject slot1Prefab;
-    public GameObject slot2Prefab;
     public GameObject Prefab_3s;
     public GameObject Prefab_4s;
     public GameObject Prefab_5s;
@@ -25,18 +23,37 @@ public class InventoryUIController : MonoBehaviour
         if (item == null)
             return;
 
+        GameObject slotPrefab;
+        switch (item.ItemGrade)
+        {
+            case ItemGrade.Common:
+                slotPrefab = Prefab_3s;
+                break;
+            case ItemGrade.Fine:
+                slotPrefab = Prefab_4s;
+                break;
+            case ItemGrade.Premium:
+                slotPrefab = Prefab_5s;
+                break;
+            case ItemGrade.Exquisite:
+                slotPrefab = Prefab_6s;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+
         switch (item.ItemType)
         {
             case ItemType.Food:
                 UpdateOrCreateSlot(
-                    slot1Prefab,
+                    slotPrefab,
                     foodPanelContent,
                     item,
                     count
                 );
 
                 UpdateOrCreateSlot(
-                    slot2Prefab,
+                    slotPrefab,
                     foodInventoryContent,
                     item,
                     count
@@ -45,14 +62,14 @@ public class InventoryUIController : MonoBehaviour
 
             case ItemType.Ingredient:
                 UpdateOrCreateSlot(
-                    slot1Prefab,
+                    slotPrefab,
                     ingredientPanelContent,
                     item,
                     count
                 );
 
                 UpdateOrCreateSlot(
-                    slot2Prefab,
+                    slotPrefab,
                     ingredientInventoryContent,
                     item,
                     count
