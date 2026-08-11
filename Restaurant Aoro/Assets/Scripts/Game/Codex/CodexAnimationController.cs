@@ -17,10 +17,11 @@ public class CodexAnimationController : MonoBehaviour
     [SerializeField] private float movingOffsetX = 500f;
 
     [Header("Animation Settings")]
-    [SerializeField] private float infoFadeAlpha = 0.25f;
+    [SerializeField] private float infoFadeAlpha = 0f;
     [SerializeField] private float fadeDuration = 0.2f;
     [SerializeField] private float slideDuration = 0.35f;
-    [SerializeField] private float detailStartOffsetX = -1000f;
+    [SerializeField] private float detailStartOffsetX = -200f;
+    [SerializeField] private float contentSlideOffsetX = 200f;
 
     private Vector2 detailOriginPosition;
     private Vector2 movingRootOriginPosition;
@@ -401,5 +402,89 @@ public class CodexAnimationController : MonoBehaviour
     private float EaseInCubic(float value)
     {
         return value * value * value;
+    }
+    //slide method
+    public void PlaySlideNext(
+        RectTransform target,
+        Action onChange,
+        Action onCompleted = null)
+    {
+        if (isTransitioning || target == null)
+            return;
+
+        StartAnimation(
+            SlideContentRoutine(
+                target,
+                -1f,
+                onChange,
+                onCompleted
+            )
+        );
+    }
+
+    public void PlaySlidePrevious(
+        RectTransform target,
+        Action onChange,
+        Action onCompleted = null)
+    {
+        if (isTransitioning || target == null)
+            return;
+
+        StartAnimation(
+            SlideContentRoutine(
+                target,
+                1f,
+                onChange,
+                onCompleted
+            )
+        );
+    }
+
+    private IEnumerator SlideContentRoutine(
+        RectTransform target,
+        float direction,
+        Action onChange,
+        Action onCompleted)
+    {
+        if (target == null)
+            yield break;
+
+        isTransitioning = true;
+
+        Vector2 originPosition = target.anchoredPosition;
+
+        Vector2 exitPosition =
+            originPosition +
+            Vector2.right * contentSlideOffsetX * direction;
+
+        Vector2 enterPosition =
+            originPosition -
+            Vector2.right * contentSlideOffsetX * direction;
+
+        yield return MoveRectTransform(
+            target,
+            originPosition,
+            exitPosition,
+            slideDuration,
+            false
+        );
+
+        onChange?.Invoke();
+
+        target.anchoredPosition = enterPosition;
+
+        yield return MoveRectTransform(
+            target,
+            enterPosition,
+            originPosition,
+            slideDuration,
+            true
+        );
+
+        target.anchoredPosition = originPosition;
+
+        FinishAnimation();
+
+        onCompleted?.Invoke();
     }
 }

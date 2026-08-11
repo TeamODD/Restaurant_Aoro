@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 
 public class CustomerCodexDetailUI : MonoBehaviour
 {
@@ -30,6 +32,11 @@ public class CustomerCodexDetailUI : MonoBehaviour
 
     [Header("Info Panel")]
     [SerializeField] private CustomerCodexInfoUI infoUI;
+    [Header("Customer Navigation")]
+    [SerializeField] private Button previousCustomerButton;
+    [SerializeField] private Button nextCustomerButton;
+
+    [SerializeField] private RectTransform contentRoot;
 
     [Header("Animation")]
     [SerializeField] private CodexAnimationController animationController;
@@ -124,6 +131,7 @@ public class CustomerCodexDetailUI : MonoBehaviour
 
         //UpdateDescriptions();
         UpdateButtons();
+        UpdateNavigationButtons();
 
         ClearPreview();
 
@@ -525,6 +533,8 @@ public class CustomerCodexDetailUI : MonoBehaviour
         currentEntry = entry;
 
         UpdateButtons();
+        UpdateNavigationButtons();
+
         ClearPreview();
 
         if (entry.mainIllustrationUnlocked)
@@ -533,6 +543,130 @@ public class CustomerCodexDetailUI : MonoBehaviour
     public void ClearPreviewForTransition()
     {
         ClearPreview();
+    }
+
+    private List<Customer> GetUnlockedCustomers()
+    {
+        if (CustomerDatabase.Instance == null ||
+            CustomerCodexManager.Instance == null)
+            return new List<Customer>();
+
+        Dictionary<string, CustomerCodexEntry> codex =
+            CustomerCodexManager.Instance.GetAll();
+
+        return CustomerDatabase.Instance
+            .GetAll()
+            .Where(customer =>
+            {
+                return codex.TryGetValue(
+                        customer.CustomerID,
+                        out CustomerCodexEntry entry
+                    )
+                    && entry.seen;
+            })
+            .ToList();
+    }
+
+    private void NextCustomer()
+    {
+        if (animationController == null ||
+            animationController.IsTransitioning)
+            return;
+
+        List<Customer> unlockedCustomers = GetUnlockedCustomers();
+
+        int currentIndex = unlockedCustomers.FindIndex(
+            customer =>
+                customer.CustomerID == currentCustomer.CustomerID
+            );
+        if (currentIndex < 0 || currentIndex >= unlockedCustomers.Count - 1)
+            return;
+
+        Customer nextCustomer =
+            unlockedCustomers[currentIndex + 1];
+
+        animationController.PlaySlideNext(
+            contentRoot,
+            () => ChangeCustomer(nextCustomer)
+        );
+    }
+    private void PreviousCustomer()
+    {
+        if (animationController == null ||
+            animationController.IsTransitioning)
+            return;
+
+        List<Customer> unlockedCustomers =
+            GetUnlockedCustomers();
+
+        int currentIndex =
+            unlockedCustomers.FindIndex(
+                customer =>
+                    customer.CustomerID ==
+                    currentCustomer.CustomerID
+            );
+
+        if (currentIndex <= 0)
+            return;
+
+        Customer previousCustomer =
+            unlockedCustomers[currentIndex - 1];
+
+        animationController.PlaySlidePrevious(
+            contentRoot,
+            () => ChangeCustomer(previousCustomer)
+        );
+    }
+
+    private void ChangeCustomer(Customer customer)
+    {
+        if (customer == null ||
+            CustomerCodexManager.Instance == null)
+            return;
+
+        Dictionary<string, CustomerCodexEntry> codex =
+            CustomerCodexManager.Instance.GetAll();
+
+        if (!codex.TryGetValue(
+                customer.CustomerID,
+                out CustomerCodexEntry entry))
+            return;
+
+        currentCustomer = customer;
+        currentEntry = entry;
+
+        UpdateButtons();
+        UpdateNavigationButtons();
+
+        ClearPreview();
+
+        if (currentEntry.mainIllustrationUnlocked)
+            ShowMainPreview();
+    }
+    private void UpdateNavigationButtons()
+    {
+        List<Customer> unlockedCustomers =
+            GetUnlockedCustomers();
+
+        int currentIndex =
+            unlockedCustomers.FindIndex(
+                customer =>
+                    customer.CustomerID ==
+                    currentCustomer.CustomerID
+            );
+
+        if (previousCustomerButton != null)
+        {
+            previousCustomerButton.interactable =
+                currentIndex > 0;
+        }
+
+        if (nextCustomerButton != null)
+        {
+            nextCustomerButton.interactable =
+                currentIndex >= 0 &&
+                currentIndex < unlockedCustomers.Count - 1;
+        }
     }
 
 }

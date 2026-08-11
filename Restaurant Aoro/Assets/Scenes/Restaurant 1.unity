@@ -5560,6 +5560,9 @@ MonoBehaviour:
   failPreviewButton: {fileID: 477112983}
   playButton: {fileID: 1447950936}
   infoUI: {fileID: 2088167711}
+  previousCustomerButton: {fileID: 0}
+  nextCustomerButton: {fileID: 0}
+  contentRoot: {fileID: 0}
   animationController: {fileID: 1643881178}
 --- !u!114 &299276447
 MonoBehaviour:
@@ -20993,7 +20996,7 @@ GameObject:
   - component: {fileID: 1315668132}
   - component: {fileID: 1315668131}
   m_Layer: 8
-  m_Name: Button
+  m_Name: FilterButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27240,6 +27243,7 @@ MonoBehaviour:
   fadeDuration: 0.2
   slideDuration: 0.35
   detailStartOffsetX: -200
+  contentSlideOffsetX: 200
 --- !u!114 &1643881179
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -35876,6 +35880,9 @@ MonoBehaviour:
   closeButton: {fileID: 719409492}
   detailUI: {fileID: 299276446}
   codexPanel: {fileID: 1177274812}
+  previousCustomerButton: {fileID: 0}
+  nextCustomerButton: {fileID: 0}
+  contentRoot: {fileID: 0}
   animationController: {fileID: 1643881178}
 --- !u!114 &2088167712
 MonoBehaviour:
