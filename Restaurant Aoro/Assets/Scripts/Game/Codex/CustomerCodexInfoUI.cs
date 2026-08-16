@@ -69,6 +69,23 @@ public class CustomerCodexInfoUI : MonoBehaviour
         if (closeButton != null)
             closeButton.onClick.RemoveListener(OnCloseButtonClicked);
     }
+    private void OnEnable()
+    {
+        if (previousCustomerButton != null)
+            previousCustomerButton.onClick.AddListener(PreviousCustomer);
+
+        if (nextCustomerButton != null)
+            nextCustomerButton.onClick.AddListener(NextCustomer);
+    }
+
+    private void OnDisable()
+    {
+        if (previousCustomerButton != null)
+            previousCustomerButton.onClick.RemoveListener(PreviousCustomer);
+
+        if (nextCustomerButton != null)
+            nextCustomerButton.onClick.RemoveListener(NextCustomer);
+    }
 
     public void Open(
         Customer customer,
@@ -84,6 +101,8 @@ public class CustomerCodexInfoUI : MonoBehaviour
 
         currentCustomer = customer;
         currentEntry = entry;
+        if (detailUI != null)
+            detailUI.Prepare(customer, entry);
 
         if (customerPanel != null)
             customerPanel.SetActive(true);
@@ -101,6 +120,7 @@ public class CustomerCodexInfoUI : MonoBehaviour
 
         ShowInfoState();
         Refresh();
+        UpdateNavigationButtons();
     }
 
     public void ShowInfoState()
@@ -394,6 +414,7 @@ public class CustomerCodexInfoUI : MonoBehaviour
         currentEntry = entry;
 
         Refresh();
+        UpdateNavigationButtons();
     }
     private List<Customer> GetUnlockedCustomers()
     {
@@ -419,6 +440,11 @@ public class CustomerCodexInfoUI : MonoBehaviour
 
     private void NextCustomer()
     {
+        if (currentCustomer == null)
+        {
+            Debug.LogWarning("[CustomerCodexDetailUI] currentCustomer is null");
+            return;
+        }
         if (animationController == null ||
             animationController.IsTransitioning)
             return;
@@ -435,13 +461,21 @@ public class CustomerCodexInfoUI : MonoBehaviour
         Customer nextCustomer =
             unlockedCustomers[currentIndex + 1];
 
+        /*
         animationController.PlaySlideNext(
             contentRoot,
             () => ChangeCustomer(nextCustomer)
         );
+        */
+        ChangeCustomer(nextCustomer);
     }
     private void PreviousCustomer()
     {
+        if (currentCustomer == null)
+        {
+            Debug.LogWarning("[CustomerCodexDetailUI] currentCustomer is null");
+            return;
+        }
         if (animationController == null ||
             animationController.IsTransitioning)
             return;
@@ -462,10 +496,13 @@ public class CustomerCodexInfoUI : MonoBehaviour
         Customer previousCustomer =
             unlockedCustomers[currentIndex - 1];
 
+        /*
         animationController.PlaySlidePrevious(
             contentRoot,
             () => ChangeCustomer(previousCustomer)
         );
+        */
+        ChangeCustomer(previousCustomer);
     }
 
     private void ChangeCustomer(Customer customer)
