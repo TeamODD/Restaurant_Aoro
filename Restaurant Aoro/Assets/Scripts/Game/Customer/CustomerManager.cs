@@ -616,6 +616,10 @@ public class CustomerManager : MonoBehaviour
 
         if (hasSeated == true)
         {
+            Debug.Log(
+                $"[ForceSeatImmediately] 착석 처리 실행: " +
+                $"{customerData?.CustomerID}"
+            );
             if (SeatCoroutine != null)
             {
                 StopCoroutine(SeatCoroutine); // �̵� ����
@@ -623,6 +627,8 @@ public class CustomerManager : MonoBehaviour
 
             transform.position = customerSeat.position;
             SwitchVisual(customerData.prefabSeated);
+            if (CustomerCodexManager.Instance != null && customerData != null) //add codex seat
+                CustomerCodexManager.Instance.UnlockSeatedInfo(customerData.CustomerID);
             /*var lp = idle_up.transform.localPosition;
             lp.z -= 0.3f;
             idle_up.transform.localPosition = lp;

@@ -89,6 +89,7 @@ public class CustomerCodexManager : MonoBehaviour
         var e = GetOrCreate(customerId);
 
         e.seatedIllustrationUnlocked = true;
+        Debug.Log($"[CustomerCodex] Seated unlocked: {customerId}");
 
         OnCodexChanged?.Invoke();
     }
@@ -104,6 +105,7 @@ public class CustomerCodexManager : MonoBehaviour
             case ResultType.Perfect:
                 e.perfectCount++;
                 e.perfectIllustrationUnlocked = true;
+                Debug.Log($"[CustomerCodex] Perfect unlocked: {customerId}");
                 break;
 
             case ResultType.Excellent:
@@ -125,6 +127,7 @@ public class CustomerCodexManager : MonoBehaviour
         }
 
         e.eatingIllustrationUnlocked = true;
+        Debug.Log($"[CustomerCodex] Eating unlocked: {customerId}");
 
         int totalResultCount =
             e.perfectCount +

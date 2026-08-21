@@ -79,12 +79,6 @@ public class CustomerCodexDetailUI : MonoBehaviour
 
         if (playButton != null)
             playButton.onClick.AddListener(TogglePreviewPlayback);
-
-        if (previousCustomerButton != null)
-            previousCustomerButton.onClick.AddListener(PreviousCustomer);
-
-        if (nextCustomerButton != null)
-            nextCustomerButton.onClick.AddListener(NextCustomer);
     }
     private void OnDestroy()
     {
@@ -117,7 +111,18 @@ public class CustomerCodexDetailUI : MonoBehaviour
 
         if (playButton != null)
             playButton.onClick.RemoveListener(TogglePreviewPlayback);
+    }
+    private void OnEnable()
+    {
+        if (previousCustomerButton != null)
+            previousCustomerButton.onClick.AddListener(PreviousCustomer);
 
+        if (nextCustomerButton != null)
+            nextCustomerButton.onClick.AddListener(NextCustomer);
+    }
+
+    private void OnDisable()
+    {
         if (previousCustomerButton != null)
             previousCustomerButton.onClick.RemoveListener(PreviousCustomer);
 
