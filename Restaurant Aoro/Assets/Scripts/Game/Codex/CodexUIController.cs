@@ -10,6 +10,7 @@ public class CodexUIController : MonoBehaviour
     [SerializeField] private GameObject foodCodexPanel;
     [SerializeField] private GameObject recipeCodexPanel;
     [SerializeField] private GameObject customerCodexPanel;
+    [SerializeField] private GameObject customerPanel;
     //[SerializeField] private GameObject savePanel;
 
     [Header("Buttons")]
@@ -80,6 +81,12 @@ public class CodexUIController : MonoBehaviour
         Image codexImg = codexRoot.GetComponent<Image>();
         if (codexImg != null)
             codexImg.raycastTarget = false;
+
         codexPanel.SetActive(false);
+        ingredientCodexPanel.SetActive(false);
+        foodCodexPanel.SetActive(false);
+        recipeCodexPanel.SetActive(false);
+        customerCodexPanel.SetActive(false);
+        customerPanel.SetActive(false);
     }
 }

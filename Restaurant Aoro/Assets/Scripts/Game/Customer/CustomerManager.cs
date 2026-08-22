@@ -4,10 +4,10 @@ using UnityEditor;
 using System;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 
 public class CustomerManager : MonoBehaviour
 {
-    [Header("�մ� ������")]
     public Customer customerData;
     public Transform speechAnchor;
     //public GameObject idle_up;
@@ -29,6 +29,7 @@ public class CustomerManager : MonoBehaviour
     private bool isLeaving = false;
     private bool isEatingLocked = false;
     private bool hasSeated = false;
+    private bool isMoving = false;
     private bool greetedOnce = false;
 
     public event Action<CustomerManager> OnSeated;
@@ -215,6 +216,7 @@ public class CustomerManager : MonoBehaviour
         tabletState.canClicked = false;
         SwitchVisual(customerData.prefabLeft);
         hasSeated = true;
+        isMoving = true;
         customerSeat = seatLocation;
 
         OnAnyCustomerAccepted?.Invoke();
@@ -601,8 +603,12 @@ public class CustomerManager : MonoBehaviour
 
         CustomerClick customerClick = GetComponent<CustomerClick>();
         hasSeated = true;
+        isMoving = false;
+
         OnSeated?.Invoke(this);
+
         customerClick.setSeatedTrue();
+        SeatCoroutine = null;
         yield return new WaitForSeconds(0.3f);
     }
 
@@ -614,6 +620,9 @@ public class CustomerManager : MonoBehaviour
             return;
         }
 
+        if (!isMoving)
+            return;
+
         if (hasSeated == true)
         {
             Debug.Log(
@@ -622,7 +631,8 @@ public class CustomerManager : MonoBehaviour
             );
             if (SeatCoroutine != null)
             {
-                StopCoroutine(SeatCoroutine); // �̵� ����
+                StopCoroutine(SeatCoroutine);
+                SeatCoroutine = null;
             }
 
             transform.position = customerSeat.position;
@@ -636,6 +646,7 @@ public class CustomerManager : MonoBehaviour
             animator_idle_up.Play(customerData.upAnim.name);*/
             CustomerClick customerClick = GetComponent<CustomerClick>();
             hasSeated = true;
+            isMoving = false;
             OnSeated?.Invoke(this);
             customerClick.setSeatedTrue();
         }
