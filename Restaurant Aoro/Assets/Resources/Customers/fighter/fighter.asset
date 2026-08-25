@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04d68a976a9f9c44f9d6ba9deca2a180, type: 3}
+  m_Name: fighter
+  m_EditorClassIdentifier: 
+  CustomerID: 5
+  CustomerName: fighter
+  codexIcon: {fileID: 0}
+  tribe: 0
+  NPCType: 0
+  appearStartHour: 17
+  appearEndHour: 20
+  codexDescription: 
+  codexDetailDescription: 
+  favoriteTastes: 00000000
+  dislikedTastes: 
+  favoriteFoods: 05000000
+  dislikedFoods: 
+  payable: 
+  payItem:
+  - {fileID: 11400000, guid: f0ad64e262a230c439b12ccb9fa89302, type: 2}
+  - {fileID: 11400000, guid: f0ad64e262a230c439b12ccb9fa89302, type: 2}
+  - {fileID: 11400000, guid: f0ad64e262a230c439b12ccb9fa89302, type: 2}
+  prefabStand: {fileID: 8180418749800880426, guid: 83b68634b5f401c4d9cdaf3b0a2ed6e0, type: 3}
+  prefabSeated: {fileID: 2192379590063851809, guid: 72f3617d259bc144694f00730cde0a74, type: 3}
+  prefabEating: {fileID: 4872212369792824219, guid: eb95e9e71df565e40ad53a4b3dc46fa8, type: 3}
+  prefabLeft: {fileID: 1698835443240368224, guid: b8f721180fc658847a2a880b83128650, type: 3}
+  standStates:
+    baseState: fighter_stand
+    variants: []
+  seatedStates:
+    baseState: fighter_sit
+    variants:
+    - fighter_sit_soso
+    - fighter_sit_good
+    - fighter_sit_great
+    - fighter_sit_bad
+  eatingStates:
+    baseState: fighter_eat
+    variants: []
+  leftStates:
+    baseState: fighter_left
+    variants: []
+  rightStates:
+    baseState: fighter_right
+    variants: []
+  greetingLines:
+  - HI
+  orderLines:
+  - I like apple
+  resultBuckets:
+  - type: 0
+    lines:
+    - good
+  - type: 1
+    lines:
+    - Noooooo
+  - type: 2
+    lines:
+    - Perfect
+  - type: 3
+    lines:
+    - Excellent!!

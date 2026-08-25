@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04d68a976a9f9c44f9d6ba9deca2a180, type: 3}
+  m_Name: grandpa
+  m_EditorClassIdentifier: 
+  CustomerID: 8
+  CustomerName: grandpa
+  codexIcon: {fileID: 0}
+  tribe: 0
+  NPCType: 0
+  appearStartHour: 17
+  appearEndHour: 20
+  codexDescription: 
+  codexDetailDescription: 
+  favoriteTastes: 00000000
+  dislikedTastes: 
+  favoriteFoods: 05000000
+  dislikedFoods: 
+  payable: 
+  payItem:
+  - {fileID: 11400000, guid: f0ad64e262a230c439b12ccb9fa89302, type: 2}
+  - {fileID: 11400000, guid: f0ad64e262a230c439b12ccb9fa89302, type: 2}
+  - {fileID: 11400000, guid: f0ad64e262a230c439b12ccb9fa89302, type: 2}
+  prefabStand: {fileID: 1635785272087320639, guid: f84d11b478ddc1940834077fcc995041, type: 3}
+  prefabSeated: {fileID: 2469207788578490592, guid: 52e972433c18718479172a382ea8ef56, type: 3}
+  prefabEating: {fileID: 2402394277390883092, guid: bd186d0b3f4a98e4ea79521dcb5a1989, type: 3}
+  prefabLeft: {fileID: 300773869038151418, guid: a519fb7282b026f4cb05b5b6e86f8636, type: 3}
+  standStates:
+    baseState: grandpa_stand
+    variants: []
+  seatedStates:
+    baseState: grandpa_sit
+    variants:
+    - grandpa_sit_soso
+    - grandpa_sit_good
+    - grandpa_sit_great
+    - grandpa_sit_bad
+  eatingStates:
+    baseState: grandpa_eat
+    variants: []
+  leftStates:
+    baseState: grandpa_left
+    variants: []
+  rightStates:
+    baseState: grandpa_right
+    variants: []
+  greetingLines:
+  - HI
+  orderLines:
+  - I like apple
+  resultBuckets:
+  - type: 0
+    lines:
+    - good
+  - type: 1
+    lines:
+    - Noooooo
+  - type: 2
+    lines:
+    - Perfect
+  - type: 3
+    lines:
+    - Excellent!!

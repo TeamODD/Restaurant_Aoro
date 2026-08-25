@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04d68a976a9f9c44f9d6ba9deca2a180, type: 3}
+  m_Name: simcheong
+  m_EditorClassIdentifier: 
+  CustomerID: 12
+  CustomerName: simcheong
+  codexIcon: {fileID: 0}
+  tribe: 0
+  NPCType: 0
+  appearStartHour: 17
+  appearEndHour: 20
+  codexDescription: 
+  codexDetailDescription: 
+  favoriteTastes: 00000000
+  dislikedTastes: 
+  favoriteFoods: 05000000
+  dislikedFoods: 
+  payable: 
+  payItem:
+  - {fileID: 11400000, guid: f0ad64e262a230c439b12ccb9fa89302, type: 2}
+  - {fileID: 11400000, guid: f0ad64e262a230c439b12ccb9fa89302, type: 2}
+  - {fileID: 11400000, guid: f0ad64e262a230c439b12ccb9fa89302, type: 2}
+  prefabStand: {fileID: 2803361170732875165, guid: 56635a53be4420045922d0766911a2ec, type: 3}
+  prefabSeated: {fileID: 5129623391039263625, guid: 83cee5fa59b19eb4eb0ee58b8d44b05e, type: 3}
+  prefabEating: {fileID: 2513551901782974298, guid: 9c3e3dc37c696d642ab463ceabcfcdbc, type: 3}
+  prefabLeft: {fileID: 360098409236094128, guid: aaf33abc3090d6e4bbbd8c068adb4ebb, type: 3}
+  standStates:
+    baseState: simcheong_stand
+    variants: []
+  seatedStates:
+    baseState: simcheong_sit
+    variants:
+    - simcheong_sit_soso
+    - simcheong_sit_good
+    - simcheong_sit_great
+    - simcheong_sit_bad
+  eatingStates:
+    baseState: simcheong_eat
+    variants: []
+  leftStates:
+    baseState: simcheong_left
+    variants: []
+  rightStates:
+    baseState: simcheong_right
+    variants: []
+  greetingLines:
+  - HI
+  orderLines:
+  - I like apple
+  resultBuckets:
+  - type: 0
+    lines:
+    - good
+  - type: 1
+    lines:
+    - Noooooo
+  - type: 2
+    lines:
+    - Perfect
+  - type: 3
+    lines:
+    - Excellent!!
