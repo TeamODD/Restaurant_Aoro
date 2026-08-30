@@ -178,6 +178,8 @@ public class ArrowController : MonoBehaviour
             }
 
             StartCoroutine(FadeOutArrow(Arrow[(int)ArrowDirection.Left], 0.3f));
+
+            FadeInSelector(new[] { ArrowDirection.Right });
         }
         else if (hor.currentStep == hor.minStep)
         {
@@ -190,6 +192,8 @@ public class ArrowController : MonoBehaviour
             }
 
             StartCoroutine(FadeOutArrow(Arrow[(int)ArrowDirection.Right], 0.3f));
+
+            FadeInSelector(new[] { ArrowDirection.Left });
         }
         else
             FadeInSelector(new[] { ArrowDirection.Left, ArrowDirection.Right });

@@ -30,10 +30,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f0ad64e262a230c439b12ccb9fa89302, type: 2}
   - {fileID: 11400000, guid: f0ad64e262a230c439b12ccb9fa89302, type: 2}
   - {fileID: 11400000, guid: f0ad64e262a230c439b12ccb9fa89302, type: 2}
-  prefabStand: {fileID: 2803361170732875165, guid: 56635a53be4420045922d0766911a2ec, type: 3}
-  prefabSeated: {fileID: 5129623391039263625, guid: 83cee5fa59b19eb4eb0ee58b8d44b05e, type: 3}
-  prefabEating: {fileID: 2513551901782974298, guid: 9c3e3dc37c696d642ab463ceabcfcdbc, type: 3}
-  prefabLeft: {fileID: 360098409236094128, guid: aaf33abc3090d6e4bbbd8c068adb4ebb, type: 3}
+  prefabStand: {fileID: 5706494458794380382, guid: 627cfeba2094fd34eac2e03be49b1fb1, type: 3}
+  prefabSeated: {fileID: 2510914103698646500, guid: 6be2279fb5aadfb4c9e196ba653a92ff, type: 3}
+  prefabEating: {fileID: 5648808705131322660, guid: 83460c303bafe7643a665b6aab021da6, type: 3}
+  prefabLeft: {fileID: 8815738518026889355, guid: 1a9eb3b359d2ca54a859401683c35926, type: 3}
   standStates:
     baseState: streamer_stand
     variants: []
