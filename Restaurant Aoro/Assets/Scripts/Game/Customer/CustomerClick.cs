@@ -2,6 +2,7 @@ using AOT;
 using Game.UI;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -13,7 +14,7 @@ public class CustomerClick : MonoBehaviour
     private static readonly List<CustomerClick> All = new List<CustomerClick>();
     private static CustomerClick s_locked;
 
-    
+
 
     private CustomerManager manager;
     private InventoryManager Invmanager;
@@ -30,13 +31,14 @@ public class CustomerClick : MonoBehaviour
     private float moveDuration;
 
     private bool zoomed = false;
-    private bool canClick = false;
+    [SerializeField] private bool canClick = false;
+    private bool isClickReady = false;
     private bool isSeated = false;
 
     [SerializeField] private float viewportX = 0.4f;
     [SerializeField] private float viewportY = 0.5f;
 
-    [Header("Exclamation (¥¿≥¶«•)")]
+    [Header("Exclamation (ÔøΩÔøΩÔøΩÔøΩ«•)")]
     [SerializeField] private GameObject exclamation;
     [SerializeField] private float exclamationDelayMin = 1f;
     [SerializeField] private float exclamationDelayMax = 3f;
@@ -45,7 +47,7 @@ public class CustomerClick : MonoBehaviour
 
     private bool pendingZoomIn = false;
     private Coroutine pendingRoutine;
-    private float clickDebounce = 2f; // º±≈√: ≥ π´ ∫¸∏• ¡ﬂ∫π ≈¨∏Ø æÔ¡¶
+    private float clickDebounce = 0.25f; // ÎÑàÎ¨¥ Îπ†Î•∏ Ï§ëÎ≥µ ÌÅ¥Î¶≠ Î∞©ÏßÄ
     private float lastClickTime = -999f;
 
     private Coroutine foldRoutine;
@@ -62,7 +64,7 @@ public class CustomerClick : MonoBehaviour
         if (s_locked == this) UnlockAll();
         if (manager != null) manager.OnSeated -= HandleSeated;
     }
-    
+
 
     public void Setup(
         CustomerManager m,
@@ -106,12 +108,12 @@ public class CustomerClick : MonoBehaviour
 
         if (manager != null)
         {
-            manager.OnSeated -= HandleSeated;  
+            manager.OnSeated -= HandleSeated;
             manager.OnSeated += HandleSeated;
 
-            if (manager.GetHasSeated()) 
+            if (manager.GetHasSeated())
             {
-                HandleSeated(manager); 
+                HandleSeated(manager);
             }
         }
     }
@@ -136,6 +138,7 @@ public class CustomerClick : MonoBehaviour
         if (cm != manager) return;
         if (exclamationShownOnce) return;
         isSeated = true;
+        canClick = false;
 
         if (exclamationRoutine != null)
         {
@@ -151,6 +154,7 @@ public class CustomerClick : MonoBehaviour
         yield return new WaitForSeconds(delay);
 
         if (exclamation != null) exclamation.SetActive(true);
+        isClickReady = true;
         canClick = true;
 
         exclamationShownOnce = true;
@@ -160,8 +164,8 @@ public class CustomerClick : MonoBehaviour
 
     public void SuppressForEating()
     {
+        isClickReady = false;
         canClick = false;
-
         if (exclamationRoutine != null)
         {
             StopCoroutine(exclamationRoutine);
@@ -206,6 +210,8 @@ public class CustomerClick : MonoBehaviour
                 cm.RequestResultDialogue();
                 cm.ConfirmResultAndLeave(1.6f);
                 //cm.StartCoroutine(LeaveAfterDelay(cm, 2f));
+                isClickReady = false;
+                canClick = false;
             }
             return;
         }
@@ -234,6 +240,7 @@ public class CustomerClick : MonoBehaviour
     public static void ServeLockedCustomer()
     {
         if (s_locked == null) return;
+        s_locked.canClick = false;
         s_locked.ServeAndExit();
     }
     public void ServeAndExit()
@@ -317,7 +324,7 @@ public class CustomerClick : MonoBehaviour
             UnlockAll();
             StartCoroutine(SlideOutAfterZoomOut());
             //backBtn.SlideOut(true);
-            zoomed = false;  
+            zoomed = false;
         }
     }
 
@@ -380,7 +387,12 @@ public class CustomerClick : MonoBehaviour
         foreach (var c in All)
         {
             if (c == null) continue;
-            c.canClick = true;        
+            c.SetColliderEnabled(true);
+
+            if (c.manager.GetisEating() || c.manager.GetisLeaving()) continue;
+            if (!c.isClickReady) continue;
+
+            c.canClick = true;
             c.SetColliderEnabled(true);
         }
     }
@@ -414,8 +426,8 @@ public class CustomerClick : MonoBehaviour
             transform,
             zoomInSize,
             zoomDuration,
-            centerOffset,  
-            half,           
+            centerOffset,
+            half,
             arrowGroups,
             true,
             viewportX,
@@ -448,6 +460,7 @@ public class CustomerClick : MonoBehaviour
         }
 
         if (exclamation != null) exclamation.SetActive(true);
+        isClickReady = true;
         canClick = true;
     }
 

@@ -88,21 +88,21 @@ public class DialogueManager : MonoBehaviour
     public void RequestGreeting(CustomerManager cm, IList<string> lines, Transform anchor)
     {
         if (cm == null || lines == null || lines.Count == 0) return;
-        if (cm.HasGreeted()) return;   
+        if (cm.HasGreeted()) return;
 
         pendingGreetingOwner = cm;
         pendingGreetingLines = new List<string>(lines);
         pendingGreetingAnchor = anchor;
 
-        TryFlushGreeting(); 
+        TryFlushGreeting();
     }
 
     private void TryFlushGreeting()
     {
-        if (!counterVisible) return;             
+        if (!counterVisible) return;
         if (dialogueUI == null) return;
-        if (dialogueUI.IsShowing()) return;     
-        if (pendingGreetingOwner == null) return;  
+        if (dialogueUI.IsShowing()) return;
+        if (pendingGreetingOwner == null) return;
         if (pendingGreetingOwner.HasGreeted())
         {
             ClearPending();
@@ -112,7 +112,8 @@ public class DialogueManager : MonoBehaviour
         /*var anchor = pendingGreetingAnchor != null ? pendingGreetingAnchor : pendingGreetingOwner.transform;
         var ui = anchor.GetComponentInChildren<DialogueUI>(true);
         if (ui == null) return;
-        ui.ShowLines(pendingGreetingLines, anchor, 0f, greetingMode);*/ // »ç¿ë ¿¹Á¤
+        ui.ShowLines(pendingGreetingLines, anchor, 0f, greetingMode);*/ // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+
         var anchor = pendingGreetingAnchor != null ? pendingGreetingAnchor : pendingGreetingOwner.transform;
         dialogueUI.ShowLines(pendingGreetingLines, anchor, 0f, greetingMode);
 
@@ -210,7 +211,7 @@ public class DialogueManager : MonoBehaviour
         {
             DialogueType.Greeting => b.greeting.Count > 0,
             DialogueType.Order => b.order.Count > 0,
-            DialogueType.Result => false, // °á°ú´Â Å¸ÀÔ ÁöÁ¤ÀÌ ÇÊ¿äÇÏ¹Ç·Î º°µµ API¸¦ »ç¿ëÇÏ¼¼¿ä
+            DialogueType.Result => false, // ï¿½ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ï¿½Ï¹Ç·ï¿½ ï¿½ï¿½ï¿½ï¿½ APIï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï¼ï¿½ï¿½ï¿½
             _ => false
         };
     }

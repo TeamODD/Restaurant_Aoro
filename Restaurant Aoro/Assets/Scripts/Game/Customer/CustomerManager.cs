@@ -52,6 +52,8 @@ public class CustomerManager : MonoBehaviour
     private GameObject _currentVisual;
     private Animator _currentVisualAnimator;
 
+    public bool GetisLeaving() => isLeaving;
+    public bool GetisEating() => isEatingLocked;
     private void Prewarm(GameObject prefabAsset)
     {
         if (prefabAsset == null) { Debug.LogError("[CustomerManager] Prewarm: prefabAsset null"); return; }
@@ -349,10 +351,9 @@ public class CustomerManager : MonoBehaviour
         //PlaySeatedByResult(resultTypeOnLastServe);
 
         var customerClick = GetComponent<CustomerClick>();
-        if (customerClick != null) customerClick.setCanClickTrue();
+        //if (customerClick != null) customerClick.setCanClickTrue();
 
-        var click = GetComponent<CustomerClick>();
-        if (click != null) click.ShowResultExclamation();
+        if (customerClick != null) customerClick.ShowResultExclamation();
 
     }
 

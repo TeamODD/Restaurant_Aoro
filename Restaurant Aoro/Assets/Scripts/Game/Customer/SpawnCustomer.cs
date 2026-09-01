@@ -163,7 +163,7 @@ public class SpawnCustomer : MonoBehaviour
         );
 
         isSpawning = false;
-        tabletState.canClicked = true;
+        //tabletState.canClicked = true;
 
         spawnDelayCo = null;
     }
