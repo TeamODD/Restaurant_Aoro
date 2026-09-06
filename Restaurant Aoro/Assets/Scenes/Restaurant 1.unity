@@ -29746,10 +29746,19 @@ MonoBehaviour:
   - {fileID: 3349499071719623148, guid: 1b560f08e6d6a904b809f8a9e2321b58, type: 3}
   - {fileID: 3349499071719623148, guid: dae058632276ed441a806eeb17895c3c, type: 3}
   - {fileID: 3349499071719623148, guid: ab2bfab2b3a80164890dd796975adeff, type: 3}
+  - {fileID: 3349499071719623148, guid: 8546ad0eefee5b746ab1246b8d09ef19, type: 3}
   - {fileID: 3349499071719623148, guid: 0c4b812b465abbe4bb9349b7c74b9d6f, type: 3}
+  - {fileID: 3349499071719623148, guid: 85e81a10f51750446b6920489fb4db21, type: 3}
+  - {fileID: 3349499071719623148, guid: 6b6c316fb0c5e004987e80d2412e983b, type: 3}
+  - {fileID: 3349499071719623148, guid: 3d6a4107aae82d145a98ffa1299b4af0, type: 3}
+  - {fileID: 3349499071719623148, guid: 27f60b664c386e3469c1fbaf88daed25, type: 3}
+  - {fileID: 3349499071719623148, guid: be2023f5c541a3449a68440109df838b, type: 3}
+  - {fileID: 3349499071719623148, guid: a5142cb753b039b4cac48d6d53c44fc5, type: 3}
+  - {fileID: 3349499071719623148, guid: 71f5f008c940b0e4fac0a9b986f35505, type: 3}
   spawnPoint: {fileID: 423126371}
   stopPoint: {fileID: 1265061790}
   tabletState: {fileID: 1469554700}
+  reputationState: {fileID: 1270272998}
   inventoryManager: {fileID: 1782296692}
   inventoryController: {fileID: 1782296691}
   mainCamera: {fileID: 810440596}

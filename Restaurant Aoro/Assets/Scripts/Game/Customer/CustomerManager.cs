@@ -23,6 +23,7 @@ public class CustomerManager : MonoBehaviour
     private Vector3 stopPosition;
     private SpawnCustomer spawner;
     private TabletState tabletState;
+    private ReputationState reputationState;
     private Transform customerSeat;
 
     private float speed = 5f;
@@ -126,11 +127,12 @@ public class CustomerManager : MonoBehaviour
     }
 
 
-    public void Init(SpawnCustomer spawner, Vector3 stopPos, TabletState tabletState)
+    public void Init(SpawnCustomer spawner, Vector3 stopPos, TabletState tabletState, ReputationState reputationState)
     {
         this.spawner = spawner;
         this.stopPosition = stopPos;
         this.tabletState = tabletState;
+        this.reputationState = reputationState;
 
         if (CustomerCodexManager.Instance != null && customerData != null) //add codex entrance
             CustomerCodexManager.Instance.UnlockEntranceInfo(customerData.CustomerID);
@@ -506,6 +508,38 @@ public class CustomerManager : MonoBehaviour
             }
         }
     }
+    private void ApplyReputation()
+    {
+        int reputationValue = 0;
+
+        switch (resultTypeOnLastServe)
+        {
+            case ResultType.Perfect:
+                reputationValue = 3;
+                break;
+
+            case ResultType.Excellent:
+                reputationValue = 1;
+                break;
+
+            case ResultType.Success:
+                reputationValue = 0;
+                break;
+
+            case ResultType.Fail:
+                reputationValue = -3;
+                break;
+        }
+        reputationState.addCustomerReputation(reputationValue);
+        if (customerData.tribe == TribeType.Human)
+        {
+            reputationState.addYoukaiReputation(-reputationValue);
+        }
+        else
+        {
+            reputationState.addYoukaiReputation(reputationValue);
+        }
+    }
     private Vector3 GetExitPos()
     {
         return new Vector3(30f, transform.position.y, transform.position.z);
@@ -532,7 +566,7 @@ public class CustomerManager : MonoBehaviour
     {
         if (delay > 0f) yield return new WaitForSeconds(delay);
 
-        ResolvePayment();
+        ResolveResult();
         LeaveRestaurant();
 
         leaveRoutine = null;
@@ -552,11 +586,7 @@ public class CustomerManager : MonoBehaviour
             leaveRoutine = null;
         }
 
-        if (!hasPaidOut)
-        {
-            ResolvePayment();
-            hasPaidOut = true;
-        }
+        ResolveResult();
 
         isLeaving = true;
         hasSeated = false;
@@ -565,6 +595,16 @@ public class CustomerManager : MonoBehaviour
         if (customerClick != null) customerClick.setCanClickFalse();
 
         InstantDespawn();
+    }
+    private void ResolveResult()
+    {
+        if (hasPaidOut)
+            return;
+
+        ResolvePayment();
+        ApplyReputation();
+
+        hasPaidOut = true;
     }
 
     private IEnumerator MoveAndDestroy()
@@ -684,6 +724,7 @@ public class CustomerManager : MonoBehaviour
 
         resultTypeOnLastServe = ResultType.Fail;
 
+        ApplyReputation();
         var click = GetComponent<CustomerClick>();
 
         FreeCurrentSeat();

@@ -15,6 +15,7 @@ public class SpawnCustomer : MonoBehaviour
 
     [Header("상태 제어")]
     public TabletState tabletState;
+    [SerializeField] private ReputationState reputationState;
 
     [Header("이벤트용")]
     public InventoryManager inventoryManager;
@@ -130,7 +131,7 @@ public class SpawnCustomer : MonoBehaviour
 
         currentCustomer = Instantiate(randomCustomer, spawnPoint.position, Quaternion.identity);
         var manager = currentCustomer.GetComponent<CustomerManager>();
-        manager.Init(this, stopPoint.position, tabletState);
+        manager.Init(this, stopPoint.position, tabletState, reputationState);
 
         if (manager != null && manager.customerData != null)
         {
