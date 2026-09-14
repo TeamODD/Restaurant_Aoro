@@ -56,8 +56,8 @@ public class SaveManager : MonoBehaviour
             },
             itemInventory = new Dictionary<string, int>
             {
-                { "Potion", 2 },
-                { "Sword", 0 }
+                { "Apple", 2 },
+                { "Applepie", 0 }
             },
             customerCodex = new Dictionary<string, CustomerCodexEntry>()
         };
@@ -67,7 +67,7 @@ public class SaveManager : MonoBehaviour
         string json = JsonConvert.SerializeObject(data, Newtonsoft.Json.Formatting.Indented);
         File.WriteAllText(path, json);
 
-        Debug.Log($"[New Save] ÃÊ±â ¼¼ÀÌºê ÆÄÀÏ »ý¼º: {path}");
+        Debug.Log($"[New Save] ï¿½Ê±ï¿½ ï¿½ï¿½ï¿½Ìºï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: {path}");
     }
 
     public string GetFullPath(string fileName)

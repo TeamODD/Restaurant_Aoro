@@ -4,7 +4,7 @@ using System;
 
 public class ReputationState : MonoBehaviour
 {
-    [Header("ÆòÆÇ ¾ÆÀÌÄÜ")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")]
     public Sprite Customer_1;
     public Sprite Customer_2;
     public Sprite Customer_3;
@@ -19,6 +19,9 @@ public class ReputationState : MonoBehaviour
 
     public static event Action OnReputationChanged;
 
+    public int CustomerReputation => Customer_reputation;
+    public int YoukaiReputation => Youkai_Human_reputation;
+
     public Sprite getCustomerSprite()
     {
         return CustomerSprite;
@@ -30,7 +33,7 @@ public class ReputationState : MonoBehaviour
     }
     public void setSprite()
     {
-        if(Youkai_Human_reputation >= 33)
+        if (Youkai_Human_reputation >= 33)
         {
             YoukaiSprite = Youkai_3;
         }
@@ -68,6 +71,16 @@ public class ReputationState : MonoBehaviour
     public void addYoukaiReputation(int value)
     {
         Youkai_Human_reputation += value;
+        setSprite();
+    }
+
+    public void SetReputation(
+        int customerReputation,
+        int youkaiReputation)
+    {
+        Customer_reputation = customerReputation;
+        Youkai_Human_reputation = youkaiReputation;
+
         setSprite();
     }
 }

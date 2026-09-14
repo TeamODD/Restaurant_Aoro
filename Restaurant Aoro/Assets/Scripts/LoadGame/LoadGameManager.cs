@@ -6,27 +6,26 @@ using UnityEngine.UI;
 
 public class LoadGameManager : MonoBehaviour
 {
-    public GameObject saveDataPrefab;           // SaveData 프리팹
-    public Transform contentTransform;          // ScrollView > Viewport > Content
+    [SerializeField] private GameObject saveDataPrefab;
+    [SerializeField] private Transform contentTransform;
 
-    void Start()
+    private void Start()
     {
         var saveFiles = SaveManager.Instance.GetAllSaveFiles();
 
         foreach (var path in saveFiles)
         {
-            GameObject saveData = Instantiate(saveDataPrefab, contentTransform);
-            string fileName = System.IO.Path.GetFileName(path);
+            GameObject saveData =
+                Instantiate(saveDataPrefab, contentTransform);
 
-            // 슬롯에 파일명 텍스트 출력
-            SaveDataSlot saveDataScript = saveData.GetComponent<SaveDataSlot>();
+            string fileName =
+                System.IO.Path.GetFileName(path);
+
+            SaveDataSlot saveDataScript =
+                saveData.GetComponent<SaveDataSlot>();
+
             saveDataScript.Initialize(fileName);
         }
-    }
-    public void OnSaveSlotSelected(string fileName)
-    {
-        SaveManager.Instance.currentSaveFileName = fileName;
-        SceneManager.LoadScene("TMPGame");
     }
 
     public void OnMainButtonClicked()

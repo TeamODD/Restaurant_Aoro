@@ -2,6 +2,7 @@ using TMPro;
 using UnityEngine;
 using System.IO;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class SaveDataSlot : MonoBehaviour
 {
@@ -17,7 +18,7 @@ public class SaveDataSlot : MonoBehaviour
         fileNameText.text = name;
 
         deleteButton.onClick.AddListener(DeleteThisSave);
-        clickButton.onClick.RemoveAllListeners(); // Áßº¹ ¹æÁö
+        clickButton.onClick.RemoveAllListeners(); // ï¿½ßºï¿½ ï¿½ï¿½ï¿½ï¿½
         clickButton.onClick.AddListener(OnClickSlot);
     }
 
@@ -28,15 +29,19 @@ public class SaveDataSlot : MonoBehaviour
         if (File.Exists(path))
         {
             File.Delete(path);
-            Debug.Log($"[Delete] {fileName} »èÁ¦µÊ");
+            Debug.Log($"[Delete] {fileName} ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
         }
 
-        Destroy(gameObject); // ÇÁ¸®ÆÕ »èÁ¦
+        Destroy(gameObject); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     }
 
     private void OnClickSlot()
     {
         SaveManager.Instance.currentSaveFileName = fileName;
-        UnityEngine.SceneManagement.SceneManager.LoadScene("TMPGame");
+
+        if (!GameManager.Instance.LoadGameData())
+            return;
+
+        SceneManager.LoadScene("Restaurant 1");
     }
 }

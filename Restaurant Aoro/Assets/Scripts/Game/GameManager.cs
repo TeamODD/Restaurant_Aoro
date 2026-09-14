@@ -21,13 +21,42 @@ public class GameManager : MonoBehaviour
     public float bgmVolume;
     public float seVolume;
 
+    private GameData loadedData;
+
     void Awake()
     {
-        if (Instance == null) { Instance = this; DontDestroyOnLoad(gameObject); }
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+
+            SceneManager.sceneLoaded += OnSceneLoaded;
+        }
         else Destroy(gameObject);
     }
+    private void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+        }
+    }
 
-    // ÀúÀå ¹öÆ°/ÀÚµ¿ÀúÀå ½Ã È£Ãâ
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name != "Restaurant 1") //í›„ì— ë°©ìœ¼ë¡œ ë°”ê¿€ ì˜ˆì •
+            return;
+
+        if (loadedData == null)
+            return;
+
+        ApplyToScene(loadedData);
+
+        loadedData = null;
+
+        Debug.Log("[Load] ì”¬ ë°ì´í„° ì ìš© ì™„ë£Œ");
+    }
+
     public void SaveGame()
     {
         CaptureFromScene();
@@ -53,92 +82,143 @@ public class GameManager : MonoBehaviour
 
         string json = JsonConvert.SerializeObject(data, Newtonsoft.Json.Formatting.Indented);
         File.WriteAllText(path, json);
-        Debug.Log($"[Save] ÀúÀåµÊ: {path}");
+        Debug.Log($"[Save] ï¿½ï¿½ï¿½ï¿½ï¿½: {path}");
     }
 
-    public void LoadGame()
+    public bool LoadGameData()
     {
-        string path = SaveManager.Instance.GetFullPath(SaveManager.Instance.currentSaveFileName);
+        string path = SaveManager.Instance.GetFullPath(
+            SaveManager.Instance.currentSaveFileName
+        );
+
         if (!File.Exists(path))
         {
-            Debug.LogWarning("[Load] ¼¼ÀÌºê ÆÄÀÏÀÌ ¾ø½À´Ï´Ù.");
-            return;
+            Debug.LogWarning("[Load] ì„¸ì´ë¸Œ íŒŒì¼ì´ ì—†ìŠµë‹ˆë‹¤.");
+            return false;
         }
 
         string json = File.ReadAllText(path);
-        GameData data = JsonConvert.DeserializeObject<GameData>(json);
 
-        money = data.money;
-        reputationCustomer = data.reputationCustomer;
-        reputationYoukai = data.reputationYoukai;
-        hour = data.hour;
-        minute = data.minute;
+        loadedData = JsonConvert.DeserializeObject<GameData>(json);
 
-        year = data.year; month = data.month; day = data.day;
-        bgmVolume = data.bgmVolume; seVolume = data.seVolume;
-        triggers = data.triggers ?? new();
-        itemInventory = data.itemInventory ?? new();
+        if (loadedData == null)
+        {
+            Debug.LogWarning("[Load] ì„¸ì´ë¸Œ ë°ì´í„°ë¥¼ ì½ì§€ ëª»í–ˆìŠµë‹ˆë‹¤.");
+            return false;
+        }
 
-        CustomerCodexManager.Instance.LoadFrom(data.customerCodex);
-        data.customerCodex ??= new Dictionary<string, CustomerCodexEntry>();
-        ItemCodexManager.Instance.LoadFrom(data.itemCodex);
-        data.itemCodex ??= new Dictionary<string, ItemCodexEntry>();
+        loadedData.triggers ??= new Dictionary<string, bool>();
+        loadedData.itemInventory ??= new Dictionary<string, int>();
+        loadedData.customerCodex ??= new Dictionary<string, CustomerCodexEntry>();
+        loadedData.itemCodex ??= new Dictionary<string, ItemCodexEntry>();
 
-        ApplyToScene(data);
+        money = loadedData.money;
 
-        Debug.Log("[Load] ·Îµå ¿Ï·á");
+        reputationCustomer = loadedData.reputationCustomer;
+        reputationYoukai = loadedData.reputationYoukai;
+
+        hour = loadedData.hour;
+        minute = loadedData.minute;
+
+        year = loadedData.year;
+        month = loadedData.month;
+        day = loadedData.day;
+
+        bgmVolume = loadedData.bgmVolume;
+        seVolume = loadedData.seVolume;
+
+        triggers = new Dictionary<string, bool>(loadedData.triggers);
+        itemInventory = new Dictionary<string, int>(loadedData.itemInventory);
+
+        Debug.Log("[Load] ë°ì´í„° ë¡œë“œ ì™„ë£Œ");
+
+        return true;
     }
 
     private void CaptureFromScene()
     {
-        // µ·
+        // ëˆ
         var rm = FindObjectOfType<RestaurantManager>();
+
         if (rm != null)
         {
-            money = rm.CurrentMoney;          // <- RestaurantManager¿¡ getter ÇÊ¿ä
-            // reputationCustomer / reputationYoukai ´Â ReputationState ±¸Á¶¿¡ ¸ÂÃç Ã¤¿ì±â
-            // reputationCustomer = rm.ReputationState.CustomerRepLevel;
-            // reputationYoukai = rm.ReputationState.YoukaiRepLevel;
+            money = rm.CurrentMoney;
         }
 
-        // ½Ã°£
+        // í‰íŒ
+        var reputationState = FindObjectOfType<ReputationState>();
+
+        if (reputationState != null)
+        {
+            reputationCustomer = reputationState.CustomerReputation;
+            reputationYoukai = reputationState.YoukaiReputation;
+        }
+
+        // ì‹œê°„
         var gt = FindObjectOfType<GameTime>();
+
         if (gt != null)
         {
-            hour = gt.Hour;                  // <- GameTime¿¡ getter ÇÊ¿ä
+            hour = gt.Hour;
             minute = gt.Minute;
         }
 
-        // ÀÎº¥Åä¸®(µ¥ÀÌÅÍ ÀúÀå¼Ò ÇÊ¿ä)
+        // ì¸ë²¤í† ë¦¬
         var inv = InventoryManager.instance;
+
         if (inv != null)
         {
-            itemInventory = new Dictionary<string, int>(inv.GetAllItemsAsDict()); // <- ÀÌ ÇÔ¼ö ÇÊ¿ä
+            itemInventory = new Dictionary<string, int>(
+                inv.GetAllItemsAsDict()
+            );
         }
     }
 
     private void ApplyToScene(GameData data)
     {
-        // µ· ¹İ¿µ
         var rm = FindObjectOfType<RestaurantManager>();
+
         if (rm != null)
         {
-            rm.SetMoney(data.money);         // <- RestaurantManager¿¡ SetMoney ÇÊ¿ä
-            // rm.ReputationState.SetRepLevels(...)
+            rm.SetMoney(data.money);
         }
 
-        // ½Ã°£ ¹İ¿µ
         var gt = FindObjectOfType<GameTime>();
+
         if (gt != null)
         {
-            gt.SetTime(data.hour, data.minute);  // <- GameTime¿¡ SetTime ÇÊ¿ä
+            gt.SetTime(data.hour, data.minute);
         }
 
-        // ÀÎº¥Åä¸® UI Àç±¸¼º
+        var reputationState = FindObjectOfType<ReputationState>();
+
+        if (reputationState != null)
+        {
+            reputationState.SetReputation(
+                data.reputationCustomer,
+                data.reputationYoukai
+            );
+        }
+
         var inv = InventoryManager.instance;
+
         if (inv != null)
         {
             inv.LoadFromDict(data.itemInventory);
+        }
+
+        if (CustomerCodexManager.Instance != null)
+        {
+            CustomerCodexManager.Instance.LoadFrom(
+                data.customerCodex
+            );
+        }
+
+        if (ItemCodexManager.Instance != null)
+        {
+            ItemCodexManager.Instance.LoadFrom(
+                data.itemCodex
+            );
         }
     }
 
