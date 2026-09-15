@@ -270,6 +270,7 @@ GameObject:
   - component: {fileID: 6874986193612154034}
   - component: {fileID: 1097311083362359006}
   - component: {fileID: 4803253814812494979}
+  - component: {fileID: 3497466708807681108}
   m_Layer: 5
   m_Name: SaveData
   m_TagString: Untagged
@@ -395,6 +396,18 @@ MonoBehaviour:
   fileNameText: {fileID: 5958514908997638645}
   deleteButton: {fileID: 1261125400024534473}
   clickButton: {fileID: 1097311083362359006}
+--- !u!114 &3497466708807681108
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3259336992615335956}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e6cfcb52a8700a4ca2651f3c9a4a5eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Obj_Production
 --- !u!1 &9102944728142694146
 GameObject:
   m_ObjectHideFlags: 0

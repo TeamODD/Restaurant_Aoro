@@ -8,6 +8,8 @@ public class TitleButtonController : MonoBehaviour
         SaveManager.Instance.currentSaveFileName = SaveManager.Instance.CreateNewSaveFileName();
         SaveManager.Instance.CreateNewSave();
 
+        GameManager.Instance.LoadGameData();
+
         SceneManager.LoadScene("Restaurant 1");
     }
 

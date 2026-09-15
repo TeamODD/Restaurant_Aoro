@@ -8,6 +8,7 @@ public class LoadGameManager : MonoBehaviour
 {
     [SerializeField] private GameObject saveDataPrefab;
     [SerializeField] private Transform contentTransform;
+    [SerializeField] private LoadGameUIController loadGameUI;
 
     private void Start()
     {
@@ -24,7 +25,7 @@ public class LoadGameManager : MonoBehaviour
             SaveDataSlot saveDataScript =
                 saveData.GetComponent<SaveDataSlot>();
 
-            saveDataScript.Initialize(fileName);
+            saveDataScript.Initialize(fileName, loadGameUI);
         }
     }
 

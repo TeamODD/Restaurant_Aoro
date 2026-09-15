@@ -2,20 +2,20 @@ using TMPro;
 using UnityEngine;
 using System.IO;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
 public class SaveDataSlot : MonoBehaviour
 {
     public TextMeshProUGUI fileNameText;
     public Button deleteButton;
     public Button clickButton;
-
+    [SerializeField] private LoadGameUIController loadGameUI;
     private string fileName;
 
-    public void Initialize(string name)
+    public void Initialize(string name, LoadGameUIController controller)
     {
         fileName = name;
         fileNameText.text = name;
+        loadGameUI = controller;
 
         deleteButton.onClick.AddListener(DeleteThisSave);
         clickButton.onClick.RemoveAllListeners(); // �ߺ� ����
@@ -42,6 +42,6 @@ public class SaveDataSlot : MonoBehaviour
         if (!GameManager.Instance.LoadGameData())
             return;
 
-        SceneManager.LoadScene("Restaurant 1");
+        loadGameUI.SelectSlot(gameObject);
     }
 }

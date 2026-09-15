@@ -47,17 +47,19 @@ public class SaveManager : MonoBehaviour
             year = 2050,
             month = 1,
             day = 1,
+            hour = 9,
+            minute = 0,
             bgmVolume = 0.7f,
             seVolume = 0.7f,
             triggers = new Dictionary<string, bool>
             {
-                { "hasKey", false },
-                { "isBossDefeated", false }
+                //{ "hasKey", false },
+                //{ "isBossDefeated", false }
             },
             itemInventory = new Dictionary<string, int>
             {
-                { "Apple", 2 },
-                { "Applepie", 0 }
+                { "1" , 2 },
+                { "2" , 1 }
             },
             customerCodex = new Dictionary<string, CustomerCodexEntry>()
         };
