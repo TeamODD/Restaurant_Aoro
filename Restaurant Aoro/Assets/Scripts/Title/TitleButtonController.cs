@@ -10,7 +10,7 @@ public class TitleButtonController : MonoBehaviour
 
         GameManager.Instance.LoadGameData();
 
-        SceneManager.LoadScene("Restaurant 1");
+        SceneManager.LoadScene("Map");
     }
 
     public void OnLoadButtonClicked()

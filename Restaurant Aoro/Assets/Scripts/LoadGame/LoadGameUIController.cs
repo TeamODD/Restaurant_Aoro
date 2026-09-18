@@ -127,6 +127,6 @@ public class LoadGameUIController : MonoBehaviour
 
         blackOverlay.color = endColor;
 
-        SceneManager.LoadScene("Restaurant 1");
+        SceneManager.LoadScene("Map");
     }
 }

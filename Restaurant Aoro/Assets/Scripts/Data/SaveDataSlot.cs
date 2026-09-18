@@ -18,7 +18,7 @@ public class SaveDataSlot : MonoBehaviour
         loadGameUI = controller;
 
         deleteButton.onClick.AddListener(DeleteThisSave);
-        clickButton.onClick.RemoveAllListeners(); // �ߺ� ����
+        clickButton.onClick.RemoveAllListeners();
         clickButton.onClick.AddListener(OnClickSlot);
     }
 
@@ -29,10 +29,10 @@ public class SaveDataSlot : MonoBehaviour
         if (File.Exists(path))
         {
             File.Delete(path);
-            Debug.Log($"[Delete] {fileName} ������");
+            Debug.Log($"[Delete] {fileName}");
         }
 
-        Destroy(gameObject); // ������ ����
+        Destroy(gameObject);
     }
 
     private void OnClickSlot()

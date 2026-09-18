@@ -82,7 +82,7 @@ public class GameManager : MonoBehaviour
 
         string json = JsonConvert.SerializeObject(data, Newtonsoft.Json.Formatting.Indented);
         File.WriteAllText(path, json);
-        Debug.Log($"[Save] �����: {path}");
+        Debug.Log($"[Save]: {path}");
     }
 
     public bool LoadGameData()
