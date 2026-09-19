@@ -8,11 +8,11 @@ public class SceneParameterEditor : EditorWindow
     private enum SceneTab { Game, Title, LoadGame }
     private SceneTab currentTab = SceneTab.Game;
 
-    // °øÅë - »ç¿îµå
+    // ï¿½ï¿½ï¿½ï¿½ - ï¿½ï¿½ï¿½ï¿½
     private float bgmVolume = 0.5f;
     private float seVolume = 0.5f;
 
-    // Game Scene Àü¿ë
+    // Game Scene ï¿½ï¿½ï¿½ï¿½
     private int money = 1000;
     private int year = 2025, month = 1, day = 1;
     private Dictionary<string, bool> triggers = new() {
@@ -83,18 +83,18 @@ public class SceneParameterEditor : EditorWindow
             itemInventory[item] = EditorGUILayout.IntField(item, itemInventory[item]);
 
         GUILayout.Space(5);
-        DrawSoundTab(); // Game ¾À¿¡µµ »ç¿îµå Á¶Àý Æ÷ÇÔ °¡´É
+        DrawSoundTab(); // Game ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     }
 
     private void ApplySettingsToRuntime()
     {
         if (!Application.isPlaying)
         {
-            Debug.LogWarning("ÇÃ·¹ÀÌ ¸ðµå Áß¿¡¸¸ Àû¿ëÇÒ ¼ö ÀÖ½À´Ï´Ù.");
+            Debug.LogWarning("ï¿½Ã·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ß¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½.");
             return;
         }
 
-        // GameManager °°Àº ·±Å¸ÀÓ Å¬·¡½º¿¡¼­ Àû¿ë
+        // GameManager ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         var gm = GameObject.FindObjectOfType<GameManager>();
         if (gm != null)
         {
@@ -107,17 +107,19 @@ public class SceneParameterEditor : EditorWindow
             }
 
             gm.SetSound(bgmVolume, seVolume);*/
-            Debug.Log("¼³Á¤ Àû¿ë ¿Ï·á");
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½");
         }
         else
         {
-            Debug.LogWarning("GameManager¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("GameManagerï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
         }
 
+        /*
         var init = GameObject.FindObjectOfType<GameInit>();
         if (init != null)
         {
-            init.UpdateDisplay(); // ÅØ½ºÆ® Áï½Ã °»½Å
+            init.UpdateDisplay(); // ï¿½Ø½ï¿½Æ® ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         }
+        */
     }
 }

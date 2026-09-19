@@ -4,7 +4,7 @@ Shader "Custom/CircleReveal"
     {
         _Color ("Color", Color) = (0,0,0,1)
         _Radius ("Radius", Range(0,1.5)) = 0
-        _Softness ("Softness", Range(0.001,0.2)) = 0.01
+        _Softness ("Softness", Range(0.01,1.0)) = 0.3
     }
 
     SubShader
@@ -59,14 +59,15 @@ Shader "Custom/CircleReveal"
             {
                 float2 center = float2(0.5, 0.5);
 
-                float distanceFromCenter =
-                    distance(i.uv, center);
+                float dist = distance(i.uv, center);
 
-                float alpha = smoothstep(
-                    _Radius,
-                    _Radius + _Softness,
-                    distanceFromCenter
+                float edge = dist - _Radius;
+
+                float alpha = saturate(
+                    edge / _Softness + 0.5
                 );
+
+                alpha = alpha * alpha * (3.0 - 2.0 * alpha);
 
                 fixed4 color = _Color;
                 color.a *= alpha;
