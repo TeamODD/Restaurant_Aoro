@@ -10017,7 +10017,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94fe52bdb2c47ba47b73703c4de89bb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  item: {fileID: 11400000, guid: fbb083c2ddf75ec449a9a87735d1794e, type: 2}
+  item: {fileID: 11400000, guid: 5d692ed4c613ab644adf1d091d8c419e, type: 2}
   inventoryManager: {fileID: 1782296692}
 --- !u!114 &572619923
 MonoBehaviour:
@@ -15884,7 +15884,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94fe52bdb2c47ba47b73703c4de89bb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  item: {fileID: 11400000, guid: f0ad64e262a230c439b12ccb9fa89302, type: 2}
+  item: {fileID: 11400000, guid: 6db2022970c1f4d409800412086ff4ee, type: 2}
   inventoryManager: {fileID: 1782296692}
 --- !u!114 &897705019
 MonoBehaviour:

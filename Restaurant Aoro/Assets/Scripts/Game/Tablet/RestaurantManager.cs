@@ -71,7 +71,7 @@ public class RestaurantManager : MonoBehaviour
         isOpen = true;
         state = State.Open;
 
-        Debug.Log("°¡°Ô ¿­¸²");
+        Debug.Log("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½");
         spawnCustomer.StartCustomerFlow();
 
         openButton.interactable = false;
@@ -84,7 +84,7 @@ public class RestaurantManager : MonoBehaviour
         if (!isOpen || state != State.Open) return;
         state = State.LastOrder;
 
-        Debug.Log("¶ó½ºÆ® ¿À´õ ½ÃÀÛ: »õ ¼Õ´Ô À¯ÀÔ Áß´Ü");
+        Debug.Log("ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ ï¿½Õ´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß´ï¿½");
         spawnCustomer.StopCustomerFlow();
 
         SetCloseButtonAsClose();
@@ -97,7 +97,7 @@ public class RestaurantManager : MonoBehaviour
         isOpen = false;
         state = State.Closed;
 
-        Debug.Log("¿µ¾÷ Á¾·á: ¸ðµç ¼Õ´Ô ºÒ¸¸Á· ÅðÀå + ÅØ½ºÆ® ÃÊ±âÈ­");
+        Debug.Log("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ ï¿½Õ´ï¿½ ï¿½Ò¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ + ï¿½Ø½ï¿½Æ® ï¿½Ê±ï¿½È­");
         spawnCustomer.StopCustomerFlow();
 
         Dialogue.SetActive(false);

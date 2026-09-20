@@ -17,6 +17,8 @@ public class GameManager : MonoBehaviour
     public int year, month, day;
     public Dictionary<string, bool> triggers = new();
     public Dictionary<string, int> itemInventory = new();
+    public Dictionary<string, CustomerCodexEntry> customerCodex = new();
+    public Dictionary<string, ItemCodexEntry> itemCodex = new();
 
     public float bgmVolume;
     public float seVolume;
@@ -44,17 +46,16 @@ public class GameManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (scene.name != "Restaurant 1") //후에 방으로 바꿀 예정
-            return;
-
-        if (loadedData == null)
-            return;
-
-        ApplyToScene(loadedData);
-
-        loadedData = null;
-
-        Debug.Log("[Load] 씬 데이터 적용 완료");
+        if (scene.name == "Map")
+        {
+            ApplyRuntimeToMapScene();
+            Debug.Log("[GameManager] Runtime State → Map 적용 완료");
+        }
+        else if (scene.name == "Restaurant 1")
+        {
+            ApplyRuntimeToRestaurantScene();
+            Debug.Log("[GameManager] Runtime State → Restaurant 적용 완료");
+        }
     }
 
     public void SaveGame()
@@ -130,6 +131,8 @@ public class GameManager : MonoBehaviour
         triggers = new Dictionary<string, bool>(loadedData.triggers);
         itemInventory = new Dictionary<string, int>(loadedData.itemInventory);
 
+        customerCodex = new Dictionary<string, CustomerCodexEntry>(loadedData.customerCodex);
+        itemCodex = new Dictionary<string, ItemCodexEntry>(loadedData.itemCodex);
         Debug.Log("[Load] 데이터 로드 완료");
 
         return true;
@@ -174,20 +177,20 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void ApplyToScene(GameData data)
+    private void ApplyRuntimeToRestaurantScene()
     {
         var rm = FindObjectOfType<RestaurantManager>();
 
         if (rm != null)
         {
-            rm.SetMoney(data.money);
+            rm.SetMoney(money);
         }
 
         var gt = FindObjectOfType<GameTime>();
 
         if (gt != null)
         {
-            gt.SetTime(data.hour, data.minute);
+            gt.SetTime(hour, minute);
         }
 
         var reputationState = FindObjectOfType<ReputationState>();
@@ -195,8 +198,8 @@ public class GameManager : MonoBehaviour
         if (reputationState != null)
         {
             reputationState.SetReputation(
-                data.reputationCustomer,
-                data.reputationYoukai
+                reputationCustomer,
+                reputationYoukai
             );
         }
 
@@ -204,22 +207,40 @@ public class GameManager : MonoBehaviour
 
         if (inv != null)
         {
-            inv.LoadFromDict(data.itemInventory);
+            inv.LoadFromDict(itemInventory);
         }
 
         if (CustomerCodexManager.Instance != null)
         {
             CustomerCodexManager.Instance.LoadFrom(
-                data.customerCodex
+                customerCodex
             );
         }
 
         if (ItemCodexManager.Instance != null)
         {
             ItemCodexManager.Instance.LoadFrom(
-                data.itemCodex
+                itemCodex
             );
         }
+    }
+    private void ApplyRuntimeToMapScene()
+    {
+        var mm = FindObjectOfType<MapManager>();
+
+        if (mm != null)
+        {
+            mm.SetMoney(money);
+        }
+        /*
+        var gt = FindObjectOfType<GameTime>();
+
+        if (gt != null)
+        {
+            gt.SetTime(hour, minute);
+        }
+        */
+        // Map 인벤토리 구현 후 추가
     }
 
     public void OnMainButtonClicked()
