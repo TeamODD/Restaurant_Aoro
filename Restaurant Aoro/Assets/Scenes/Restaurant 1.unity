@@ -2116,7 +2116,7 @@ MonoBehaviour:
   - {fileID: 601170281}
   - {fileID: 518089075}
   - {fileID: 601170281}
-  _duration: 0.5
+  _duration: 0.25
   disable: {fileID: 243370162}
   cookingBar: {fileID: 1450503858}
   cookingIndicator: {fileID: 1572531885}
@@ -2241,7 +2241,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _objects:
   - {fileID: 156370994}
-  _duration: 0.5
+  _duration: 0.125
 --- !u!1 &157820036
 GameObject:
   m_ObjectHideFlags: 0
@@ -7545,7 +7545,7 @@ MonoBehaviour:
   - {fileID: 601170281}
   - {fileID: 2055009650}
   - {fileID: 601170281}
-  _duration: 0.5
+  _duration: 0.25
   disable: {fileID: 243370162}
   cookingBar: {fileID: 1044309064}
   cookingIndicator: {fileID: 1238135532}
@@ -7670,7 +7670,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _objects:
   - {fileID: 833831465}
-  _duration: 0.5
+  _duration: 0.125
 --- !u!1 &849228302
 GameObject:
   m_ObjectHideFlags: 0
@@ -7888,7 +7888,7 @@ MonoBehaviour:
   - {fileID: 601170281}
   - {fileID: 935558102}
   - {fileID: 601170281}
-  _duration: 0.5
+  _duration: 0.25
   disable: {fileID: 243370162}
   cookingBar: {fileID: 808929135}
   cookingIndicator: {fileID: 1311353029}
@@ -8013,7 +8013,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _objects:
   - {fileID: 862513606}
-  _duration: 0.5
+  _duration: 0.125
 --- !u!1 &871662266
 GameObject:
   m_ObjectHideFlags: 0
@@ -16820,7 +16820,7 @@ MonoBehaviour:
   _targetTransforms:
   - {fileID: 675368679}
   - {fileID: 675368679}
-  _duration: 1
+  _duration: 0.5
 --- !u!1 &1833303062
 GameObject:
   m_ObjectHideFlags: 0
@@ -17555,7 +17555,7 @@ MonoBehaviour:
   - {fileID: 601170281}
   - {fileID: 899360553}
   - {fileID: 601170281}
-  _duration: 0.5
+  _duration: 0.25
   disable: {fileID: 243370162}
   cookingBar: {fileID: 2138826775}
   cookingIndicator: {fileID: 1143019626}
@@ -17680,7 +17680,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _objects:
   - {fileID: 1909031844}
-  _duration: 0.5
+  _duration: 0.125
 --- !u!1 &1920703945
 GameObject:
   m_ObjectHideFlags: 0
@@ -17875,7 +17875,7 @@ MonoBehaviour:
   - {fileID: 159323052}
   - {fileID: 735133775}
   - {fileID: 1804560336}
-  _duration: 0.25
+  _duration: 0.125
 --- !u!1 &1928486200
 GameObject:
   m_ObjectHideFlags: 0

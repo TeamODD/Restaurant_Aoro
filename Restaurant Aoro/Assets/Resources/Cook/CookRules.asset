@@ -15,3 +15,4 @@ MonoBehaviour:
   cookRules:
   - {fileID: 11400000, guid: f993c2e2920a54f38b39d103e3078c36, type: 2}
   - {fileID: 11400000, guid: 4ec08ce92e2a542a8ab0be9dd9e7f7d6, type: 2}
+  - {fileID: 11400000, guid: 9227b7e09fb3a4df199e1ab6af36d16a, type: 2}
