@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
     public int money;
     public int reputationCustomer;
     public int reputationYoukai;
+    public int fatigue;
     public int hour, minute;
 
     public int year, month, day;
@@ -68,6 +69,7 @@ public class GameManager : MonoBehaviour
             money = money,
             reputationCustomer = reputationCustomer,
             reputationYoukai = reputationYoukai,
+            fatigue = fatigue,
             hour = hour,
             minute = minute,
             year = year,
@@ -117,6 +119,7 @@ public class GameManager : MonoBehaviour
 
         reputationCustomer = loadedData.reputationCustomer;
         reputationYoukai = loadedData.reputationYoukai;
+        fatigue = loadedData.fatigue;
 
         hour = loadedData.hour;
         minute = loadedData.minute;
@@ -230,7 +233,7 @@ public class GameManager : MonoBehaviour
 
         if (mm != null)
         {
-            mm.SetMoney(money);
+            mm.SetState(money, fatigue);
         }
         /*
         var gt = FindObjectOfType<GameTime>();

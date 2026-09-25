@@ -41,7 +41,7 @@ public class GameData
     public int money;
     public int reputationCustomer;
     public int reputationYoukai;
-
+    public int fatigue; //피로도
     public int hour;
     public int minute;
     public int year, month, day;
