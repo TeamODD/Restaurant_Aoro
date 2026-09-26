@@ -6,6 +6,7 @@ public class MapManager : MonoBehaviour
     public TMP_Text creditText;
     public int CurrentMoney => currentMoney;
     public int Fatigue => fatigue;
+    [SerializeField] private GameTime gameTime;
     private int currentMoney = 0;
     private int fatigue;
     public void SetState(int mvalue, int fvalue)
@@ -23,5 +24,6 @@ public class MapManager : MonoBehaviour
     public void RestoreFatigue(int value)
     {
         fatigue = Mathf.Max(0, fatigue - value);
+        GameManager.Instance.fatigue = fatigue;
     }
 }

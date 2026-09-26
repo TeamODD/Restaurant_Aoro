@@ -14,6 +14,8 @@ public class GameTime : MonoBehaviour
     private int minute = 0;
 
     private float timer = 0f;
+    private bool isTired = false;
+    private int sleepTimer = 0;
 
     [SerializeField] private Transform lightParent;
     [SerializeField] private Light2D dayLight;
@@ -31,7 +33,6 @@ public class GameTime : MonoBehaviour
 
     void Update()
     {
-        // ��� �ð� ����
         timer += Time.deltaTime;
 
         if (timer >= secondsPerGameMinute)
@@ -43,6 +44,19 @@ public class GameTime : MonoBehaviour
             {
                 minute = 0;
                 hour++;
+
+                if (!isTired)
+                {
+                    sleepTimer++;
+
+                    if (sleepTimer >= 12)
+                        isTired = true;
+                }
+                else
+                {
+                    GameManager.Instance.fatigue++;
+                }
+
             }
 
             if (hour >= 24)
@@ -51,9 +65,18 @@ public class GameTime : MonoBehaviour
             }
 
             UpdateClockUI();
+            SyncTimeToGameManager();
         }
-        
+
         UpdateLight((hour * 60 + minute) / (24f * 60f));
+    }
+    private void SyncTimeToGameManager()
+    {
+        if (GameManager.Instance == null)
+            return;
+
+        GameManager.Instance.hour = hour;
+        GameManager.Instance.minute = minute;
     }
 
     void UpdateClockUI()

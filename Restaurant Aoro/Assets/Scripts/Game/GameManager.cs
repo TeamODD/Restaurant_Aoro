@@ -178,6 +178,7 @@ public class GameManager : MonoBehaviour
                 inv.GetAllItemsAsDict()
             );
         }
+
     }
 
     private void ApplyRuntimeToRestaurantScene()
@@ -235,14 +236,14 @@ public class GameManager : MonoBehaviour
         {
             mm.SetState(money, fatigue);
         }
-        /*
+
         var gt = FindObjectOfType<GameTime>();
 
         if (gt != null)
         {
             gt.SetTime(hour, minute);
         }
-        */
+
         // Map 인벤토리 구현 후 추가
     }
 

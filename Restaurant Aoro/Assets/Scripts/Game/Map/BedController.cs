@@ -1,38 +1,47 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 public class BedController : MonoBehaviour
 {
     public MapManager mapManager;
-    public Slider sleepGauge;
-    public int cur_fatigue;
+    public Slider sleepSlider;
+    public TMP_Text timeText;
+    public TMP_Text beforeText;
+    public TMP_Text afterText;
+
+    private int cur_fatigue;
 
     void Start()
     {
         cur_fatigue = mapManager.Fatigue;
-        sleepGauge.minValue = 0f;
-        sleepGauge.maxValue = cur_fatigue;
+        sleepSlider.minValue = 0f;
+        sleepSlider.maxValue = 24f;
         //sleepGauge.maxValue = 100f;
 
-        sleepGauge.value = 0f;
-        sleepGauge.onValueChanged.AddListener(previewSleep);
+        sleepSlider.value = 0f;
+        sleepSlider.onValueChanged.AddListener(previewSleep);
     }
 
     public void previewSleep(float value)
     {
-        int restore = Mathf.RoundToInt(value);
-        int previewFatigue = cur_fatigue - restore;
+        int sleepTime = Mathf.RoundToInt(value);
+        int previewFatigue = Mathf.Max(0, cur_fatigue - (sleepTime * 2));
+
+        timeText.text = sleepTime.ToString() + "time";
+        beforeText.text = cur_fatigue.ToString();
+        afterText.text = previewFatigue.ToString();
 
         Debug.Log($"현재 피로도: {cur_fatigue}"); // UI에 적용
-        Debug.Log($"회복량: {restore}");
+        Debug.Log($"수면 시간: {sleepTime}");
         Debug.Log($"수면 후 피로도: {previewFatigue}");
     }
     public void sleep()
     {
-        int restore = Mathf.RoundToInt(sleepGauge.value);
+        int sleepTime = Mathf.RoundToInt(sleepSlider.value);
+        int restore = sleepTime * 2;
 
         mapManager.RestoreFatigue(restore);
 
         cur_fatigue = mapManager.Fatigue;
-
     }
 }
