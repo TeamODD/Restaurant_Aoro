@@ -26,4 +26,11 @@ public class MapManager : MonoBehaviour
         fatigue = Mathf.Max(0, fatigue - value);
         GameManager.Instance.fatigue = fatigue;
     }
+
+    //임시
+    public void AddFatigue(int value)
+    {
+        fatigue = Mathf.Clamp(fatigue + value, 0, 36);
+        GameManager.Instance.fatigue = fatigue;
+    }
 }
