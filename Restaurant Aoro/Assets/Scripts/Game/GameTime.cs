@@ -15,6 +15,7 @@ public class GameTime : MonoBehaviour
 
     private float timer = 0f;
     private bool isTired = false;
+    private bool isTimerPaused = false;
     private int sleepTimer = 0;
 
     [SerializeField] private Transform lightParent;
@@ -33,6 +34,9 @@ public class GameTime : MonoBehaviour
 
     void Update()
     {
+        if (isTimerPaused)
+            return;
+
         timer += Time.deltaTime;
 
         if (timer >= secondsPerGameMinute)
@@ -54,7 +58,7 @@ public class GameTime : MonoBehaviour
                 }
                 else
                 {
-                    GameManager.Instance.fatigue++;
+                    GameManager.Instance.AddFatigue(1); // 후에 기절 시스템 추가
                 }
 
             }
@@ -75,8 +79,7 @@ public class GameTime : MonoBehaviour
         if (GameManager.Instance == null)
             return;
 
-        GameManager.Instance.hour = hour;
-        GameManager.Instance.minute = minute;
+        GameManager.Instance.SetTime(hour, minute);
     }
 
     void UpdateClockUI()
@@ -90,5 +93,31 @@ public class GameTime : MonoBehaviour
         nightLight.color = nightLightGradient.Evaluate(ratio);
 
         lightParent.rotation = Quaternion.Euler(0, 0, 360.0f * ratio);
+    }
+
+    public void StopTimer()
+    {
+        isTimerPaused = true;
+    }
+
+    public void StartTimer()
+    {
+        isTimerPaused = false;
+    }
+
+    public void Sleep(int value)
+    {
+        if (value <= 0)
+            return;
+        hour = (hour + value) % 24;
+
+        sleepTimer = 0;
+        isTired = false;
+
+        UpdateClockUI();
+        SyncTimeToGameManager();
+
+        float ratio = (hour * 60 + minute) / (24f * 60f);
+        UpdateLight(ratio);
     }
 }

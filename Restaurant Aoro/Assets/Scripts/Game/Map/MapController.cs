@@ -6,6 +6,7 @@ public class MapController : MonoBehaviour
     [SerializeField] private MapManager mapManager;
     [SerializeField] private BedController bedController;
     public GameObject BedPanel;
+    public GameObject TabletPanel;
     public void EnterRestaurant()
     {
 
@@ -23,7 +24,11 @@ public class MapController : MonoBehaviour
 
     public void OpenTablet()
     {
-
+        TabletPanel.SetActive(true);
+    }
+    public void CloseTablet()
+    {
+        TabletPanel.SetActive(false);
     }
 
     public void OpenTable()

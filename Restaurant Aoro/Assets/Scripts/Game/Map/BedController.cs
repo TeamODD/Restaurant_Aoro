@@ -1,8 +1,10 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UIElements.Experimental;
 public class BedController : MonoBehaviour
 {
+    [SerializeField] private GameTime gameTime;
     public MapManager mapManager;
     public Slider sleepSlider;
     public Image gaugePreview;
@@ -61,6 +63,7 @@ public class BedController : MonoBehaviour
         int restore = sleepTime * 2;
 
         mapManager.RestoreFatigue(restore);
+        gameTime.Sleep(sleepTime);
 
         cur_fatigue = mapManager.Fatigue;
 

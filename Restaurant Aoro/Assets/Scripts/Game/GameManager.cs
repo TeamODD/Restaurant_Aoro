@@ -9,20 +9,36 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
 
     [Header("Runtime State")]
-    public int money;
-    public int reputationCustomer;
-    public int reputationYoukai;
-    public int fatigue;
-    public int hour, minute;
+    [SerializeField] private int money;
+    [SerializeField] private int reputationCustomer;
+    [SerializeField] private int reputationYoukai;
+    [SerializeField] private int fatigue;
+    [SerializeField] private int hour;
+    [SerializeField] private int minute;
 
-    public int year, month, day;
-    public Dictionary<string, bool> triggers = new();
-    public Dictionary<string, int> itemInventory = new();
-    public Dictionary<string, CustomerCodexEntry> customerCodex = new();
-    public Dictionary<string, ItemCodexEntry> itemCodex = new();
+    [SerializeField] private int year;
+    [SerializeField] private int month;
+    [SerializeField] private int day;
 
-    public float bgmVolume;
-    public float seVolume;
+    private Dictionary<string, bool> triggers = new();
+    private Dictionary<string, int> itemInventory = new();
+    private Dictionary<string, CustomerCodexEntry> customerCodex = new();
+    private Dictionary<string, ItemCodexEntry> itemCodex = new();
+
+    [SerializeField] private float bgmVolume;
+    [SerializeField] private float seVolume;
+
+    public int Money => money;
+    public int ReputationCustomer => reputationCustomer;
+    public int ReputationYoukai => reputationYoukai;
+    public int Fatigue => fatigue;
+
+    public int Hour => hour;
+    public int Minute => minute;
+
+    public int Year => year;
+    public int Month => month;
+    public int Day => day;
 
     private GameData loadedData;
 
@@ -250,5 +266,21 @@ public class GameManager : MonoBehaviour
     public void OnMainButtonClicked()
     {
         SceneManager.LoadScene("Title");
+    }
+
+    public void SetTime(int hour, int minute)
+    {
+        this.hour = hour;
+        this.minute = minute;
+    }
+
+    public void AddFatigue(int value)
+    {
+        fatigue = Mathf.Clamp(fatigue + value, 0, 36);
+    }
+
+    public void RestoreFatigue(int value)
+    {
+        fatigue = Mathf.Max(0, fatigue - value);
     }
 }

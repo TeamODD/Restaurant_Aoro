@@ -5,14 +5,13 @@ public class MapManager : MonoBehaviour
 {
     public TMP_Text creditText;
     public int CurrentMoney => currentMoney;
-    public int Fatigue => fatigue;
+    public int Fatigue => GameManager.Instance.Fatigue;
     [SerializeField] private GameTime gameTime;
     private int currentMoney = 0;
-    private int fatigue;
+
     public void SetState(int mvalue, int fvalue)
     {
         currentMoney = Mathf.Max(0, mvalue);
-        fatigue = Mathf.Max(0, fvalue);
         UpdateCreditText();
     }
 
@@ -23,14 +22,12 @@ public class MapManager : MonoBehaviour
 
     public void RestoreFatigue(int value)
     {
-        fatigue = Mathf.Max(0, fatigue - value);
-        GameManager.Instance.fatigue = fatigue;
+        GameManager.Instance.RestoreFatigue(value);
     }
 
     //임시
     public void AddFatigue(int value)
     {
-        fatigue = Mathf.Clamp(fatigue + value, 0, 36);
-        GameManager.Instance.fatigue = fatigue;
+        GameManager.Instance.AddFatigue(value);
     }
 }
