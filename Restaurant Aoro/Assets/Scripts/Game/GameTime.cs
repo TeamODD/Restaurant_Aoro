@@ -59,6 +59,12 @@ public class GameTime : MonoBehaviour
                 else
                 {
                     GameManager.Instance.AddFatigue(1); // 후에 기절 시스템 추가
+
+                    if (GameManager.Instance.Fatigue >= 36)
+                    {
+                        Faint();
+                        return;
+                    }
                 }
 
             }
@@ -109,7 +115,14 @@ public class GameTime : MonoBehaviour
     {
         if (value <= 0)
             return;
-        hour = (hour + value) % 24;
+
+        int totalHours = hour + value;
+        int daysPassed = totalHours / 24;
+
+        hour = totalHours % 24;
+
+        if (daysPassed > 0)
+            GameManager.Instance.AddDay(daysPassed);
 
         sleepTimer = 0;
         isTired = false;
@@ -119,5 +132,13 @@ public class GameTime : MonoBehaviour
 
         float ratio = (hour * 60 + minute) / (24f * 60f);
         UpdateLight(ratio);
+    }
+
+    private void Faint()
+    {
+        Sleep(24);
+        //후에 연출 추가
+        GameManager.Instance.AddDay(1);
+        GameManager.Instance.RestoreFatigue(16);
     }
 }

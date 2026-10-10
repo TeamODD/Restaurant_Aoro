@@ -283,4 +283,18 @@ public class GameManager : MonoBehaviour
     {
         fatigue = Mathf.Max(0, fatigue - value);
     }
+
+    public void AddDay(int value)
+    {
+        if (value <= 0)
+            return;
+
+        System.DateTime currentDate = new System.DateTime(year, month, day);
+
+        currentDate = currentDate.AddDays(value);
+
+        year = currentDate.Year;
+        month = currentDate.Month;
+        day = currentDate.Day;
+    }
 }
