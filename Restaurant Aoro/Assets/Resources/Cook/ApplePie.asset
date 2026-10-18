@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: ApplePie
   m_EditorClassIdentifier: 
   ingredients:
-  - {fileID: 11400000, guid: f0ad64e262a230c439b12ccb9fa89302, type: 2}
-  common: {fileID: 11400000, guid: fbb083c2ddf75ec449a9a87735d1794e, type: 2}
-  fine: {fileID: 11400000, guid: fbb083c2ddf75ec449a9a87735d1794e, type: 2}
-  premium: {fileID: 11400000, guid: fbb083c2ddf75ec449a9a87735d1794e, type: 2}
-  exquisite: {fileID: 11400000, guid: fbb083c2ddf75ec449a9a87735d1794e, type: 2}
+  - {fileID: 11400000, guid: 6db2022970c1f4d409800412086ff4ee, type: 2}
+  common: {fileID: 11400000, guid: 5d692ed4c613ab644adf1d091d8c419e, type: 2}
+  fine: {fileID: 11400000, guid: 5d692ed4c613ab644adf1d091d8c419e, type: 2}
+  premium: {fileID: 11400000, guid: 5d692ed4c613ab644adf1d091d8c419e, type: 2}
+  exquisite: {fileID: 11400000, guid: 5d692ed4c613ab644adf1d091d8c419e, type: 2}

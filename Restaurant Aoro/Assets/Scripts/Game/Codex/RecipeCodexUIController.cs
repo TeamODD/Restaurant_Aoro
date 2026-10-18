@@ -13,8 +13,8 @@ public class RecipeCodexUIController : MonoBehaviour
     public Button prevButton;
     public Button nextButton;
 
-    [Header("Detail Scene")]
-    public string detailSceneName = "RecipeCodexDetail";
+    [Header("Detail Panel")]
+    [SerializeField] private RecipeCodexDetailUI detailUI;
 
     private List<RecipeCodexEntry> recipeEntries = new();
     private int currentPage = 0;
@@ -145,7 +145,15 @@ public class RecipeCodexUIController : MonoBehaviour
 
     private void OnClickUnlockedSlot(string entryId)
     {
-        /*RecipeCodexSelection.SelectedEntryId = entryId;
-        SceneManager.LoadScene(detailSceneName);*/
+        if (detailUI == null)
+            return;
+
+        RecipeCodexEntry entry = recipeEntries
+            .FirstOrDefault(x => x.entryId == entryId);
+
+        if (entry == null || !entry.unlocked)
+            return;
+
+        detailUI.Open(entry);
     }
 }

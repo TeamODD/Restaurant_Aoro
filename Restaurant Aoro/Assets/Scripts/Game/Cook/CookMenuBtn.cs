@@ -6,6 +6,7 @@ namespace Game.Cook
 {
     public class CookMenuBtn : SlidingController
     {
+        public bool IsAvailable => !cooking && !cookFinish;
         [SerializeField] private DisableOtherObjects disable;
         [SerializeField] private Transform cookingBar;
         [SerializeField] private Animator cookingIndicator;
@@ -83,7 +84,7 @@ namespace Game.Cook
         private void OnMouseDown()
         {
             if (cooking) return;
-            
+
             if (cookFinish)
             {
                 EndCook();

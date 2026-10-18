@@ -138,7 +138,6 @@ public class GameTime : MonoBehaviour
     {
         Sleep(24);
         //후에 연출 추가
-        GameManager.Instance.AddDay(1);
         GameManager.Instance.RestoreFatigue(16);
     }
 }
