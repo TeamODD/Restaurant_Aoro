@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour
     private Dictionary<string, int> itemInventory = new();
     private Dictionary<string, CustomerCodexEntry> customerCodex = new();
     private Dictionary<string, ItemCodexEntry> itemCodex = new();
+    private Dictionary<string, RecipeCodexEntry> recipeCodex = new();
 
     [SerializeField] private float bgmVolume;
     [SerializeField] private float seVolume;
@@ -98,6 +99,7 @@ public class GameManager : MonoBehaviour
         };
         data.customerCodex = CustomerCodexManager.Instance.GetAll();
         data.itemCodex = ItemCodexManager.Instance.GetAll();
+        data.recipeCodex = RecipeCodexManager.Instance.GetAll();
 
         string json = JsonConvert.SerializeObject(data, Newtonsoft.Json.Formatting.Indented);
         File.WriteAllText(path, json);
@@ -130,6 +132,7 @@ public class GameManager : MonoBehaviour
         loadedData.itemInventory ??= new Dictionary<string, int>();
         loadedData.customerCodex ??= new Dictionary<string, CustomerCodexEntry>();
         loadedData.itemCodex ??= new Dictionary<string, ItemCodexEntry>();
+        loadedData.recipeCodex ??= new Dictionary<string, RecipeCodexEntry>();
 
         money = loadedData.money;
 
@@ -152,6 +155,7 @@ public class GameManager : MonoBehaviour
 
         customerCodex = new Dictionary<string, CustomerCodexEntry>(loadedData.customerCodex);
         itemCodex = new Dictionary<string, ItemCodexEntry>(loadedData.itemCodex);
+        recipeCodex = new Dictionary<string, RecipeCodexEntry>(loadedData.recipeCodex);
         Debug.Log("[Load] 데이터 로드 완료");
 
         return true;
@@ -243,6 +247,12 @@ public class GameManager : MonoBehaviour
                 itemCodex
             );
         }
+        if (RecipeCodexManager.Instance != null)
+        {
+            RecipeCodexManager.Instance.LoadFrom(
+                recipeCodex
+            );
+        }
     }
     private void ApplyRuntimeToMapScene()
     {
@@ -295,6 +305,6 @@ public class GameManager : MonoBehaviour
 
         year = currentDate.Year;
         month = currentDate.Month;
-        day = currentDate.Day;
+        day = currentDate.Day; //날짜 변경 방식 수정 예정(현재는 임시)
     }
 }

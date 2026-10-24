@@ -29312,6 +29312,7 @@ MonoBehaviour:
   recipeCodexPanel: {fileID: 1935501849}
   customerCodexPanel: {fileID: 1177274812}
   customerPanel: {fileID: 1009773821}
+  recipeDetailPanel: {fileID: 1103962652}
   ingredientCodexButton: {fileID: 604674545}
   foodCodexButton: {fileID: 382811901}
   recipeCodexButton: {fileID: 165519107}

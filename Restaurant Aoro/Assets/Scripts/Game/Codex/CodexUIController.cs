@@ -11,6 +11,7 @@ public class CodexUIController : MonoBehaviour
     [SerializeField] private GameObject recipeCodexPanel;
     [SerializeField] private GameObject customerCodexPanel;
     [SerializeField] private GameObject customerPanel;
+    [SerializeField] private GameObject recipeDetailPanel;
     //[SerializeField] private GameObject savePanel;
 
     [Header("Buttons")]
@@ -86,6 +87,7 @@ public class CodexUIController : MonoBehaviour
         ingredientCodexPanel.SetActive(false);
         foodCodexPanel.SetActive(false);
         recipeCodexPanel.SetActive(false);
+        recipeDetailPanel.SetActive(false);
         customerCodexPanel.SetActive(false);
         customerPanel.SetActive(false);
     }

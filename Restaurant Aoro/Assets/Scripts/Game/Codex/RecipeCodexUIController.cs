@@ -125,7 +125,11 @@ public class RecipeCodexUIController : MonoBehaviour
             );
         }
     }
-
+    public void onClose()
+    {
+        if (detailUI != null)
+            detailUI.gameObject.SetActive(false);
+    }
     private void OnClickPrev()
     {
         if (currentPage <= 0) return;
