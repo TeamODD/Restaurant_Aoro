@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class RecipeCodexDetailUI : MonoBehaviour
 {
+    [Header("UI")]
+    [SerializeField] private GameObject recipeCodexPanel;
     [Header("Result")]
     [SerializeField] private Image resultImage;
     [SerializeField] private TextMeshProUGUI resultNameText;
@@ -22,6 +24,7 @@ public class RecipeCodexDetailUI : MonoBehaviour
 
     [Header("Buttons")]
     [SerializeField] private Button cookButton;
+    [SerializeField] private Button backButton;
 
     private RecipeCodexEntry currentRecipe;
 
@@ -34,6 +37,15 @@ public class RecipeCodexDetailUI : MonoBehaviour
         gameObject.SetActive(true);
 
         Refresh();
+    }
+    private void OnEnable()
+    {
+        backButton.onClick.AddListener(OnBackBtnClicked);
+    }
+
+    private void OnDisable()
+    {
+        backButton.onClick.RemoveListener(OnBackBtnClicked);
     }
 
     private void Refresh()
@@ -116,5 +128,10 @@ public class RecipeCodexDetailUI : MonoBehaviour
             ItemGrade.Exquisite => Prefab_6s,
             _ => null
         };
+    }
+    private void OnBackBtnClicked()
+    {
+        recipeCodexPanel.SetActive(true);
+        gameObject.SetActive(false);
     }
 }

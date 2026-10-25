@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.Experimental.GlobalIllumination;
 
 public class RestaurantManager : MonoBehaviour
 {
@@ -9,8 +10,8 @@ public class RestaurantManager : MonoBehaviour
     public Button closeButton;
     public TMP_Text closeButtonLabel;
 
-    [Header("Exceptional")]
-    public GameObject Dialogue;
+    [Header("Dialogue")]
+    [SerializeField] private DialogueUI dialogueUI;
 
     [Header("Spawner")]
     public SpawnCustomer spawnCustomer;
@@ -97,10 +98,13 @@ public class RestaurantManager : MonoBehaviour
         isOpen = false;
         state = State.Closed;
 
-        Debug.Log("���� ����: ��� �մ� �Ҹ��� ���� + �ؽ�Ʈ �ʱ�ȭ");
         spawnCustomer.StopCustomerFlow();
 
-        Dialogue.SetActive(false);
+        if (dialogueUI != null)
+            dialogueUI.HideImmediate();
+        if (DialogueManager.Instance != null)
+            DialogueManager.Instance.ClearPendingGreeting();
+
         ForceCloseAllCustomersAsDissatisfied();
 
         acceptedCustomer = 0;

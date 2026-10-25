@@ -10,18 +10,18 @@ public enum DialogueInputMode { Global, Blocker }
 public class DialogueUI : MonoBehaviour, IPointerClickHandler
 {
     [Header("Refs")]
-    [SerializeField] private RectTransform panel;          // ¸»Ç³¼± ¹è°æ(RectTransform)
-    [SerializeField] private TextMeshProUGUI text;         // TMP ÅØ½ºÆ®
-    [SerializeField] private CanvasGroup group;            // ÆäÀÌµå
+    [SerializeField] private RectTransform panel;          // ï¿½ï¿½Ç³ï¿½ï¿½ ï¿½ï¿½ï¿½(RectTransform)
+    [SerializeField] private TextMeshProUGUI text;         // TMP ï¿½Ø½ï¿½Æ®
+    [SerializeField] private CanvasGroup group;            // ï¿½ï¿½ï¿½Ìµï¿½
     [SerializeField] private Camera cam;
 
     [Header("Options")]
-    [SerializeField] private Vector2 screenOffset = new Vector2(0f, 80f);  // ¸»Ç³¼±À» ¾ÞÄ¿ À§·Î ¶ç¿ì´Â ÇÈ¼¿ ¿ÀÇÁ¼Â
-    [SerializeField] private float fadeTime = 0.15f;                       // ÆäÀÌµå ½Ã°£
-    [SerializeField] private float charInterval = 0.2f;                    // Å¸ÀÚ±â °£°Ý
-    [SerializeField] private bool clampToScreen = true;                    // È­¸é ¹ÛÀ¸·Î ³ª°¡Áö ¾Ê±â
-    [SerializeField] private Vector2 padding = new Vector2(320f, 180f);    // ÅØ½ºÆ® ¹Û ¿©¹é(px)
-    [SerializeField] private float maxWidth = 650f;                        // ¸»Ç³¼± ÃÖ´ë ³Êºñ(px), ÀÚµ¿ ÁÙ¹Ù²Þ ±â¹Ý
+    [SerializeField] private Vector2 screenOffset = new Vector2(0f, 80f);  // ï¿½ï¿½Ç³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¿ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½È¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    [SerializeField] private float fadeTime = 0.15f;                       // ï¿½ï¿½ï¿½Ìµï¿½ ï¿½Ã°ï¿½
+    [SerializeField] private float charInterval = 0.2f;                    // Å¸ï¿½Ú±ï¿½ ï¿½ï¿½ï¿½ï¿½
+    [SerializeField] private bool clampToScreen = true;                    // È­ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½
+    [SerializeField] private Vector2 padding = new Vector2(320f, 180f);    // ï¿½Ø½ï¿½Æ® ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(px)
+    [SerializeField] private float maxWidth = 650f;                        // ï¿½ï¿½Ç³ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½Êºï¿½(px), ï¿½Úµï¿½ ï¿½Ù¹Ù²ï¿½ ï¿½ï¿½ï¿½
 
     [SerializeField] private float minBubbleWidth = 140f;
     [SerializeField] private float minBubbleHeight = 64f;
@@ -35,11 +35,12 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
     private DialogueInputMode currentMode;
     public DialogueInputMode CurrentMode => currentMode;
 
-    // ³»ºÎ »óÅÂ
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     private Transform worldAnchor;
     private Coroutine followRoutine;
     private Coroutine typeRoutine;
     private Coroutine fadeRoutine;
+    private Coroutine hideRoutine;
 
     private readonly Queue<string> lineQueue = new Queue<string>();
     private string currentLine = "";
@@ -89,7 +90,12 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
             return;
         }
 
-        StartCoroutine(FadeOutAndHide());
+        if (hideRoutine == null)
+        {
+            hideRoutine = StartCoroutine(FadeOutAndHide());
+        }
+
+        //StartCoroutine(FadeOutAndHide());
     }
 
     private void EnableBlocker(bool on)
@@ -109,6 +115,12 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
 
     private void EnsureActive()
     {
+        if (hideRoutine != null)
+        {
+            StopCoroutine(hideRoutine);
+            hideRoutine = null;
+        }
+
         if (!gameObject.activeSelf) gameObject.SetActive(true);
         if (!enabled) enabled = true;
         if (group != null) group.blocksRaycasts = true;
@@ -380,7 +392,10 @@ public class DialogueUI : MonoBehaviour, IPointerClickHandler
         isShowing = false;
 
         if (group != null) group.blocksRaycasts = false;
+
         EnableBlocker(false);
+
+        hideRoutine = null;
         gameObject.SetActive(false);
     }
 

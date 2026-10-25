@@ -6,6 +6,9 @@ public class GlobalDialogueClickRelay : MonoBehaviour
 
     void Update()
     {
+        if (dialogueUI == null) return;
+        if (!dialogueUI.gameObject.activeInHierarchy) return;
+
         if (dialogueUI == null || !dialogueUI.IsShowing()) return;
         if (dialogueUI.CurrentMode != DialogueInputMode.Global) return;
 

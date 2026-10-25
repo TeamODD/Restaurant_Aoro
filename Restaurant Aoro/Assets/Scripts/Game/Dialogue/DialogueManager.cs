@@ -121,6 +121,10 @@ public class DialogueManager : MonoBehaviour
         ClearPending();
     }
 
+    public void ClearPendingGreeting()
+    {
+        ClearPending();
+    }
     private void ClearPending()
     {
         pendingGreetingOwner = null;
