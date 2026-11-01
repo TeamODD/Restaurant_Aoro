@@ -27,9 +27,9 @@ MonoBehaviour:
   dislikedFoods: 
   payable: 
   payItem:
-  - {fileID: 11400000, guid: f0ad64e262a230c439b12ccb9fa89302, type: 2}
-  - {fileID: 11400000, guid: f0ad64e262a230c439b12ccb9fa89302, type: 2}
-  - {fileID: 11400000, guid: f0ad64e262a230c439b12ccb9fa89302, type: 2}
+  - {fileID: 11400000, guid: 6db2022970c1f4d409800412086ff4ee, type: 2}
+  - {fileID: 11400000, guid: 6db2022970c1f4d409800412086ff4ee, type: 2}
+  - {fileID: 11400000, guid: 6db2022970c1f4d409800412086ff4ee, type: 2}
   prefabStand: {fileID: 2894818090675673590, guid: aa1359ac2b2a20440b06028afec79647, type: 3}
   prefabSeated: {fileID: 4843200848866546953, guid: 953370d1f50e6e549954c79db7117616, type: 3}
   prefabEating: {fileID: 4221557268649686477, guid: a7d36adc6ac80d1498f237ee3fdda80a, type: 3}

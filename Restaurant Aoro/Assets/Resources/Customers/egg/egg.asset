@@ -14,20 +14,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CustomerID: 3
   CustomerName: egg
+  codexIcon: {fileID: 0}
   tribe: 1
   NPCType: 0
   appearStartHour: 17
   appearEndHour: 20
   codexDescription: 
+  codexDetailDescription: 
   favoriteTastes: 00000000
   dislikedTastes: 
   favoriteFoods: 05000000
   dislikedFoods: 
   payable: 
   payItem:
-  - {fileID: 11400000, guid: f0ad64e262a230c439b12ccb9fa89302, type: 2}
-  - {fileID: 11400000, guid: f0ad64e262a230c439b12ccb9fa89302, type: 2}
-  - {fileID: 11400000, guid: f0ad64e262a230c439b12ccb9fa89302, type: 2}
+  - {fileID: 11400000, guid: 6db2022970c1f4d409800412086ff4ee, type: 2}
+  - {fileID: 11400000, guid: 6db2022970c1f4d409800412086ff4ee, type: 2}
+  - {fileID: 11400000, guid: 6db2022970c1f4d409800412086ff4ee, type: 2}
   prefabStand: {fileID: 8996567409460136301, guid: c2f28881f2f9a9849983adb30e1a859e, type: 3}
   prefabSeated: {fileID: 4458811809326082427, guid: bcf3d55451f67664f93035a4f39d4835, type: 3}
   prefabEating: {fileID: 3075280054291559063, guid: 99e7fb039e96e734fa5c33a2cb9fe919, type: 3}
