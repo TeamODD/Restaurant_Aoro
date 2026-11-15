@@ -53,6 +53,9 @@ public class ArrowController : MonoBehaviour
     private Axis hor = new(CameraStep.Center, CameraStep.Center, CameraStep.Two);
     private Axis ver = new(CameraStep.Center, CameraStep.Center, CameraStep.One);
 
+    public bool IsAtKitchen =>
+        ver.currentStep == CameraStep.One;
+
     private Coroutine moveCoroutine;
 
     private void Start()
@@ -351,5 +354,13 @@ public class ArrowController : MonoBehaviour
         Arrow[(int)ArrowDirection.Right].transform.position = rightTarget;
         Arrow[(int)ArrowDirection.Down].transform.position = downTarget;
         Arrow[(int)ArrowDirection.Up].transform.position = upTarget;
+    }
+
+    public void MoveToKitchen()
+    {
+        if (IsAtKitchen)
+            return;
+
+        MoveDown();
     }
 }

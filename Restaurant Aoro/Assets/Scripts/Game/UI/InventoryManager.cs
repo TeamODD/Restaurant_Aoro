@@ -100,6 +100,12 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
+    public void OnClickCloseInventoryPosition()
+    {
+        controller.MovePanelToCenter(offset, 0.2f);
+        isCentered = false;
+    }
+
     public void ChangeToInventory()
     {
         panelObjects[0].SetActive(true);
@@ -199,5 +205,15 @@ public class InventoryManager : MonoBehaviour
         uiController.UpdateItemQuantity(item, currentCount);
 
         return true;
+    }
+
+    public int GetItemCount(string itemId)
+    {
+        if (string.IsNullOrEmpty(itemId))
+            return 0;
+
+        return itemCounts.TryGetValue(itemId, out int count)
+            ? count
+            : 0;
     }
 }

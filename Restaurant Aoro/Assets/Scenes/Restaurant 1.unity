@@ -19431,6 +19431,8 @@ MonoBehaviour:
   Prefab_6s: {fileID: 2105772223809456789, guid: 231405fee74dd2241a67dfe76c9d3f36, type: 3}
   cookButton: {fileID: 765773480}
   backButton: {fileID: 1967956326}
+  arrowController: {fileID: 1782296689}
+  codexUIController: {fileID: 1643881179}
 --- !u!1 &1114555736
 GameObject:
   m_ObjectHideFlags: 0
@@ -31537,7 +31539,7 @@ MonoBehaviour:
   openButton: {fileID: 2086042624}
   closeButton: {fileID: 1811280748}
   closeButtonLabel: {fileID: 1142328620}
-  Dialogue: {fileID: 505234395}
+  dialogueUI: {fileID: 0}
   spawnCustomer: {fileID: 1782296690}
   Tablet3: {fileID: 981544852}
   VisitingText: {fileID: 381023512}

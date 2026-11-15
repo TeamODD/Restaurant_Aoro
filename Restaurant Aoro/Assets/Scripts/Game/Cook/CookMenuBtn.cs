@@ -83,6 +83,11 @@ namespace Game.Cook
 
         private void OnMouseDown()
         {
+            if (CookManager.instance.IsRecipeMode)
+            {
+                CookManager.instance.SelectRecipeCookSlot(this);
+                return;
+            }
             if (cooking) return;
 
             if (cookFinish)

@@ -26,6 +26,9 @@ public class RecipeCodexDetailUI : MonoBehaviour
     [SerializeField] private Button cookButton;
     [SerializeField] private Button backButton;
 
+    [Header("Controllers")]
+    [SerializeField] private ArrowController arrowController;
+    [SerializeField] private CodexUIController codexUIController;
     private RecipeCodexEntry currentRecipe;
 
     public void Open(RecipeCodexEntry entry)
@@ -40,11 +43,13 @@ public class RecipeCodexDetailUI : MonoBehaviour
     }
     private void OnEnable()
     {
+        cookButton.onClick.AddListener(OnCookBtnClicked);
         backButton.onClick.AddListener(OnBackBtnClicked);
     }
 
     private void OnDisable()
     {
+        cookButton.onClick.RemoveListener(OnCookBtnClicked);
         backButton.onClick.RemoveListener(OnBackBtnClicked);
     }
 
@@ -133,5 +138,17 @@ public class RecipeCodexDetailUI : MonoBehaviour
     {
         recipeCodexPanel.SetActive(true);
         gameObject.SetActive(false);
+    }
+
+    private void OnCookBtnClicked()
+    {
+        if (currentRecipe == null)
+            return;
+
+        Game.Cook.CookManager.instance.BeginRecipeCook(currentRecipe);
+
+        codexUIController.CloseCodex();
+        arrowController.MoveToKitchen();
+        InventoryManager.instance.OnClickCloseInventoryPosition();
     }
 }

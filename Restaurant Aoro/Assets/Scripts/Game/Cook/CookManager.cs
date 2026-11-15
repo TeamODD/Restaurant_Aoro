@@ -37,6 +37,10 @@ namespace Game.Cook
         public float cookingTime = 60f;
         [SerializeField] private GradePolicy gradePolicy;
 
+        private RecipeCodexEntry selectedRecipe;
+
+        public bool IsRecipeMode => selectedRecipe != null;
+
         private void OnEnable()
         {
             if (instance != null) return;
@@ -107,11 +111,12 @@ namespace Game.Cook
 
         public void ResetTileSortOrder()
         {
-            foreach (var tile in cookTiles) {
+            foreach (var tile in cookTiles)
+            {
                 tile.GetComponent<SpriteRenderer>().sortingOrder = 5;
             }
         }
-        
+
         public void IngredientAddedToCookTile(ItemSlotUI item)
         {
             if (!cooktileOnHold || item.item_.ItemType != ItemType.Ingredient) return;
@@ -240,5 +245,100 @@ namespace Game.Cook
                 // }
             });
         }
+        public void BeginRecipeCook(RecipeCodexEntry recipe)
+        {
+            if (recipe == null || recipe.result == null)
+                return;
+
+            selectedRecipe = recipe;
+
+            Debug.Log($"[CookManager] 레시피 요리 모드 시작: {recipe.result.itemId}");
+        }
+        public void SelectRecipeCookSlot(CookMenuBtn slot)
+        {
+            if (!IsRecipeMode || slot == null || isWorking)
+                return;
+
+            if (!slot.IsAvailable)
+            {
+                Debug.Log("[CookManager] 사용 중인 조리 슬롯입니다.");
+                return;
+            }
+
+            if (selectedRecipe.ingredients == null)
+                return;
+
+            Item resultItem = ItemDatabase.Instance.GetItem(
+                selectedRecipe.result.itemId
+            );
+
+            if (resultItem == null)
+            {
+                Debug.LogWarning("[CookManager] 레시피 결과 아이템을 찾을 수 없습니다.");
+                return;
+            }
+
+            // 레시피에 필요한 재료 수량 계산
+            Dictionary<string, int> requiredItems = new();
+
+            foreach (var ingredient in selectedRecipe.ingredients)
+            {
+                if (string.IsNullOrEmpty(ingredient.itemId))
+                    return;
+
+                if (requiredItems.ContainsKey(ingredient.itemId))
+                    requiredItems[ingredient.itemId]++;
+                else
+                    requiredItems[ingredient.itemId] = 1;
+            }
+
+            // 모든 재료의 보유량 확인
+            foreach (var required in requiredItems)
+            {
+                if (inventoryManager.GetItemCount(required.Key) < required.Value)
+                {
+                    Debug.LogWarning(
+                        $"[CookManager] 재료 부족: {required.Key}, 필요 {required.Value}개"
+                    );
+                    return;
+                }
+            }
+
+            // 재료 소모
+            foreach (var required in requiredItems)
+            {
+                Item ingredientItem = ItemDatabase.Instance.GetItem(required.Key);
+
+                if (ingredientItem == null)
+                {
+                    Debug.LogWarning($"[CookManager] 재료 아이템을 찾을 수 없습니다: {required.Key}");
+                    return;
+                }
+
+                for (int i = 0; i < required.Value; i++)
+                {
+                    inventoryManager.ConsumeItem(ingredientItem);
+                }
+            }
+
+            // 조리 시작
+            slot.StartCookingBar(cookingTime);
+            StartCoroutine(CookingCoroutine(resultItem));
+
+            Debug.Log($"[CookManager] 레시피 요리 시작: {resultItem.ItemName}");
+
+            // 레시피 요리 모드 종료
+            selectedRecipe = null;
+            menuBtnOnHold = null;
+        }
+        public void CancelRecipeCook()
+        {
+            selectedRecipe = null;
+            menuBtnOnHold = null;
+
+            Debug.Log("[CookManager] 레시피 요리 모드 종료");
+        }
     }
+
+
 }
