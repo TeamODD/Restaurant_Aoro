@@ -16,7 +16,7 @@ namespace EditorEditor
         private class CsvRecipeData
         {
             public string RecipeID;
-            public string ItemID;
+            public string IngredientCategory;
         }
 
         private CookRulesSO currentDatabase;
@@ -197,15 +197,23 @@ namespace EditorEditor
             rightPane.Add(nameField);
 
             var serializedRule = new SerializedObject(rule);
-            var iterator = serializedRule.GetIterator();
-            iterator.NextVisible(true);
+            serializedRule.Update();
 
-            while (iterator.NextVisible(false))
+            var iterator = serializedRule.GetIterator();
+            var enterChildren = true;
+
+            while (iterator.NextVisible(enterChildren))
             {
-                var propField = new PropertyField(iterator);
-                propField.Bind(serializedRule);
+                enterChildren = false;
+
+                if (iterator.propertyPath == "m_Script")
+                    continue;
+
+                var propField = new PropertyField(iterator.Copy());
                 rightPane.Add(propField);
             }
+
+            rightPane.Bind(serializedRule);
         }
 
         private void CreateNewRule()
@@ -307,7 +315,7 @@ namespace EditorEditor
                 csvData
                     .Where(x =>
                         !string.IsNullOrWhiteSpace(x.RecipeID) &&
-                        !string.IsNullOrWhiteSpace(x.ItemID))
+                        !string.IsNullOrWhiteSpace(x.IngredientCategory))
                     .GroupBy(x => x.RecipeID);
 
             foreach (var group in groupedRecipes)
@@ -325,25 +333,39 @@ namespace EditorEditor
                         .objectReferenceValue = rule;
                 }
 
-                var ingredients = new List<Item>();
+                var ingredients = new List<IngredientCategory>();
 
                 foreach (var row in group)
                 {
-                    var item = FindItemByID(row.ItemID);
-
-                    if (item == null)
+                    if (Enum.TryParse(
+                            row.IngredientCategory,
+                            true,
+                            out IngredientCategory category) &&
+                        Enum.IsDefined(typeof(IngredientCategory), category))
                     {
-                        Debug.LogWarning(
-                            $"[{group.Key}] ItemID를 찾을 수 없습니다: {row.ItemID}"
-                        );
+                        if (!ingredients.Contains(category))
+                        {
+                            ingredients.Add(category);
+                        }
 
                         continue;
                     }
 
-                    if (!ingredients.Contains(item))
+                    var item = FindItemByID(row.IngredientCategory);
+
+                    if (item != null)
                     {
-                        ingredients.Add(item);
+                        if (!ingredients.Contains(item.IngredientCategory))
+                        {
+                            ingredients.Add(item.IngredientCategory);
+                        }
+
+                        continue;
                     }
+
+                    Debug.LogWarning(
+                        $"[{group.Key}] IngredientCategory 변환 실패: {row.IngredientCategory}"
+                    );
                 }
 
                 rule.ingredients = ingredients.ToArray();
@@ -374,23 +396,25 @@ namespace EditorEditor
             if (rows.Count == 0)
                 throw new Exception("CSV가 비어있습니다.");
 
-            var headers = rows[0];
+            var headers = rows[0].Select(h => h.Trim()).ToArray();
 
-            var recipeIDIndex = System.Array.IndexOf(
+            var recipeIDIndex = Array.FindIndex(
                 headers,
-                "RecipeID"
+                h => string.Equals(h, "RecipeID", StringComparison.OrdinalIgnoreCase)
             );
 
-            var itemIDIndex = System.Array.IndexOf(
+            var categoryIndex = Array.FindIndex(
                 headers,
-                "ItemID"
+                h => string.Equals(h, "IngredientCategory", StringComparison.OrdinalIgnoreCase) ||
+                     string.Equals(h, "Category", StringComparison.OrdinalIgnoreCase) ||
+                     string.Equals(h, "ItemID", StringComparison.OrdinalIgnoreCase)
             );
 
             if (recipeIDIndex == -1)
                 throw new Exception("CSV에 'RecipeID' 컬럼이 없습니다.");
 
-            if (itemIDIndex == -1)
-                throw new Exception("CSV에 'ItemID' 컬럼이 없습니다.");
+            if (categoryIndex == -1)
+                throw new Exception("CSV에 'IngredientCategory' 컬럼이 없습니다.");
 
             var result = new List<CsvRecipeData>();
 
@@ -406,15 +430,15 @@ namespace EditorEditor
                         ? row[recipeIDIndex].Trim()
                         : string.Empty;
 
-                var itemID =
-                    itemIDIndex < row.Length
-                        ? row[itemIDIndex].Trim()
+                var ingredientCategory =
+                    categoryIndex < row.Length
+                        ? row[categoryIndex].Trim()
                         : string.Empty;
 
                 result.Add(new CsvRecipeData
                 {
                     RecipeID = recipeID,
-                    ItemID = itemID
+                    IngredientCategory = ingredientCategory
                 });
             }
 

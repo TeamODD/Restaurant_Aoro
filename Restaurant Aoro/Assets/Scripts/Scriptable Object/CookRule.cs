@@ -5,7 +5,7 @@ namespace Scriptable_Object
     [CreateAssetMenu(menuName = "Cook/CookRule")]
     public class CookRule: ScriptableObject
     {
-        [Header("Ingredient Information")] public Item[] ingredients;
+        [Header("Ingredient Information")] public IngredientCategory[] ingredients;
         
         [Header("Food Item")]
         public Item common;

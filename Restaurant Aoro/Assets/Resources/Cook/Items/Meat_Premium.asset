@@ -15,7 +15,8 @@ MonoBehaviour:
   ItemID: 3
   ItemName: Meat
   ItemType: 0
-  ItemMainCategory: 3
-  ItemSubCategory: 1
+  IngredientCategory: 3
+  DishMainCategory: 0
+  DishSubCategory: 4
   ItemGrade: 2
   ItemSprite: {fileID: -4494312840230113853, guid: d3e0b750906544e23a65f129ab9801a4, type: 3}

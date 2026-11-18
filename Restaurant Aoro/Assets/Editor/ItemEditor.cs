@@ -236,24 +236,47 @@ namespace EditorEditor
             rightPane.Add(title);
 
             var serializedItem = new SerializedObject(item);
-
             serializedItem.Update();
 
-            var iterator = serializedItem.GetIterator();
+            var itemIdField = new PropertyField(serializedItem.FindProperty("ItemID"));
+            var itemNameField = new PropertyField(serializedItem.FindProperty("ItemName"));
+            var itemTypeProp = serializedItem.FindProperty("ItemType");
+            var itemTypeField = new PropertyField(itemTypeProp);
 
-            var enterChildren = true;
+            var ingredientContainer = new VisualElement();
+            ingredientContainer.Add(new PropertyField(serializedItem.FindProperty("IngredientCategory")));
 
-            while (iterator.NextVisible(enterChildren))
+            var dishContainer = new VisualElement();
+            dishContainer.Add(new PropertyField(serializedItem.FindProperty("DishMainCategory")));
+            dishContainer.Add(new PropertyField(serializedItem.FindProperty("DishSubCategory")));
+            dishContainer.Add(new PropertyField(serializedItem.FindProperty("Foodtaste")));
+
+            var itemGradeField = new PropertyField(serializedItem.FindProperty("ItemGrade"));
+            var itemSpriteField = new PropertyField(serializedItem.FindProperty("ItemSprite"));
+
+            void UpdateCategoryVisibility(ItemType type)
             {
-                enterChildren = false;
-
-                if (iterator.propertyPath == "m_Script")
-                    continue;
-
-                var field = new PropertyField(iterator.Copy());
-
-                rightPane.Add(field);
+                ingredientContainer.style.display =
+                    type == ItemType.Ingredient ? DisplayStyle.Flex : DisplayStyle.None;
+                dishContainer.style.display =
+                    type == ItemType.Food ? DisplayStyle.Flex : DisplayStyle.None;
             }
+
+            UpdateCategoryVisibility(item.ItemType);
+
+            itemTypeField.RegisterValueChangeCallback(_ =>
+            {
+                serializedItem.Update();
+                UpdateCategoryVisibility((ItemType)itemTypeProp.enumValueIndex);
+            });
+
+            rightPane.Add(itemIdField);
+            rightPane.Add(itemNameField);
+            rightPane.Add(itemTypeField);
+            rightPane.Add(ingredientContainer);
+            rightPane.Add(dishContainer);
+            rightPane.Add(itemGradeField);
+            rightPane.Add(itemSpriteField);
 
             rightPane.Bind(serializedItem);
 
@@ -460,32 +483,55 @@ namespace EditorEditor
                 item.ItemType = itemType;
             }
 
-            if (!Enum.TryParse(
-                    data.ItemMainCategory,
-                    true,
-                    out ItemMainCategory mainCategory))
+            if (!string.IsNullOrWhiteSpace(data.IngredientCategory))
             {
-                Debug.LogWarning(
-                    $"[{data.ItemID}] ItemMainCategory 변환 실패: {data.ItemMainCategory}"
-                );
-            }
-            else
-            {
-                item.ItemMainCategory = mainCategory;
+                if (!Enum.TryParse(
+                        data.IngredientCategory,
+                        true,
+                        out IngredientCategory ingredientCategory))
+                {
+                    Debug.LogWarning(
+                        $"[{data.ItemID}] IngredientCategory 변환 실패: {data.IngredientCategory}"
+                    );
+                }
+                else
+                {
+                    item.IngredientCategory = ingredientCategory;
+                }
             }
 
-            if (!Enum.TryParse(
-                    data.ItemSubCategory,
-                    true,
-                    out ItemSubCategory subCategory))
+            if (!string.IsNullOrWhiteSpace(data.DishMainCategory))
             {
-                Debug.LogWarning(
-                    $"[{data.ItemID}] ItemSubCategory 변환 실패: {data.ItemSubCategory}"
-                );
+                if (!Enum.TryParse(
+                        data.DishMainCategory,
+                        true,
+                        out DishMainCategory mainCategory))
+                {
+                    Debug.LogWarning(
+                        $"[{data.ItemID}] DishMainCategory 변환 실패: {data.DishMainCategory}"
+                    );
+                }
+                else
+                {
+                    item.DishMainCategory = mainCategory;
+                }
             }
-            else
+
+            if (!string.IsNullOrWhiteSpace(data.DishSubCategory))
             {
-                item.ItemSubCategory = subCategory;
+                if (!Enum.TryParse(
+                        data.DishSubCategory,
+                        true,
+                        out DishSubCategory subCategory))
+                {
+                    Debug.LogWarning(
+                        $"[{data.ItemID}] DishSubCategory 변환 실패: {data.DishSubCategory}"
+                    );
+                }
+                else
+                {
+                    item.DishSubCategory = subCategory;
+                }
             }
 
             if (!Enum.TryParse(
@@ -616,8 +662,9 @@ namespace EditorEditor
                 "ItemID",
                 "ItemName",
                 "ItemType",
-                "ItemMainCategory",
-                "ItemSubCategory",
+                "IngredientCategory",
+                "DishMainCategory",
+                "DishSubCategory",
                 "ItemGrade",
                 "Foodtaste"
             };
@@ -646,10 +693,12 @@ namespace EditorEditor
                     ItemID = GetValue("ItemID"),
                     ItemName = GetValue("ItemName"),
                     ItemType = GetValue("ItemType"),
-                    ItemMainCategory =
-                        GetValue("ItemMainCategory"),
-                    ItemSubCategory =
-                        GetValue("ItemSubCategory"),
+                    IngredientCategory =
+                        GetValue("IngredientCategory"),
+                    DishMainCategory =
+                        GetValue("DishMainCategory"),
+                    DishSubCategory =
+                        GetValue("DishSubCategory"),
                     ItemGrade = GetValue("ItemGrade"),
                     Foodtaste = GetValue("Foodtaste")
                 });
@@ -800,10 +849,43 @@ namespace EditorEditor
             public string ItemID;
             public string ItemName;
             public string ItemType;
-            public string ItemMainCategory;
-            public string ItemSubCategory;
+            public string IngredientCategory;
+            public string DishMainCategory;
+            public string DishSubCategory;
             public string ItemGrade;
             public string Foodtaste;
+        }
+    }
+
+    [CustomEditor(typeof(Item))]
+    public class ItemCustomInspector : Editor
+    {
+        public override void OnInspectorGUI()
+        {
+            serializedObject.Update();
+
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("ItemID"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("ItemName"));
+
+            var itemTypeProp = serializedObject.FindProperty("ItemType");
+            EditorGUILayout.PropertyField(itemTypeProp);
+
+            var currentType = (ItemType)itemTypeProp.enumValueIndex;
+            if (currentType == ItemType.Ingredient)
+            {
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("IngredientCategory"));
+            }
+            else if (currentType == ItemType.Food)
+            {
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("DishMainCategory"));
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("DishSubCategory"));
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("Foodtaste"));
+            }
+
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("ItemGrade"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("ItemSprite"));
+
+            serializedObject.ApplyModifiedProperties();
         }
     }
 }

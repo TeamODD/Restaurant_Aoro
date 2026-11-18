@@ -15,7 +15,8 @@ MonoBehaviour:
   ItemID: 5
   ItemName: Rice
   ItemType: 0
-  ItemMainCategory: 0
-  ItemSubCategory: 3
+  IngredientCategory: 0
+  DishMainCategory: 0
+  DishSubCategory: 4
   ItemGrade: 0
   ItemSprite: {fileID: -5915392730302165460, guid: 4a2baa2feaba44f5bb29004ef6193305, type: 3}

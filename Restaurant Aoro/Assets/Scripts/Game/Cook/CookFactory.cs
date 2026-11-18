@@ -38,19 +38,27 @@ namespace Game.Cook
             policy = _policy;
         }
 
+
+        //Recipe Based on Ingredient Category
         public Item Make(Item[] ingredients)
         {
             if (cookRulesSO == null) throw new NullReferenceException("[CookFactory] Cook Rule is Empty!");
 
-            var cookRules = cookRulesSO.cookRules;
-            cookRules = cookRules.OrderByDescending(rule => rule.ingredients.Count(i => i != null)).ToArray();
+            var validIngredients = ingredients.Where(ing => ing != null).ToArray();
+            var inputCategories = validIngredients.Select(ing => ing.IngredientCategory).ToHashSet();
+
+            var cookRules = cookRulesSO.cookRules
+                .Where(rule => rule != null && rule.ingredients != null)
+                .OrderByDescending(rule => rule.ingredients.Length)
+                .ToArray();
 
             var match = (from cookRule in cookRules
-                where cookRule.ingredients.Length <= ingredients.Length
-                let commonQty = ingredients.Count(ing => ing != null && ing.ItemGrade == ItemGrade.Common)
-                let exquisiteQty = ingredients.Count(ing => ing != null && ing.ItemGrade == ItemGrade.Exquisite)
-                let grade = ingredients
-                    .Where(ing => ing != null && cookRule.ingredients.Contains(ing))
+                where cookRule.ingredients.Length > 0 && cookRule.ingredients.Length <= validIngredients.Length
+                where cookRule.ingredients.All(cat => inputCategories.Contains(cat))
+                let commonQty = validIngredients.Count(ing => ing.ItemGrade == ItemGrade.Common)
+                let exquisiteQty = validIngredients.Count(ing => ing.ItemGrade == ItemGrade.Exquisite)
+                let grade = validIngredients
+                    .Where(ing => cookRule.ingredients.Contains(ing.IngredientCategory))
                     .Select(ing => ing.ItemGrade switch
                     {
                         ItemGrade.Common => policy.common,
@@ -59,13 +67,13 @@ namespace Game.Cook
                         ItemGrade.Exquisite => policy.exquisite,
                         _ => throw new Exception("Unknown ItemGrade!")
                     })
-                    .Aggregate(1.0, (current, ingGrade) => current * ingGrade) * policy.GetQtyWeight(ingredients.Length)
+                    .Aggregate(1.0, (current, ingGrade) => current * ingGrade) * policy.GetQtyWeight(validIngredients.Length)
                 select grade switch
                 {
                     _ when grade < policy.maxCommon && exquisiteQty == 0 => cookRule.common,
                     _ when grade < policy.maxFine => cookRule.fine,
                     _ when grade < policy.maxPremium && commonQty < 2 => cookRule.premium,
-                    _ when grade < policy.maxExquisite && commonQty == 0 && exquisiteQty >= 3 && ingredients.Length >= 4
+                    _ when grade < policy.maxExquisite && commonQty == 0 && exquisiteQty >= 3 && validIngredients.Length >= 4
                         => cookRule.exquisite,
                     _ => throw new Exception("Item grade score exceeds max value!")
                 }).FirstOrDefault();

@@ -15,7 +15,8 @@ MonoBehaviour:
   ItemID: 10
   ItemName: Canned Fish
   ItemType: 0
-  ItemMainCategory: 4
-  ItemSubCategory: 2
+  IngredientCategory: 4
+  DishMainCategory: 0
+  DishSubCategory: 4
   ItemGrade: 0
   ItemSprite: {fileID: 3887119476849654520, guid: 76f62c03bf1fa4e5bb9d56abcfb8e730, type: 3}

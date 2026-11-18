@@ -5,6 +5,21 @@ public enum ItemType
     Ingredient, Food
 }
 
+public enum IngredientCategory
+{
+    Rice, Noodle, Broth, Meat, Seafood, Vegetable, Etc
+}
+
+public enum DishMainCategory
+{
+    Rice, Noodle, Soup, Meat, Seafood, Vegetable
+}
+
+public enum DishSubCategory
+{
+    Etc, Meat, Seafood, Vegetable, None
+}
+
 public enum ItemMainCategory
 {
     Rice, Noodle, Soup, Meat, Seafood, Vegetable
@@ -27,9 +42,13 @@ public class Item : ScriptableObject
     public string ItemID;
     public string ItemName;
     public ItemType ItemType;
-    public ItemMainCategory ItemMainCategory;
-    public ItemSubCategory ItemSubCategory;
+    public IngredientCategory IngredientCategory;
+    public DishMainCategory DishMainCategory;
+    public DishSubCategory DishSubCategory;
     public ItemGrade ItemGrade;
     public FoodTaste Foodtaste;
     public Sprite ItemSprite;
+
+    public ItemMainCategory ItemMainCategory => (ItemMainCategory)DishMainCategory;
+    public ItemSubCategory ItemSubCategory => (ItemSubCategory)DishSubCategory;
 }

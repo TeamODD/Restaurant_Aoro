@@ -15,7 +15,8 @@ MonoBehaviour:
   ItemID: 14
   ItemName: Clam
   ItemType: 0
-  ItemMainCategory: 4
-  ItemSubCategory: 2
+  IngredientCategory: 4
+  DishMainCategory: 0
+  DishSubCategory: 4
   ItemGrade: 0
   ItemSprite: {fileID: 964365941278430979, guid: 8eaa35e542a1d461f93021fb19cf65bb, type: 3}

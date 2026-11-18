@@ -15,7 +15,8 @@ MonoBehaviour:
   ItemID: 12
   ItemName: Fish
   ItemType: 0
-  ItemMainCategory: 4
-  ItemSubCategory: 2
+  IngredientCategory: 4
+  DishMainCategory: 0
+  DishSubCategory: 4
   ItemGrade: 2
   ItemSprite: {fileID: -7998914879539037203, guid: f23271acfa98441e19701418a564961c, type: 3}
